@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CALTA — Центрально-Азиатская логистическая транспортная ассоциация</title>
+<meta name="description" content="CALTA — независимая платформа для развития логистики, международной торговли и цифровой трансформации в Центральной Азии." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+  --navy:#101B33;
+  --navy-2:#17223F;
+  --navy-3:#1F2C4D;
+  --red-1:#300309;
+  --red-2:#3F1717;
+  --red-3:#4D1F1F;
+  --red-bright:#BD0F26;
+  --red-card:#5F0712;
+  --red-card-2:#8F0A1C;
+  --green-1:#042F0B;
+  --green-bright:#0FBD2B;
+  --green-card:#0A521B;
+  --green-card-2:#137A29;
+  --gold-1:#022331;
+  --gold-bright:#0F87BD;
+  --gold-card:#034563;
+  --gold-card-2:#056894;
+  --amber-1:#2B1B02;
+  --amber-2:#3D2705;
+  --amber-bright:#D99A3D;
+  --amber-card:#4A2E05;
+  --amber-card-2:#6E4A12;
+  --up:#6FCF8E;
+  --down:#E38080;
+  --sand:#E7E0CC;
+  --sand-2:#F4F0E4;
+  --turquoise:#14958C;
+  --turquoise-light:#4FB8AF;
+  --ochre:#C6862E;
+  --ink:#171712;
+  --cream:#F3EFE2;
+  --line:rgba(23,23,18,0.14);
+  --line-dark:rgba(243,239,226,0.16);
+  --display:'IBM Plex Sans',sans-serif;
+  --body:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+
+html {
+  zoom: 1.1; /* для Chrome, Edge, Safari */
+  -moz-transform: scale(1.1); /* для Firefox */
+  -moz-transform-origin: top left;
+}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--body);
+    background:var(--sand-2);
+    color:var(--ink);
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+    opacity:.75;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ochre);flex:0 0 auto;}
+  .eyebrow .dot.tq{background:var(--turquoise);}
+
+  h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.01em;}
+
+  /* ---------- header ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    background:rgb(251, 251, 252);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-dark);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+  }
+  header.header-hidden{transform:translateY(-100%);}
+  .rate-ticker{
+    background:var(--navy);border-bottom:1px solid var(--line-dark);
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .rate-ticker::-webkit-scrollbar{display:none;}
+  .rate-ticker-inner{
+    display:flex;align-items:center;gap:22px;
+    max-width:1180px;margin:0 auto;padding:7px 32px;
+    white-space:nowrap;
+  }
+  .rate-item{
+    font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+    color:var(--cream);opacity:.75;display:inline-flex;gap:7px;align-items:baseline;
+  }
+  .rate-label{color:#ffffff;opacity:1;}
+  .rate-value{color:var(--turquoise-light);font-weight:500;}
+  .rate-updated{
+    font-family:var(--mono);font-size:10px;letter-spacing:.04em;
+    color:var(--cream);opacity:.4;margin-left:auto;padding-left:16px;
+  }
+  @media(max-width:760px){
+    .rate-updated{display:none;}
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0px 32px;max-width:1180px;margin:0 auto;
+  }
+  .nav-right{display:flex;align-items:center;}
+  .nav-left{display:flex;align-items:center;gap:38px;}
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:34px;height:34px;flex:0 0 auto;}
+  .logo-badge{position:relative;width:120px;height:120px;flex:0 0 auto;}
+  .logo-badge-inner{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:120px;height:120px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .logo-img{
+    width:100%;height:100%;object-fit:contain;display:block;
+  }
+  .logo-text{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.02em;line-height:1.1;}
+  .logo-text span{display:block;font-family:var(--mono);font-weight:400;font-size:9.5px;letter-spacing:.1em;opacity:.6;text-transform:uppercase;margin-top:2px;}
+  nav.links{display:flex;gap:26px;align-items:center;}
+  nav.links a{font-family:var(--mono);
+    font-size:12.5px;letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#000000;
+    opacity:.8;transition:opacity .2s;
+  }
+  nav.links a:hover{opacity:1;}
+  .nav-cta{
+    font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:#000000;background:var(--turquoise-light);
+    padding:9px 16px;border-radius:2px;white-space:nowrap;
+  }
+  .nav-cta-mobile{
+    display:none;
+    font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    color:#000000;background:var(--turquoise-light);
+    padding:12px 16px;border-radius:2px;
+  }
+
+  /* ---------- nav dropdown: Подробная информация ---------- */
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-trigger{
+    display:flex;flex-direction:row;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:#000000;opacity:.8;cursor:default;transition:opacity .2s;white-space:nowrap;
+  }
+  .nav-dropdown:hover .nav-dropdown-trigger{opacity:1;}
+  .nav-dropdown-arrow{
+    width:13px;height:13px;flex:0 0 auto;
+    transform:rotate(0deg);
+    transition:transform .45s cubic-bezier(.4,0,.2,1);
+  }
+  .nav-dropdown:hover .nav-dropdown-arrow{transform:rotate(180deg);}
+  /* invisible hit-area bridge so the pointer never leaves the hoverable box
+     while moving from the trigger down into the menu */
+  .nav-dropdown::after{
+    content:'';position:absolute;left:50%;transform:translateX(-50%);
+    top:100%;width:220px;height:18px;
+  }
+  .nav-dropdown-menu{
+    position:absolute;top:calc(100% + 14px);left:50%;
+    transform:translate(-50%,8px);
+    min-width:200px;
+    background:#ffffff;border:1px solid rgba(0,0,0,.1);
+    box-shadow:0 18px 40px rgba(0,0,0,.25);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .25s ease,transform .25s ease,visibility .25s;
+    z-index:1200;
+  }
+  .nav-dropdown:hover .nav-dropdown-menu,
+  .nav-dropdown:focus-within .nav-dropdown-menu{
+    opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0);
+  }
+  .nav-dropdown-menu a{
+    display:block;padding:14px 18px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+    color:#000000;opacity:.85;border-top:1px solid rgba(0,0,0,.08);
+    transition:opacity .2s,background .2s;
+  }
+  .nav-dropdown-menu a:first-child{border-top:none;}
+  .nav-dropdown-menu a:hover{opacity:1;background:rgba(0,0,0,.05);color:var(--turquoise);}
+  .burger{display:none;background:none;border:none;color:#000000;cursor:pointer;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;min-height:100vh;
+    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 55%, var(--navy) 100%);
+    color:var(--cream);
+    display:flex;flex-direction:column;justify-content:center;
+    padding-top:168px;
+    overflow:hidden;
+  }
+  .hero-map{position:absolute;inset:0;width:100%;height:100%;opacity:.9;transform:translateY(60px);}
+  .hero-map .route{
+    fill:none;stroke:var(--ochre);stroke-width:1.4;stroke-dasharray:6 3000;
+    animation:draw 3.5s ease forwards;
+    opacity:.55;
+  }
+  .hero-map .route.tq{stroke:var(--turquoise-light);}
+  .hero-map .node circle{fill:var(--sand);opacity:.85;}
+  .hero-map .node text{font-family:var(--mono);font-size:9px;fill:var(--cream);opacity:.5;letter-spacing:.04em;}
+  @keyframes draw{ to{ stroke-dasharray:6000 6000; } }
+  @media (prefers-reduced-motion: reduce){
+    .hero-map .route{animation:none;stroke-dasharray:none;opacity:.4;}
+  }
+
+  /* decorative route stripes reused on non-hero dark sections */
+  .section-map{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
+  .section-map .route{
+    fill:none;stroke:var(--ochre);stroke-width:1.4;stroke-dasharray:6 3000;
+    animation:draw 3.5s ease forwards;
+    animation-play-state:paused;
+    opacity:.32;
+  }
+  .section-map.in .route{animation-play-state:running;}
+  .section-map .route.tq{stroke:var(--turquoise-light);}
+  .section-map .map-silhouette{opacity:.22;stroke-width:2.6;}
+  .section-map .grid-dot circle{fill:var(--ochre);opacity:.4;}
+  .section-map text{font-family:var(--mono);font-size:11px;font-weight:500;fill:var(--cream);opacity:.6;letter-spacing:.06em;}
+  .section-map .label-dot{fill:var(--turquoise-light);opacity:.9;}
+  @media (prefers-reduced-motion: reduce){
+    .section-map .route{animation:none;stroke-dasharray:none;opacity:.25;}
+  }
+
+  @media(max-width:900px){
+    .section-map{display:none;}
+  }
+
+  .hero-inner{position:relative;z-index:2;}
+  .hero-inner.wrap{max-width:none;margin:0;padding-left:18vw;padding-right:32px;}
+  .hero-content{max-width:760px;padding:60px 0 90px;}
+  .hero h1{
+    font-size:clamp(38px,6vw,66px);
+    line-height:1.04;
+    margin-bottom:26px;
+  }
+  .hero h1 em{font-style:normal;color:var(--turquoise-light);}
+  .hero p.lead{
+    font-family:var(--body);font-size:18px;line-height:1.65;
+    max-width:600px;color:rgba(243,239,226,.85);margin-bottom:38px;
+  }
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+    padding:14px 24px;border-radius:2px;display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line-dark);transition:all .2s;
+  }
+  .btn-primary{background:var(--ochre);color:var(--navy);border-color:var(--ochre);}
+  .btn-primary:hover{background:#dd9a3c;}
+  .btn-ghost{color:var(--cream);}
+  .btn-ghost:hover{background:rgba(243,239,226,.08);}
+
+  /* ---------- section shell ---------- */
+  section{padding:110px 0;position:relative;z-index:0;}
+  section.dark{background:var(--navy);color:var(--cream);}
+  section.dark.section-red{background:linear-gradient(135deg, var(--red-1) 0%, var(--red-bright) 65%, var(--red-1) 130%);}
+  section.dark.section-green{background:linear-gradient(135deg, var(--green-1) 0%, var(--green-bright) 65%, var(--green-1) 130%);}
+  section.dark.section-red .adv-card{background:linear-gradient(150deg, var(--red-card) 0%, var(--red-card-2) 100%);border-color:rgba(243,239,226,0.16);}
+  section.dark.section-green .adv-card{background:linear-gradient(150deg, var(--green-card) 0%, var(--green-card-2) 100%);border-color:rgba(243,239,226,0.16);}
+  section.dark.section-red .goals-visual{background:linear-gradient(150deg, var(--red-card) 0%, var(--red-card-2) 100%);}
+  section.dark.section-green .goals-visual{background:linear-gradient(150deg, var(--green-card) 0%, var(--green-card-2) 100%);}
+  section.dark.section-gold{
+    background:linear-gradient(135deg, var(--gold-1) 0%, var(--gold-bright) 65%, var(--gold-1) 130%);
+    padding:56px 0;
+  }
+  section.dark.section-gold .adv-card,
+  section.dark.section-gold .goals-visual{background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);border-color:rgba(243,239,226,0.16);}
+  section.dark.section-amber{background:linear-gradient(150deg, var(--amber-1) 0%, var(--amber-bright) 68%, var(--amber-2) 130%);}
+
+  /* ---------- info feed (AI-managed content) ---------- */
+  .info-grid{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:22px;
+  }
+  .info-card{
+    background:var(--sand-2);border:1px solid var(--line);border-radius:3px;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .info-card .ic-body{padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .info-card.media{grid-column:span 3;}
+  .info-card.stat,.info-card.fact,.info-card.trend{grid-column:span 2;}
+  .ic-tag{
+    align-self:flex-start;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--turquoise);background:rgba(20,149,140,.09);border:1px solid rgba(20,149,140,.25);
+    padding:4px 9px;border-radius:2px;
+  }
+  .info-card h3{font-size:17px;line-height:1.3;font-weight:600;}
+  .info-card p{font-family:var(--body);font-size:14px;line-height:1.6;opacity:.75;}
+  .ic-foot{
+    margin-top:auto;padding-top:12px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;opacity:.5;
+    display:flex;justify-content:space-between;gap:10px;
+  }
+
+  /* photo placeholder — filled in automatically by the AI agent */
+  .ic-photo{
+    position:relative;aspect-ratio:16/10;width:100%;
+    background:linear-gradient(150deg,#DED4B8 0%,#EDE7D4 100%);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
+    color:var(--ink);
+  }
+  .ic-photo svg{width:30px;height:30px;opacity:.35;}
+  .ic-photo span{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;opacity:.4;}
+  .ic-photo .ai-chip{
+    position:absolute;top:10px;right:10px;
+    display:inline-flex;align-items:center;gap:5px;
+    background:rgba(23,23,18,.72);color:var(--cream);backdrop-filter:blur(4px);
+    font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;
+    padding:5px 9px;border-radius:20px;
+  }
+  .ic-photo .ai-chip svg{width:10px;height:10px;opacity:1;}
+  .ic-photo .ai-chip .pulse{width:5px;height:5px;border-radius:50%;background:var(--turquoise-light);animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.4;transform:scale(.8);}50%{opacity:1;transform:scale(1.15);}}
+
+  /* stat / fact / trend variants (no photo) */
+  .info-card.stat .ic-body,.info-card.fact .ic-body,.info-card.trend .ic-body{padding:26px 24px;justify-content:center;}
+  .ic-figure{font-family:var(--display);font-size:40px;font-weight:600;color:var(--turquoise);line-height:1;}
+  .ic-figure small{font-family:var(--mono);font-size:13px;font-weight:400;opacity:.5;margin-left:4px;}
+  .ic-trendline{width:100%;height:44px;}
+  .ic-fact-icon{width:30px;height:30px;margin-bottom:4px;}
+
+  .info-note{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;opacity:.5;
+    margin-top:28px;padding-top:20px;border-top:1px solid var(--line);
+    display:flex;align-items:center;gap:8px;
+  }
+  .info-note svg{width:13px;height:13px;flex:0 0 auto;opacity:.8;}
+
+  @media(max-width:1000px){
+    .info-grid{grid-template-columns:repeat(2,1fr);}
+    .info-card.media,.info-card.stat,.info-card.fact,.info-card.trend{grid-column:span 1;}
+  }
+  @media(max-width:640px){
+    .info-grid{grid-template-columns:1fr;}
+  }
+
+  /* ---------- grain quotes ---------- */
+  .grain-wrap{display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:stretch;}
+  .grain-hero{
+    background:rgba(23,15,2,.28);border:1px solid rgba(243,239,226,0.18);border-radius:4px;
+    padding:34px 36px;display:flex;flex-direction:column;
+  }
+  .grain-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap;}
+  .grain-crop{display:flex;align-items:center;gap:12px;}
+  .grain-crop-icon{width:38px;height:38px;flex:0 0 auto;}
+  .grain-crop-name{font-family:var(--display);font-size:20px;font-weight:600;color:var(--cream);}
+  .grain-crop-sub{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--cream);opacity:.55;margin-top:2px;}
+  .demo-badge{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
+    color:var(--amber-1);background:var(--cream);padding:5px 10px;border-radius:20px;white-space:nowrap;
+  }
+  .grain-price-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
+  .grain-price{font-family:var(--display);font-size:clamp(46px,5.5vw,64px);font-weight:600;color:var(--cream);line-height:1;}
+  .grain-unit{font-family:var(--mono);font-size:14px;color:var(--cream);opacity:.55;}
+  .grain-change{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:14px;font-weight:500;
+    padding:5px 11px;border-radius:20px;
+  }
+  .grain-change.up{color:var(--up);background:rgba(111,207,142,.14);}
+  .grain-change.down{color:var(--down);background:rgba(227,128,128,.14);}
+  .grain-meta{font-family:var(--mono);font-size:11.5px;color:var(--cream);opacity:.5;margin-bottom:22px;}
+  .grain-spark{width:100%;height:64px;margin-top:auto;}
+  .grain-source{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;color:var(--cream);opacity:.45;
+    margin-top:16px;padding-top:16px;border-top:1px solid rgba(243,239,226,.16);
+  }
+
+  .grain-list{display:flex;flex-direction:column;gap:14px;}
+  .grain-mini{
+    background:linear-gradient(150deg, var(--amber-card) 0%, var(--amber-card-2) 100%);
+    border:1px solid rgba(243,239,226,0.16);border-radius:3px;
+    padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+    flex:1;flex-wrap:wrap;min-width:0;
+  }
+  .grain-mini-name{font-family:var(--display);font-size:15px;font-weight:600;color:var(--cream);}
+  .grain-mini-name span{display:block;font-family:var(--mono);font-size:10px;font-weight:400;opacity:.5;margin-top:3px;text-transform:uppercase;letter-spacing:.05em;}
+  .grain-mini-right{text-align:right;}
+  .grain-mini-price{font-family:var(--mono);font-size:16px;color:var(--cream);font-weight:500;}
+  .grain-mini-change{font-family:var(--mono);font-size:11.5px;margin-top:4px;}
+  .grain-mini-change.up{color:var(--up);}
+  .grain-mini-change.down{color:var(--down);}
+  .grain-mini.soon{opacity:.45;}
+  .grain-mini.soon .grain-mini-price{font-size:11px;letter-spacing:.05em;text-transform:uppercase;}
+
+  @media(max-width:900px){
+    .grain-wrap{grid-template-columns:minmax(0,1fr);}
+    .grain-hero,.grain-list{min-width:0;}
+  }
+
+  /* ---------- events carousel ---------- */
+  .events-grid{display:grid;grid-template-columns:min(440px,42vw) 1fr;gap:56px;align-items:center;}
+  .events-carousel{
+    position:relative;height:400px;max-height:55vh;
+    display:flex;align-items:center;justify-content:center;
+    cursor:grab;user-select:none;
+  }
+  .events-carousel.dragging{cursor:grabbing;}
+  .carousel-track{position:relative;width:100%;height:100%;}
+  .carousel-item{
+    position:absolute;left:50%;top:50%;width:min(440px,42vw);aspect-ratio:4/3;
+    border:1px solid var(--line-dark);
+    background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    transition:transform .55s cubic-bezier(.22,.7,.3,1),opacity .55s ease;
+    will-change:transform,opacity;
+  }
+  .carousel-item span{
+    font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--cream);opacity:.6;padding:0 14px;
+  }
+  .events-info{min-height:220px;position:relative;padding:6px 8px;}
+  .ei-border{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+  .ei-border rect{fill:none;stroke:var(--turquoise-light);stroke-width:1.5;opacity:.8;}
+  .ei-date{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:14px;transition:opacity .3s;}
+  .ei-title{font-family:var(--display);font-size:26px;margin-bottom:16px;transition:opacity .3s;}
+  .ei-desc{font-family:var(--body);font-size:16px;line-height:1.7;opacity:.9;margin-bottom:18px;transition:opacity .3s;}
+  .ei-location{font-family:var(--mono);font-size:12px;opacity:.6;display:flex;align-items:center;gap:8px;transition:opacity .3s;}
+  .ei-location .dot{width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);flex:0 0 auto;}
+  .events-info.fade{opacity:0;transform:translateY(6px);}
+  .events-info{opacity:1;transform:none;transition:opacity .3s ease,transform .3s ease;}
+  @media(max-width:820px){
+    .events-grid{grid-template-columns:1fr;gap:36px;}
+    .events-carousel{height:380px;}
+    .events-carousel,.carousel-item{width:100%;}
+    .carousel-item{width:min(320px,80vw);}
+  }
+  section.sand{background:var(--sand);}
+  .section-head{max-width:640px;margin-bottom:64px;}
+  .section-head h2{font-size:clamp(28px,3.4vw,42px);line-height:1.12;margin-bottom:18px;}
+  .section-head p{font-family:var(--body);font-size:17px;line-height:1.7;opacity:.82;}
+  section.dark .eyebrow{opacity:.6;}
+
+  /* route rail (signature motif) */
+  .rail{
+    position:absolute;left:32px;top:0;bottom:0;width:1px;
+    background:var(--line);display:none;
+  }
+  section.dark .rail{background:var(--line-dark);}
+  @media(min-width:1100px){ .rail{display:block;} }
+
+  /* ---------- directions (manifest cards) ---------- */
+  .directions-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+  }
+  .dir-card{
+    background:var(--sand-2);padding:34px 30px;min-height:280px;
+    display:flex;flex-direction:column;
+  }
+  .dir-code{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ochre);
+    margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;
+  }
+  .dir-card h3{font-size:19px;margin-bottom:14px;line-height:1.25;}
+  .dir-card ul{list-style:none;font-family:var(--body);font-size:14.5px;line-height:1.55;opacity:.85;}
+  .dir-card ul li{position:relative;padding-left:16px;margin-bottom:8px;}
+  .dir-card ul li::before{content:'—';position:absolute;left:0;color:var(--turquoise);}
+
+  @media(max-width:900px){
+    .directions-grid{grid-template-columns:1fr;}
+  }
+  @media(min-width:901px) and (max-width:1200px){
+    .directions-grid{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* ---------- goals ---------- */
+  .goals-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:70px;align-items:start;}
+  .goals-list{list-style:none;}
+  .goals-list li{
+    display:flex;gap:20px;padding:22px 0;border-top:1px solid var(--line-dark);
+    font-family:var(--body);font-size:16.5px;line-height:1.55;
+  }
+  .goals-list li:last-child{border-bottom:1px solid var(--line-dark);}
+  .goals-list .g-num{font-family:var(--mono);font-size:12px;color:var(--turquoise-light);flex:0 0 auto;padding-top:2px;}
+  .goals-visual{
+    border:1px solid var(--line-dark);padding:30px;font-family:var(--mono);
+    background:var(--navy-3);
+  }
+  .goals-visual .gv-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin-bottom:20px;}
+  .goals-visual .gv-figure{font-size:52px;font-family:var(--display);color:var(--turquoise-light);line-height:1;margin-bottom:10px;}
+  .goals-visual .gv-desc{font-size:13px;line-height:1.6;opacity:.75;font-family:var(--body);}
+  .goals-visual hr{border:none;border-top:1px solid var(--line-dark);margin:24px 0;}
+
+  @media(max-width:860px){
+    .goals-wrap{grid-template-columns:1fr;gap:40px;}
+  }
+
+  /* ---------- advantage cards ---------- */
+  .adv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .adv-card{
+    padding:32px 26px;background:var(--sand-2);border:1px solid var(--line);
+  }
+  section.dark .adv-card{background:var(--navy-2);border-color:var(--line-dark);}
+  .adv-icon{width:38px;height:38px;margin-bottom:22px;}
+  .adv-card h3{font-size:18px;margin-bottom:10px;}
+  .adv-card p{font-family:var(--body);font-size:14.5px;line-height:1.6;opacity:.8;}
+  @media(max-width:860px){ .adv-grid{grid-template-columns:1fr;} }
+
+  /* ---------- contact ---------- */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;}
+  .contact-item{border-top:1px solid var(--line-dark);padding:22px 0;}
+  .contact-item .ci-label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin-bottom:8px;}
+  .contact-item .ci-value{font-family:var(--body);font-size:18px;}
+  .contact-item .ci-value a:hover{color:var(--turquoise-light);}
+  .social-row{display:flex;gap:14px;margin-top:34px;}
+  .social-row a{
+    width:42px;height:42px;border:1px solid var(--line-dark);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;transition:.2s;
+  }
+  .social-row a:hover{background:var(--turquoise);border-color:var(--turquoise);}
+  .docs-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:40px;}
+
+  .map-frame{
+    width:100%;aspect-ratio:4/3;
+    border:1px solid var(--line);overflow:hidden;background:var(--navy);
+    filter:grayscale(.15) contrast(1.02);
+  }
+  .map-frame iframe{width:100%;height:100%;display:block;}
+  .map-link{
+    display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--ink);opacity:.75;border-bottom:1px solid var(--line);padding-bottom:2px;
+    transition:opacity .2s,color .2s,border-color .2s;
+  }
+  .map-link:hover{opacity:1;color:var(--turquoise);border-color:var(--turquoise);}
+
+  /* ---------- footer ---------- */
+  footer{
+    background:var(--navy);color:rgba(243,239,226,.5);
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;
+    padding:26px 0;border-top:1px solid var(--line-dark);
+  }
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+  /* ---------- back to top ---------- */
+  .back-to-top-row{background:var(--sand);padding:18px 0;}
+  .back-to-top-row .wrap{display:flex;justify-content:flex-end;}
+  .back-to-top{
+    width:44px;height:44px;border-radius:50%;
+    background:var(--navy);
+    border:1px solid var(--navy);opacity:1;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:background .2s,border-color .2s,transform .2s,opacity .2s;
+  }
+  .back-to-top:hover{background:var(--turquoise);border-color:var(--turquoise);opacity:1;transform:translateY(-2px);}
+  .back-to-top svg path{stroke:#F3EFE2;}
+  .back-to-top svg{display:block;}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+
+  @media(max-width:1239px){
+    .nav{position:relative;}
+    .nav .links{
+      display:none;
+      position:absolute;top:calc(100% + 1px);left:0;right:0;
+      flex-direction:column;align-items:stretch;gap:0;
+      background:rgb(251,251,252);
+      border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+      box-shadow:0 20px 30px rgba(0,0,0,.14);
+      max-height:calc(100vh - 64px);overflow-y:auto;
+    }
+    .nav .links a{padding:16px 32px;border-bottom:1px solid var(--line);color:#000;}
+    .nav-dropdown{width:100%;}
+    .nav-dropdown-trigger{width:100%;padding:16px 32px;border-bottom:1px solid var(--line);justify-content:space-between;opacity:1;}
+    .nav-dropdown-menu{
+      position:static;transform:none;min-width:0;width:100%;
+      opacity:1;visibility:visible;pointer-events:auto;
+      box-shadow:none;border:none;border-radius:0;
+      display:none;
+    }
+    .nav-dropdown.mobile-open .nav-dropdown-menu{display:block;}
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown:focus-within .nav-dropdown-menu,
+    .nav-dropdown.mobile-open .nav-dropdown-menu{transform:none;}
+    .nav-dropdown.mobile-open .nav-dropdown-arrow{transform:rotate(180deg);}
+    .nav-dropdown-menu a{border-top:none;border-bottom:1px solid var(--line);background:rgba(0,0,0,.02);padding-left:44px;}
+    .nav-cta-mobile{display:block;margin:18px 32px 22px;text-align:center;}
+    header.menu-open .nav .links{display:flex;}
+    .nav-right{display:none;}
+    .burger{display:block;position:relative;z-index:5;}
+  }
+  @media(max-width:760px){
+    section{padding:70px 0;}
+    .contact-grid{grid-template-columns:1fr;gap:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="rate-ticker">
+    <div class="rate-ticker-inner" id="rateTicker">
+      <span class="rate-item"><span class="rate-label">USD/KZT</span><span class="rate-value" id="r-KZT">—</span></span>
+      <span class="rate-item"><span class="rate-label">USD/UZS</span><span class="rate-value" id="r-UZS">—</span></span>
+      <span class="rate-item"><span class="rate-label">USD/KGS</span><span class="rate-value" id="r-KGS">—</span></span>
+      <span class="rate-item"><span class="rate-label">USD/TJS</span><span class="rate-value" id="r-TJS">—</span></span>
+      <span class="rate-item"><span class="rate-label">USD/TMT</span><span class="rate-value" id="r-TMT">—</span></span>
+      <span class="rate-updated" id="rateUpdated"></span>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="nav-left">
+      <a href="#top" class="logo">
+        <span class="logo-badge">
+          <span class="logo-badge-inner">
+            <img class="logo-img" src="file:///C:/Users/User/Downloads/12eGZ.png" alt="CALTA">
+          </span>
+        </span>
+      </a>
+      <nav class="links">
+        <a href="#about">О нас</a>
+        <a href="#directions">Направления</a>
+        <a href="#goals">Цели</a>
+        <div class="nav-dropdown" tabindex="0">
+          <span class="nav-dropdown-trigger">
+            <span class="nav-dropdown-label">Подробная информация</span>
+            <svg class="nav-dropdown-arrow" viewBox="0 0 14 14" fill="none"><path d="M7 11.5V2.5M7 2.5L3 6.5M7 2.5L11 6.5" stroke="#000000" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div class="nav-dropdown-menu">
+            <a href="https://docs.google.com/presentation/d/1pSV3cxSo9hO5s6gzpYuSz4s3EA1xTWDh/edit?usp=sharing" target="_blank" rel="noopener">Презентация</a>
+            <a href="https://docs.google.com/document/d/1W2-Q37u9CoXTfyJhED8MKntIB5jAoelQ/edit?usp=sharing" target="_blank" rel="noopener">Концепция</a>
+          </div>
+        </div>
+        <a href="#events">Мероприятия</a>
+        <a href="#insights">Новости</a>
+        <a href="#grain">Зерно</a>
+        <a href="#contact">Контакты</a>
+        <a href="#contact" class="nav-cta-mobile">Связаться</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <a class="nav-cta" href="#contact">Связаться</a>
+    </div>
+    <button class="burger" aria-label="Меню">☰</button>
+  </div>
+</header>
+
+<div id="top" class="hero">
+  <svg class="hero-map" viewBox="0 0 1180 760" preserveAspectRatio="xMidYMid slice">
+    <path class="route" d="M40 520 C 220 470, 300 610, 460 540 S 700 380, 860 430 S 1080 300, 1150 260" />
+    <path class="route tq" d="M120 220 C 260 300, 380 260, 480 360 S 640 470, 780 420 S 980 520, 1120 560" style="animation-delay:.3s" />
+    <path class="route" d="M60 120 C 200 160, 340 90, 500 150 S 760 220, 900 160 S 1080 90, 1160 140" style="animation-delay:.6s" />
+    <g class="node">
+      <circle cx="460" cy="540" r="3.5"/><text x="470" y="536">ASTANA · 51.1N</text>
+      <circle cx="700" cy="380" r="3"/><text x="710" y="376">ALMATY</text>
+      <circle cx="480" cy="360" r="3"/><text x="490" y="356">BISHKEK</text>
+      <circle cx="780" cy="420" r="3"/><text x="790" y="416">TASHKENT</text>
+      <circle cx="500" cy="150" r="3"/><text x="510" y="146">ASHGABAT</text>
+      <circle cx="1150" cy="260" r="3"/><text x="1120" y="245">→ CHINA</text>
+      <circle cx="60" cy="120" r="3"/><text x="35" y="105">EUROPE →</text>
+    </g>
+  </svg>
+  <div class="wrap hero-inner">
+    <div class="hero-content">
+      <div class="eyebrow"><span class="dot"></span> Central Asia · Trade &amp; Transport Corridor</div>
+      <h1>Партнёрство.<br>Инновации.<br><em>Развитие.</em></h1>
+      <p class="lead">Central Asian Logistics and Transport Association (CALTA) — независимая платформа, созданная для поддержки устойчивого развития логистической отрасли, международной торговли и цифровой трансформации в регионе. Мы объединяем бизнес, научные и образовательные учреждения, государственные органы и международные организации.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#about">Информация</a>
+        <a class="btn btn-ghost" href="#contact">Связаться</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="about" class="sand">
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot tq"></span> О нас</div>
+      <h2>Платформа для тех, кто строит логистику региона</h2>
+      <p>CALTA формирует профессиональное пространство, где бизнес, наука, государство и международные партнёры вырабатывают общие решения для логистики и торговли Центральной Азии — от координации отраслевых проектов до цифровизации перевозок.</p>
+    </div>
+  </div>
+</section>
+
+<section id="events" class="dark section-gold">
+
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot tq"></span> Календарь</div>
+      <h2>Мероприятия Ассоциации</h2>
+      <p>Форумы, конференции и рабочие встречи CALTA — прокрутите фотографии, чтобы узнать подробности о каждом мероприятии.</p>
+    </div>
+    <div class="events-grid reveal">
+      <div class="events-carousel" id="eventsCarousel">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-item"><span>Фото мероприятия<br>1 — добавьте позже</span></div>
+          <div class="carousel-item"><span>Фото мероприятия<br>2 — добавьте позже</span></div>
+          <div class="carousel-item"><span>Фото мероприятия<br>3 — добавьте позже</span></div>
+          <div class="carousel-item"><span>Фото мероприятия<br>4 — добавьте позже</span></div>
+          <div class="carousel-item"><span>Фото мероприятия<br>5 — добавьте позже</span></div>
+        </div>
+      </div>
+      <div class="events-info" id="eventsInfo">
+        <svg class="ei-border" aria-hidden="true"><rect id="eiBorderRect" x="0" y="0" width="100%" height="100%" rx="3"/></svg>
+        <div class="ei-date" id="eiDate">15 сентября 2026</div>
+        <h3 class="ei-title" id="eiTitle">Astana Logistics Forum</h3>
+        <p class="ei-desc" id="eiDesc">Ежегодный форум, объединяющий логистические компании, госорганы и международных партнёров для обсуждения развития транспортных коридоров Центральной Азии.</p>
+        <div class="ei-location" id="eiLocation"><span class="dot"></span> Астана, Казахстан</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="directions" class="sand">
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> Манифест деятельности</div>
+      <h2>Направления деятельности Ассоциации</h2>
+      <p>Сотрудничество с ключевыми игроками рынка для развития логистического сектора Центральной Азии.</p>
+    </div>
+    <div class="directions-grid reveal">
+      <div class="dir-card">
+        <div class="dir-code">RT-01 <span>ORG</span></div>
+        <h3>Организация и координация</h3>
+        <ul>
+          <li>Объединение логистических компаний, НИИ, вузов и экспертов</li>
+          <li>Формирование профессиональных сетей и кластеров</li>
+          <li>Координация международных и межотраслевых проектов</li>
+        </ul>
+      </div>
+      <div class="dir-card">
+        <div class="dir-code">RT-02 <span>RSD</span></div>
+        <h3>Аналитика и исследования</h3>
+        <ul>
+          <li>Проведение исследований в сфере логистики и торговли</li>
+          <li>Разработка стратегий и рекомендаций</li>
+          <li>Организация конференций, форумов и круглых столов</li>
+        </ul>
+      </div>
+      <div class="dir-card">
+        <div class="dir-code">RT-03 <span>EDU</span></div>
+        <h3>Образование и повышение квалификации</h3>
+        <ul>
+          <li>Программы обучения для логистов, экспедиторов, транспортных компаний</li>
+          <li>Онлайн-вебинары, семинары и тренинги</li>
+          <li>Методические и образовательные материалы</li>
+        </ul>
+      </div>
+      <div class="dir-card">
+        <div class="dir-code">RT-04 <span>DGT</span></div>
+        <h3>Цифровая трансформация и ИТ-решения</h3>
+        <ul>
+          <li>Внедрение цифровых платформ для мониторинга перевозок</li>
+          <li>Консультации по цифровизации логистики и нормативной базе</li>
+          <li>Разработка и поддержка цифровых стратегий</li>
+        </ul>
+      </div>
+      <div class="dir-card">
+        <div class="dir-code">RT-05 <span>INT</span></div>
+        <h3>Международное сотрудничество</h3>
+        <ul>
+          <li>Развитие партнёрств с международными логистическими организациями</li>
+          <li>Участие в трансграничных транспортных и торговых проектах</li>
+          <li>Поддержка международной интеграции бизнеса региона</li>
+        </ul>
+      </div>
+      <div class="dir-card">
+        <div class="dir-code">RT-06 <span>LAW</span></div>
+        <h3>Законодательные инициативы</h3>
+        <ul>
+          <li>Участие в формировании отраслевой политики</li>
+          <li>Подготовка предложений по совершенствованию законодательства</li>
+          <li>Представление интересов отрасли на экспертных советах</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="goals" class="dark section-red">
+          <svg class="section-map" viewBox="89 29 1204 901" preserveAspectRatio="xMidYMid meet">
+    <g>
+      <path class="route map-silhouette" d="M787 47 L780 44 L775 48 L771 48 L765 51 L763 54 L764 62 L762 64 L747 66 L740 69 L731 69 L721 74 L703 76 L699 78 L693 86 L689 86 L685 83 L673 80 L661 83 L659 88 L653 91 L635 92 L623 96 L618 96 L614 102 L609 100 L595 100 L593 102 L581 100 L575 105 L574 111 L570 116 L576 121" style="animation-delay:0.0s" />
+      <path class="route map-silhouette" d="M787 47 L789 45 L796 46 L810 53 L814 53 L821 49 L824 50 L830 56 L831 72 L837 76 L838 89 L835 95 L836 100 L852 103 L854 99 L864 97 L874 107" style="animation-delay:0.03s" />
+      <path class="route map-silhouette" d="M997 92 L989 95" style="animation-delay:0.06s" />
+      <path class="route map-silhouette" d="M997 92 L998 100 L996 102 L991 103" style="animation-delay:0.09s" />
+      <path class="route map-silhouette" d="M989 95 L978 96 L972 102 L965 105 L961 105 L955 114 L944 116 L936 123 L934 128 L930 128 L922 124 L908 126 L903 130 L899 127 L898 124 L899 119 L906 113 L905 108 L903 106 L893 110 L889 110 L881 106 L874 107" style="animation-delay:0.12s" />
+      <path class="route map-silhouette" d="M989 95 L989 100 L991 103" style="animation-delay:0.15s" />
+      <path class="route map-silhouette" d="M991 103 L993 110 L1011 120 L1029 134 L1058 177 L1089 230 L1092 230 L1098 224 L1098 216 L1100 213 L1104 211 L1109 211 L1115 215 L1115 223 L1122 225 L1123 230 L1125 232" style="animation-delay:0.18s" />
+      <path class="route map-silhouette" d="M576 121 L572 130 L585 135 L590 141 L585 147 L571 144 L562 148 L556 155 L562 170 L539 182 L539 192 L552 196 L554 203 L568 213 L564 231 L559 235 L541 239 L523 230 L515 233 L509 243 L496 244 L492 243 L488 236 L472 232 L466 225 L466 219 L458 213 L446 213 L442 218 L434 219 L425 209 L419 208 L413 211 L404 209 L398 215 L394 215 L388 225 L379 226 L368 221 L355 205 L348 202 L344 207" style="animation-delay:0.21s" />
+      <path class="route map-silhouette" d="M340 207 L333 201 L327 186 L311 180 L303 166 L275 166 L268 154 L255 157 L251 164 L247 164 L242 156 L228 154 L225 163 L214 174 L195 180 L194 192 L176 201 L180 221 L177 229 L169 232 L161 230 L152 209 L143 205 L136 215 L135 224 L124 231 L120 246 L124 260 L114 267 L104 289 L118 295 L120 314 L129 312 L144 315 L149 321 L162 353 L161 357 L155 359" style="animation-delay:0.24s" />
+      <path class="route map-silhouette" d="M344 207 L346 209 L346 219 L342 222 L337 217 L340 207" style="animation-delay:0.27s" />
+      <path class="route map-silhouette" d="M1125 232 L1133 228 L1138 230 L1152 228 L1157 223 L1160 217 L1167 213 L1173 212 L1183 216 L1192 226 L1196 233 L1197 239 L1204 243 L1210 243 L1217 250 L1218 254 L1225 264 L1238 264 L1242 266 L1249 266 L1250 263 L1255 260" style="animation-delay:0.3s" />
+      <path class="route map-silhouette" d="M1255 260 L1255 257 L1257 255 L1261 255 L1262 261" style="animation-delay:0.33s" />
+      <path class="route map-silhouette" d="M1262 261 L1271 272 L1278 275 L1278 279 L1269 283 L1269 289 L1272 292 L1271 301 L1264 309 L1254 311 L1248 323 L1249 341 L1253 353 L1252 363 L1246 365 L1238 373 L1227 367 L1207 370 L1193 364 L1190 367 L1190 383 L1183 427 L1191 431 L1191 441 L1176 443 L1169 438 L1156 448 L1148 448 L1134 454 L1132 460 L1143 465 L1144 481 L1158 510 L1161 522 L1155 527 L1154 534 L1156 535" style="animation-delay:0.36s" />
+      <path class="route map-silhouette" d="M155 359 L155 364 L163 371" style="animation-delay:0.39s" />
+      <path class="route map-silhouette" d="M205 361 L195 363 L186 369 L173 369 L168 367 L163 371" style="animation-delay:0.42s" />
+      <path class="route map-silhouette" d="M205 361 L209 359 L212 355 L222 352 L234 356 L244 366 L261 362 L270 368 L272 377 L271 393 L266 407 L257 415 L256 418 L262 432" style="animation-delay:0.45s" />
+      <path class="route map-silhouette" d="M163 371 L163 373 L156 378 L150 378" style="animation-delay:0.48s" />
+      <path class="route map-silhouette" d="M262 432 L256 433 L249 429 L237 428 L232 425 L226 424 L219 426 L214 434 L208 439" style="animation-delay:0.51s" />
+      <path class="route map-silhouette" d="M203 433 L201 436 L208 439" style="animation-delay:0.54s" />
+      <path class="route map-silhouette" d="M208 439 L211 448 L211 451 L209 453" style="animation-delay:0.57s" />
+      <path class="route map-silhouette" d="M209 453 L206 455 L199 450 L185 449 L183 451 L182 456 L183 460 L193 464 L199 473 L198 483 L203 491 L205 498 L205 505 L203 510 L205 512 L210 512 L214 514 L219 527 L226 527 L229 530 L236 530 L240 536 L241 548 L233 559 L232 565 L230 567 L230 572 L233 577 L234 583" style="animation-delay:0.6s" />
+      <path class="route map-silhouette" d="M209 453 L211 455 L218 456" style="animation-delay:0.63s" />
+      <path class="route map-silhouette" d="M1156 535 L1153 538 L1155 551" style="animation-delay:0.66s" />
+      <path class="route map-silhouette" d="M705 546 L703 548 L697 548" style="animation-delay:0.69s" />
+      <path class="route map-silhouette" d="M705 546 L707 561 L706 591 L717 592 L720 612 L727 632 L770 632 L778 637 L779 649 L786 652 L792 658 L796 658 L800 656 L799 647 L802 640 L808 634 L813 633 L816 630 L817 625 L825 617 L833 613 L837 608 L842 607" style="animation-delay:0.72s" />
+      <path class="route map-silhouette" d="M697 548 L691 531 L680 520 L674 507 L660 512 L618 505 L575 508 L548 467 L491 415 L482 412 L373 439 L353 623" style="animation-delay:0.75s" />
+      <path class="route map-silhouette" d="M1155 551 L1140 551 L1129 538 L1105 537 L1089 539 L1068 535 L1056 540 L1030 540 L1025 546 L1019 546 L1004 542 L997 535 L981 532 L964 537 L961 540 L955 556 L955 563 L938 560 L913 550 L898 548 L878 554 L868 571" style="animation-delay:0.78s" />
+      <path class="route map-silhouette" d="M1155 551 L1163 561 L1163 575 L1154 577 L1150 580 L1148 584 L1133 591 L1123 601 L1115 605 L1111 605 L1106 615 L1105 622 L1102 626 L1093 626 L1083 630 L1064 630 L1060 638 L1056 642 L1056 650 L1051 658 L1039 659 L1032 663 L1026 663 L1025 657 L1020 650 L1008 659 L999 658" style="animation-delay:0.81s" />
+      <path class="route map-silhouette" d="M868 571 L872 573 L875 578 L861 585 L856 594 L848 596 L844 600 L842 607" style="animation-delay:0.84s" />
+      <path class="route map-silhouette" d="M252 573 L257 567 L273 564 L293 575 L304 587 L310 596 L312 606 L323 625 L353 623" style="animation-delay:0.87s" />
+      <path class="route map-silhouette" d="M252 573 L248 574 L242 582" style="animation-delay:0.9s" />
+      <path class="route map-silhouette" d="M252 573 L256 575 L266 574 L268 576 L268 583 L270 588 L270 604 L273 610 L283 619 L285 623 L286 631 L283 633 L283 635 L273 636" style="animation-delay:0.93s" />
+      <path class="route map-silhouette" d="M438 578 L441 569 L454 567 L461 575 L468 576 L475 586 L497 590 L497 602 L502 609 L500 626 L509 634 L539 640 L547 636 L557 639 L565 649 L565 659 L578 678 L578 688 L583 697 L628 733 L643 739 L685 775 L704 777 L727 791 L722 803 L723 821" style="animation-delay:0.96s" />
+      <path class="route map-silhouette" d="M438 578 L429 579 L427 585 L419 592 L407 591 L395 603 L395 617 L398 623 L394 627 L381 627 L353 623" style="animation-delay:0.99s" />
+      <path class="route map-silhouette" d="M438 578 L444 585" style="animation-delay:1.02s" />
+      <path class="route map-silhouette" d="M242 582 L239 581 L234 583" style="animation-delay:1.05s" />
+      <path class="route map-silhouette" d="M242 582 L245 584 L243 603 L240 605" style="animation-delay:1.08s" />
+      <path class="route map-silhouette" d="M234 583 L233 589 L236 593 L236 601 L240 605" style="animation-delay:1.11s" />
+      <path class="route map-silhouette" d="M240 605 L242 630" style="animation-delay:1.14s" />
+      <path class="route map-silhouette" d="M842 607 L852 613 L852 618 L856 622 L875 621 L881 612 L885 612 L891 619 L904 618 L906 621 L907 631 L919 637 L920 639" style="animation-delay:1.17s" />
+      <path class="route map-silhouette" d="M242 630 L238 632 L232 645 L231 652 L233 655 L233 662 L235 664" style="animation-delay:1.2s" />
+      <path class="route map-silhouette" d="M242 630 L245 633 L257 633" style="animation-delay:1.23s" />
+      <path class="route map-silhouette" d="M257 633 L260 639 L270 640 L273 636" style="animation-delay:1.26s" />
+      <path class="route map-silhouette" d="M920 639 L920 643 L913 648 L905 648 L895 663 L885 663 L879 670 L868 662 L859 659 L854 659 L850 661 L836 660 L832 664 L830 669 L831 681" style="animation-delay:1.29s" />
+      <path class="route map-silhouette" d="M999 658 L998 663 L995 664 L986 675 L982 677 L976 677 L973 679 L969 689 L970 695 L972 697 L971 706 L966 709 L964 713" style="animation-delay:1.32s" />
+      <path class="route map-silhouette" d="M235 664 L248 664 L253 668" style="animation-delay:1.35s" />
+      <path class="route map-silhouette" d="M253 668 L250 677" style="animation-delay:1.38s" />
+      <path class="route map-silhouette" d="M250 677 L244 681 L244 684" style="animation-delay:1.41s" />
+      <path class="route map-silhouette" d="M250 677 L252 684 L248 685" style="animation-delay:1.44s" />
+      <path class="route map-silhouette" d="M831 681 L815 684" style="animation-delay:1.47s" />
+      <path class="route map-silhouette" d="M831 681 L842 681 L846 685 L840 694 L840 706 L843 709 L857 710 L860 708 L869 708 L873 706 L881 714 L887 714 L892 711 L895 707 L904 708 L905 713 L907 715 L910 715 L915 721 L919 718 L927 720 L933 715 L947 717 L953 713 L964 713" style="animation-delay:1.5s" />
+      <path class="route map-silhouette" d="M244 684 L241 687 L241 691 L245 692" style="animation-delay:1.53s" />
+      <path class="route map-silhouette" d="M815 684 L814 697 L806 703 L805 710 L803 712 L789 712 L780 709 L772 711 L770 713 L767 727 L775 732 L777 738 L786 738 L788 740 L789 748 L786 755 L786 766 L794 772 L792 791 L784 797 L783 803 L777 810 L774 831" style="animation-delay:1.56s" />
+      <path class="route map-silhouette" d="M248 685 L248 688 L245 692" style="animation-delay:1.59s" />
+      <path class="route map-silhouette" d="M245 692 L253 696 L262 713 L252 757 L254 786 L276 783 L278 774 L299 760 L322 762 L332 755 L351 760 L354 774 L407 795 L412 810 L426 817 L436 834 L458 837 L458 874 L474 895 L494 893 L511 907 L523 906 L537 915 L555 900 L557 881 L583 880 L622 860 L644 860 L656 851 L662 830 L684 824 L690 813 L711 823 L723 821" style="animation-delay:1.62s" />
+      <path class="route map-silhouette" d="M235 702 L234 713" style="animation-delay:1.65s" />
+      <path class="route map-silhouette" d="M964 713 L966 726 L971 730 L970 739 L972 750 L975 753 L978 752" style="animation-delay:1.68s" />
+      <path class="route map-silhouette" d="M978 752 L982 748 L987 747 L1000 753 L1003 756 L1002 766 L1005 777 L1011 788 L1010 800 L1012 803 L1018 806 L1017 813 L1009 817" style="animation-delay:1.71s" />
+      <path class="route map-silhouette" d="M901 789 L899 787 L901 781 L901 771 L897 767 L894 767 L888 762 L884 762 L878 766 L873 774 L871 781 L860 793 L861 799 L864 804 L863 810 L855 815 L848 811 L843 813 L835 813 L832 815 L829 820 L831 826 L831 831 L829 834 L822 835 L820 830 L814 827 L801 835 L797 835 L792 843 L785 844 L778 840 L777 833 L774 831" style="animation-delay:1.74s" />
+      <path class="route map-silhouette" d="M901 789 L903 791 L909 792 L908 819 L905 827 L905 832 L911 842 L910 849 L913 854 L917 854 L921 851 L927 850 L932 843 L939 839 L952 838 L954 836 L956 829 L961 824 L966 823 L971 817 L980 816 L981 818" style="animation-delay:1.77s" />
+      <path class="route map-silhouette" d="M1009 817 L1001 817 L994 823 L987 825 L981 818" style="animation-delay:1.8s" />
+      <path class="route map-silhouette" d="M723 821 L725 823 L743 822 L753 832 L756 832 L764 828 L770 831 L774 831" style="animation-delay:1.83s" />
+      <path class="route map-silhouette" d="M1095 555 L1098 556 L1098 560 L1101 562 L1101 565 L1091 576 L1089 582 L1086 585 L1082 585 L1076 589 L1059 588 L1057 586 L1044 584 L1040 580 L1043 574 L1054 570 L1062 564 L1072 562 L1087 556" style="animation-delay:1.86s" />
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot tq"></span> Курс</div>
+      <h2>Основные цели и задачи</h2>
+    </div>
+    <div class="goals-wrap reveal">
+      <ul class="goals-list">
+        <li><span class="g-num">01</span>Развитие инновационной, устойчивой и интегрированной логистической системы в Центральной Азии</li>
+        <li><span class="g-num">02</span>Укрепление позиций региона на международной логистической карте</li>
+        <li><span class="g-num">03</span>Повышение экспортного потенциала и прозрачности торговых процессов</li>
+        <li><span class="g-num">04</span>Поддержка цифровых решений и современных ИТ-платформ</li>
+        <li><span class="g-num">05</span>Продвижение профессионального образования и развития компетенций в области логистики и транспорта</li>
+      </ul>
+      <div class="goals-visual">
+        <div class="gv-label">Регион охвата</div>
+        <div class="gv-figure">5 стран</div>
+        <div class="gv-desc">Казахстан, Узбекистан, Кыргызстан, Таджикистан, Туркменистан — единый логистический коридор между Китаем, Каспием и Европой.</div>
+        <hr>
+        <div class="gv-label">Статус</div>
+        <div class="gv-desc">Независимая ассоциация, открытая для бизнеса, науки, государственных органов и международных партнёров.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sand">
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> Преимущества</div>
+      <h2>Почему CALTA</h2>
+      <p>Поддержка инноваций и устойчивого развития в области логистики и торговли — основа для эффективных и экологически чистых решений.</p>
+    </div>
+    <div class="adv-grid reveal">
+      <div class="adv-card">
+        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><path d="M20 4L34 12V28L20 36L6 28V12L20 4Z" stroke="#14958C" stroke-width="1.3"/><path d="M20 4V36M6 12L34 28M34 12L6 28" stroke="#C6862E" stroke-width="1"/></svg>
+        <h3>Инновационный подход</h3>
+        <p>Внедрение современных решений для повышения эффективности логистической сети.</p>
+      </div>
+      <div class="adv-card">
+        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><path d="M20 5C20 5 8 14 8 24C8 30.6 13.4 36 20 36C26.6 36 32 30.6 32 24C32 14 20 5 20 5Z" stroke="#14958C" stroke-width="1.3"/></svg>
+        <h3>Экологическая ответственность</h3>
+        <p>Забота об окружающей среде и стремление к устойчивому развитию.</p>
+      </div>
+      <div class="adv-card">
+        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><circle cx="14" cy="16" r="6" stroke="#C6862E" stroke-width="1.3"/><circle cx="27" cy="18" r="5" stroke="#14958C" stroke-width="1.3"/><path d="M5 34C5 27 9 24 14 24C17 24 20 25.5 21.5 28" stroke="#C6862E" stroke-width="1.3"/><path d="M19 34C19.5 28.5 23 25 27 25C31 25 35 28 35 34" stroke="#14958C" stroke-width="1.3"/></svg>
+        <h3>Сотрудничество с бизнесом</h3>
+        <p>Объединение усилий с бизнесом и экспертами для решения задач в сфере логистики и торговли.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark section-green">
+  <svg class="section-map" viewBox="0 0 1180 420" preserveAspectRatio="xMidYMid slice">
+    <g transform="translate(-330,0)">
+      <circle class="route" cx="950" cy="210" r="130" />
+      <line class="route" x1="950" y1="80" x2="950" y2="340" style="animation-delay:.15s" />
+      <ellipse class="route" cx="950" cy="210" rx="65" ry="130" style="animation-delay:.2s" />
+      <ellipse class="route tq" cx="950" cy="210" rx="112.6" ry="130" style="animation-delay:.3s" />
+      <ellipse class="route tq" cx="950" cy="210" rx="130" ry="45.5" style="animation-delay:.4s" />
+      <ellipse class="route" cx="950" cy="145" rx="112.6" ry="39.4" style="animation-delay:.45s" />
+      <ellipse class="route" cx="950" cy="275" rx="112.6" ry="39.4" style="animation-delay:.5s" />
+      <ellipse class="route" cx="950" cy="97.4" rx="65" ry="22.8" style="animation-delay:.55s" />
+      <ellipse class="route" cx="950" cy="322.6" rx="65" ry="22.8" style="animation-delay:.6s" />
+      <g class="route" stroke-width="1.2" style="animation-delay:.7s">
+        <line x1="1059.9" y1="250.0" x2="944.3" y2="274.8"/>
+        <line x1="944.3" y1="274.8" x2="846.2" y2="247.8"/>
+        <line x1="846.2" y1="247.8" x2="899.9" y2="150.2"/>
+        <line x1="899.9" y1="150.2" x2="1011.8" y2="103.0"/>
+        <line x1="1011.8" y1="103.0" x2="1059.9" y2="250.0"/>
+        <line x1="1059.9" y1="250.0" x2="846.2" y2="247.8"/>
+      </g>
+      <g class="route tq" fill="var(--turquoise-light)" style="animation-delay:.8s">
+        <circle cx="1059.9" cy="250.0" r="3.5"/>
+        <circle cx="944.3" cy="274.8" r="3.5"/>
+        <circle cx="846.2" cy="247.8" r="3.5"/>
+        <circle cx="899.9" cy="150.2" r="3.5"/>
+        <circle cx="1011.8" cy="103.0" r="3.5"/>
+      </g>
+    </g>
+  </svg>
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot tq"></span> Глобальный контур</div>
+      <h2>Преимущества международного сотрудничества</h2>
+      <p>Обмен опытом и знаниями с международными партнёрами и сотрудничество с ними — важный шаг для развития профессионального сообщества.</p>
+    </div>
+    <div class="adv-grid reveal">
+      <div class="adv-card">
+        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><path d="M6 20H34M20 6C24 12 24 28 20 34C16 28 16 12 20 6Z" stroke="#4FB8AF" stroke-width="1.3"/><circle cx="20" cy="20" r="14" stroke="#4FB8AF" stroke-width="1.3"/></svg>
+        <h3>Обмен опытом</h3>
+        <p>Сотрудничество позволяет обмениваться лучшими практиками и инновационными решениями.</p>
+      </div>
+      <div class="adv-card">
+        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><path d="M5 30L16 14L24 22L35 8" stroke="#C6862E" stroke-width="1.3"/><path d="M27 8H35V16" stroke="#C6862E" stroke-width="1.3"/></svg>
+        <h3>Расширение горизонтов</h3>
+        <p>Взаимодействие с международными партнёрами открывает новые возможности для профессионального роста.</p>
+      </div>
+      <div class="adv-card">
+        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><rect x="8" y="8" width="24" height="24" stroke="#4FB8AF" stroke-width="1.3"/><path d="M8 16H32M16 8V32" stroke="#4FB8AF" stroke-width="1"/></svg>
+        <h3>Доступ к международным стандартам</h3>
+        <p>Сотрудничество помогает внедрять международные стандарты и практики в работу.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--
+  Информационный блок — предназначен для автоматического наполнения AI-агентом.
+  Каждая карточка .info-card несёт data-атрибуты (data-topic, data-kind, data-updated),
+  по которым агент определяет тему материала, тип карточки и время последнего обновления,
+  а также подбирает и подставляет изображение внутрь .ic-photo (заменяя плейсхолдер на <img>).
+  Пока источник данных не подключён — показаны образцы структуры с плейсхолдерами.
+-->
+<section class="sand" id="insights">
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> Мониторинг отрасли</div>
+      <h2>Новости</h2>
+    </div>
+
+    <div class="info-grid reveal">
+
+      <article class="info-card media" id="newsCard1" data-topic="logistics" data-kind="news" data-updated="">
+        <div class="ic-photo">
+          <div class="ai-chip"><span class="pulse"></span> Фото подбирает ИИ</div>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Изображение появится автоматически</span>
+        </div>
+        <div class="ic-body">
+          <span class="ic-tag">Логистика</span>
+          <h3>Контейнерный индекс региона за неделю</h3>
+          <p>Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.</p>
+          <div class="ic-foot"><span>Автосводка · ИИ-агент</span><span>—</span></div>
+        </div>
+      </article>
+
+      <article class="info-card media" id="newsCard2" data-topic="infrastructure" data-kind="event" data-updated="">
+        <div class="ic-photo">
+          <div class="ai-chip"><span class="pulse"></span> Фото подбирает ИИ</div>
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Изображение появится автоматически</span>
+        </div>
+        <div class="ic-body">
+          <span class="ic-tag">Инфраструктура</span>
+          <h3>Ход строительства транспортных коридоров</h3>
+          <p>Статусы проектов по развитию дорожной и железнодорожной инфраструктуры региона.</p>
+          <div class="ic-foot"><span>Автосводка · ИИ-агент</span><span>—</span></div>
+        </div>
+      </article>
+
+      <article class="info-card stat" data-topic="trade" data-kind="metric" data-updated="">
+        <div class="ic-body">
+          <span class="ic-tag">Показатель</span>
+          <div class="ic-figure" id="statFigure">—<small>%</small></div>
+          <p>Изменение объёма транзитных перевозок за квартал (данные ИИ-агента).</p>
+        </div>
+      </article>
+
+      <article class="info-card fact" data-topic="general" data-kind="fact" data-updated="">
+        <div class="ic-body">
+          <svg class="ic-fact-icon" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="15" stroke="#14958C" stroke-width="1.3"/><path d="M20 13v8l6 3" stroke="#14958C" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="ic-tag">Факт</span>
+          <p>Здесь будет краткий актуальный факт по теме логистики и торговли, подобранный ИИ-агентом из проверенных источников.</p>
+        </div>
+      </article>
+
+      <article class="info-card trend" data-topic="market" data-kind="trend" data-updated="">
+        <div class="ic-body">
+          <span class="ic-tag">Тренд</span>
+          <svg class="ic-trendline" viewBox="0 0 220 44" preserveAspectRatio="none"><polyline points="0,32 30,28 60,34 90,20 120,24 150,10 180,16 220,6" fill="none" stroke="#14958C" stroke-width="2"/></svg>
+          <p>Динамика ключевого показателя за последний период — обновляется автоматически.</p>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="info-note">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="7" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M9 7V4h6v3M8 12h.01M16 12h.01M9 16h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Раздел заполняется и иллюстрируется автоматически — состав, тексты и фотографии карточек будут обновляться ИИ-агентом по мере поступления новых данных.
+    </div>
+  </div>
+</section>
+
+<!--
+  Блок котировок зерна — архитектура рассчитана на подключение внешнего источника котировок.
+  См. функцию loadGrainQuotes() в конце документа: сейчас используется явно обозначенный
+  демонстрационный набор GRAIN_DEMO_DATA; при появлении API его достаточно подставить в fetchGrainData().
+-->
+<section class="dark section-amber" id="grain">
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot" style="background:var(--amber-1)"></span> Товарный рынок</div>
+      <h2>Котировка зерна</h2>
+      <p>Ориентир по ключевым зерновым культурам для участников логистических и торговых цепочек региона.</p>
+    </div>
+
+    <div class="grain-wrap reveal">
+      <div class="grain-hero" id="grainHero">
+        <div class="grain-hero-top">
+          <div class="grain-crop">
+            <svg class="grain-crop-icon" viewBox="0 0 40 40" fill="none"><path d="M20 6C22 12 22 20 20 34C18 20 18 12 20 6Z" stroke="#F3EFE2" stroke-width="1.3"/><path d="M20 12L14 9M20 12L26 9M20 18L13 15M20 18L27 15M20 24L14 22M20 24L26 22" stroke="#F3EFE2" stroke-width="1.1" stroke-linecap="round"/></svg>
+            <div>
+              <div class="grain-crop-name" id="grainName">Пшеница</div>
+              <div class="grain-crop-sub" id="grainSubName">Wheat · CBOT</div>
+            </div>
+          </div>
+          <span class="demo-badge" id="demoBadge">Демо-данные</span>
+        </div>
+
+        <div class="grain-price-row">
+          <span class="grain-price" id="grainPrice">—</span>
+          <span class="grain-unit" id="grainUnit">USD / т</span>
+          <span class="grain-change up" id="grainChange">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 10V2M2 6l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="grainChangeText">—</span>
+          </span>
+        </div>
+        <div class="grain-meta" id="grainMeta">Обновлено: —</div>
+
+        <svg class="grain-spark" id="grainSpark" viewBox="0 0 400 64" preserveAspectRatio="none"></svg>
+
+        <div class="grain-source" id="grainSource">Источник: API котировок не подключён · отображаются демонстрационные данные для проверки макета</div>
+      </div>
+
+      <div class="grain-list">
+        <div class="grain-mini" data-crop="corn">
+          <div class="grain-mini-name">Кукуруза<span>Corn</span></div>
+          <div class="grain-mini-right">
+            <div class="grain-mini-price">191 $/т</div>
+            <div class="grain-mini-change up">▲ 0.9%</div>
+          </div>
+        </div>
+        <div class="grain-mini" data-crop="barley">
+          <div class="grain-mini-name">Ячмень<span>Barley</span></div>
+          <div class="grain-mini-right">
+            <div class="grain-mini-price">205 $/т</div>
+            <div class="grain-mini-change down">▼ 0.6%</div>
+          </div>
+        </div>
+        <div class="grain-mini" data-crop="soy">
+          <div class="grain-mini-name">Соя<span>Soybean</span></div>
+          <div class="grain-mini-right">
+            <div class="grain-mini-price">438 $/т</div>
+            <div class="grain-mini-change up">▲ 0.3%</div>
+          </div>
+        </div>
+        <div class="grain-mini soon">
+          <div class="grain-mini-name">Другие культуры<span>Rice · Rye · Oats</span></div>
+          <div class="grain-mini-right">
+            <div class="grain-mini-price">Скоро</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="sand">
+  <div class="rail"></div>
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> Контакты</div>
+      <h2>Свяжитесь с нами</h2>
+    </div>
+    <div class="contact-grid reveal">
+      <div>
+        <div class="contact-item">
+          <div class="ci-label">Юридический адрес</div>
+          <div class="ci-value">Республика Казахстан, город Астана, улица Алихан Бокейхан 6, жилой комплекс Caspian Palace</div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-label">Телефон</div>
+          <div class="ci-value"><a href="tel:+77789988866">+7 778 998 8866</a></div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-label">E-mail</div>
+          <div class="ci-value"><a href="mailto:info@calta.asia">info@calta.asia</a></div>
+        </div>
+        <div class="social-row">
+          <a href="https://wa.me/77789988866" target="_blank" rel="noopener" aria-label="WhatsApp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20.5 3.5A10.6 10.6 0 0012 0C6 0 1.3 4.7 1.3 10.6c0 1.9.5 3.6 1.4 5.2L1 22l6.4-1.7c1.5.8 3.2 1.2 5 1.2h.1c6 0 10.9-4.7 10.9-10.6 0-2.8-1.1-5.5-3.1-7.4zM12 19.6h-.1c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3.4.9.9-3.3-.2-.3c-.9-1.4-1.4-3-1.4-4.6C3 6 7 2 12 2c2.4 0 4.6.9 6.4 2.6 1.7 1.7 2.6 3.9 2.6 6.3 0 5-4 9-8.9 9z" fill="#171712"/></svg>
+          </a>
+          <a href="https://www.instagram.com/tisservise" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#171712" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="#171712" stroke-width="1.6"/><circle cx="17.4" cy="6.6" r="1.1" fill="#171712"/></svg>
+          </a>
+          <a href="mailto:info@calta.asia" aria-label="E-mail">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="#171712" stroke-width="1.6"/><path d="M3 6l9 7 9-7" stroke="#171712" stroke-width="1.6"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="map-frame">
+          <iframe
+            src="https://yandex.ru/map-widget/v1/?ll=71.438505%2C51.116883&z=16&pt=71.438505%2C51.116883%2Cpm2rdm"
+            width="100%" height="100%" frameborder="0" style="border:0;"
+            loading="lazy"
+            title="CALTA на карте — Caspian Palace, ул. Алихан Бокейхан 6, Астана">
+          </iframe>
+        </div>
+        <a class="map-link" href="https://yandex.ru/maps/?ll=71.438505%2C51.116883&z=16&pt=71.438505%2C51.116883%2Cpm2rdm" target="_blank" rel="noopener">Открыть на карте →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="back-to-top-row">
+  <div class="wrap">
+    <div class="back-to-top" id="backToTop" aria-label="Наверх" role="button" tabindex="0">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 11L9 6L14 11" stroke="#F3EFE2" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>© CALTA — авторские права на все товарные знаки принадлежат данной ассоциации</div>
+    <div>Astana, Kazakhstan · calta.asia</div>
+  </div>
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal, .section-map');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:.15});
+    els.forEach(el=>io.observe(el));
+  } else {
+    els.forEach(el=>el.classList.add('in'));
+  }
+</script>
+
+<script>
+  (function(){
+    const header = document.querySelector('header');
+    const burger = document.querySelector('.burger');
+    const links = document.querySelector('.nav .links');
+    if(!burger || !header || !links) return;
+
+    function closeMenu(){
+      header.classList.remove('menu-open');
+      burger.textContent = '☰';
+      burger.setAttribute('aria-expanded','false');
+      document.querySelectorAll('.nav-dropdown.mobile-open').forEach(d=>d.classList.remove('mobile-open'));
+    }
+    function openMenu(){
+      header.classList.add('menu-open');
+      burger.textContent = '✕';
+      burger.setAttribute('aria-expanded','true');
+    }
+
+    burger.setAttribute('aria-expanded','false');
+    burger.addEventListener('click', function(){
+      header.classList.contains('menu-open') ? closeMenu() : openMenu();
+    });
+
+    // accordion for "Подробная информация" on touch devices
+    const dropdownTrigger = document.querySelector('.nav-dropdown-trigger');
+    const dropdown = document.querySelector('.nav-dropdown');
+    if(dropdownTrigger && dropdown){
+      dropdownTrigger.addEventListener('click', function(e){
+        if(window.matchMedia('(max-width:1239px)').matches){
+          e.preventDefault();
+          dropdown.classList.toggle('mobile-open');
+        }
+      });
+    }
+
+    // close mobile menu after tapping any regular link
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        if(window.matchMedia('(max-width:1239px)').matches) closeMenu();
+      });
+    });
+
+    window.addEventListener('resize', function(){
+      if(!window.matchMedia('(max-width:1239px)').matches) closeMenu();
+    });
+  })();
+</script>
+
+<script>
+  (function(){
+    const header = document.querySelector('header');
+    const backToTop = document.getElementById('backToTop');
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    function onScroll(){
+      const y = window.scrollY;
+      const goingDown = y > lastY;
+      const pastHeader = y > 120;
+
+      // hide header on scroll down, show it again on scroll up
+      if(goingDown && pastHeader){
+        header.classList.add('header-hidden');
+      } else {
+        header.classList.remove('header-hidden');
+      }
+      lastY = y;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', ()=>{
+      if(!ticking){
+        requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    }, {passive:true});
+
+    function scrollToTop(){
+      window.scrollTo({top:0, behavior:'smooth'});
+      header.classList.remove('header-hidden');
+    }
+    backToTop.addEventListener('click', scrollToTop);
+    backToTop.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); scrollToTop(); }
+    });
+
+    onScroll();
+  })();
+</script>
+
+<script>
+  (function(){
+    const events = [
+      { date:'15 сентября 2026', title:'Astana Logistics Forum', desc:'Ежегодный форум, объединяющий логистические компании, госорганы и международных партнёров для обсуждения развития транспортных коридоров Центральной Азии.', location:'Астана, Казахстан' },
+      { date:'3 ноября 2026', title:'Цифровизация грузоперевозок', desc:'Практический семинар по внедрению цифровых платформ мониторинга и электронного документооборота для логистических компаний региона.', location:'Онлайн-трансляция' },
+      { date:'20 января 2027', title:'Trade Corridor Summit', desc:'Встреча представителей пяти стран Центральной Азии по вопросам гармонизации таможенных процедур и развития коридора Китай—Европа.', location:'Ташкент, Узбекистан' },
+      { date:'12 марта 2027', title:'Форум молодых логистов', desc:'Образовательная программа для студентов и начинающих специалистов: карьера в логистике, стажировки и обмен опытом с экспертами CALTA.', location:'Бишкек, Кыргызстан' },
+      { date:'8 июня 2027', title:'Международный день торговли', desc:'Круглый стол с участием международных партнёров, посвящённый итогам года и планам по расширению сотрудничества.', location:'Астана, Казахстан' }
+    ];
+
+    const track = document.getElementById('carouselTrack');
+    const items = track ? Array.from(track.children) : [];
+    const info = document.getElementById('eventsInfo');
+    const carousel = document.getElementById('eventsCarousel');
+    if(!track || !items.length) return;
+
+    let active = 0;
+
+    function render(){
+      const activeItem = items[active];
+      const activeHeight = activeItem.offsetHeight || carousel.clientHeight * 0.65;
+      const step = activeHeight * 0.22; // neighbours mostly tucked behind the active photo
+
+      items.forEach((el, i)=>{
+        const n = items.length;
+        let offset = i - active;
+        // wrap around so the carousel loops seamlessly (shortest signed distance)
+        if(offset > n/2) offset -= n;
+        if(offset < -n/2) offset += n;
+        const abs = Math.abs(offset);
+        const scale = abs === 0 ? 1 : 0.8;
+        el.style.transform = `translate(-50%, calc(-50% + ${offset * step}px)) scale(${scale})`;
+        if(abs === 0){
+          el.style.opacity = '1';
+          el.style.zIndex = '10';
+          el.style.pointerEvents = 'none';
+        } else if(abs === 1){
+          el.style.opacity = '.5';
+          el.style.zIndex = '5';
+          el.style.pointerEvents = 'auto';
+        } else {
+          el.style.opacity = '0';
+          el.style.zIndex = '1';
+          el.style.pointerEvents = 'none';
+        }
+      });
+    }
+
+    function updateInfo(){
+      const ev = events[active] || events[0];
+      info.classList.add('fade');
+      setTimeout(()=>{
+        document.getElementById('eiDate').textContent = ev.date;
+        document.getElementById('eiTitle').textContent = ev.title;
+        document.getElementById('eiDesc').textContent = ev.desc;
+        document.getElementById('eiLocation').innerHTML = '<span class="dot"></span> ' + ev.location;
+        info.classList.remove('fade');
+        playBorder();
+      }, 180);
+    }
+
+    const borderRect = document.getElementById('eiBorderRect');
+    function playBorder(){
+      if(!borderRect) return;
+      const bbox = borderRect.getBBox();
+      const peri = 2 * (bbox.width + bbox.height);
+      borderRect.style.transition = 'none';
+      borderRect.style.strokeDasharray = peri;
+      borderRect.style.strokeDashoffset = peri;
+      // force reflow so the browser registers the reset before animating
+      borderRect.getBoundingClientRect();
+      borderRect.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)';
+      requestAnimationFrame(()=>{ borderRect.style.strokeDashoffset = 0; });
+    }
+    window.addEventListener('resize', playBorder);
+
+    function goTo(index){
+      active = ((index % items.length) + items.length) % items.length;
+      render();
+      updateInfo();
+    }
+
+    items.forEach((el, i)=>{
+      el.addEventListener('click', ()=>{ if(i !== active) goTo(i); });
+    });
+
+    // mouse wheel navigation
+    let wheelLock = false;
+    carousel.addEventListener('wheel', (e)=>{
+      e.preventDefault();
+      if(wheelLock) return;
+      wheelLock = true;
+      goTo(active + (e.deltaY > 0 ? 1 : -1));
+      setTimeout(()=>{ wheelLock = false; }, 400);
+    }, {passive:false});
+
+    // drag / swipe navigation
+    let dragging = false, startY = 0, dragged = false;
+    carousel.addEventListener('pointerdown', (e)=>{
+      dragging = true; dragged = false; startY = e.clientY;
+      carousel.classList.add('dragging');
+    });
+    window.addEventListener('pointermove', (e)=>{
+      if(!dragging) return;
+      const delta = e.clientY - startY;
+      if(Math.abs(delta) > 40){
+        dragged = true;
+        goTo(active + (delta > 0 ? -1 : 1));
+        startY = e.clientY;
+      }
+    });
+    window.addEventListener('pointerup', ()=>{
+      dragging = false;
+      carousel.classList.remove('dragging');
+    });
+    window.addEventListener('resize', render);
+
+    render();
+    updateInfo();
+  })();
+</script>
+
+<script>
+  (function(){
+    var codes = ['KZT','UZS','KGS','TJS','TMT'];
+    fetch('https://open.er-api.com/v6/latest/USD')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(!data || data.result !== 'success' || !data.rates) throw new Error('bad payload');
+        codes.forEach(function(code){
+          var el = document.getElementById('r-'+code);
+          if(el && typeof data.rates[code] === 'number'){
+            el.textContent = data.rates[code].toLocaleString('ru-RU',{maximumFractionDigits:2});
+          } else if(el){
+            el.textContent = 'н/д';
+          }
+        });
+        var upd = document.getElementById('rateUpdated');
+        if(upd){
+          var d = data.time_last_update_utc ? new Date(data.time_last_update_utc) : new Date();
+          upd.textContent = 'Обновлено ' + d.toLocaleDateString('ru-RU') + ', ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+        }
+      })
+      .catch(function(){
+        codes.forEach(function(code){
+          var el = document.getElementById('r-'+code);
+          if(el) el.textContent = 'н/д';
+        });
+        var upd = document.getElementById('rateUpdated');
+        if(upd) upd.textContent = 'Курсы временно недоступны';
+      });
+  })();
+</script>
+
+<script>
+  /* =====================================================================
+     Котировки зерна — архитектура для подключения внешнего источника данных.
+     ---------------------------------------------------------------------
+     Чтобы подключить реальный источник:
+       1) реализуйте fetchGrainData() так, чтобы она возвращала Promise,
+          резолвящийся объектом такой же формы, как GRAIN_DEMO_DATA;
+       2) уберите/скройте demo-badge и обновите grain-source текст.
+     Пока реального источника нет — используются ЯВНО помеченные демо-данные.
+  ===================================================================== */
+  var GRAIN_DEMO_DATA = {
+    isDemo: true,
+    crop: 'Пшеница',
+    cropEn: 'Wheat · CBOT',
+    price: 238,
+    currency: 'USD',
+    unit: 'т',
+    changeAbs: 3.3,
+    changePercent: 1.4,
+    direction: 'up', // 'up' | 'down'
+    updatedAt: new Date(),
+    spark: [222,225,221,228,231,227,233,230,236,232,238,235,238]
+  };
+
+  function fetchGrainData(){
+    // data/grain.json обновляется автоматически GitHub Actions раз в 24 часа
+    // (см. .github/workflows/update-data.yml). Если файл недоступен —
+    // используются демо-данные, чтобы блок не сломался.
+    return fetch('./data/grain.json', {cache:'no-store'})
+      .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('bad status')); })
+      .then(function(data){
+        if(!data || typeof data.price !== 'number') throw new Error('bad payload');
+        data.updatedAt = new Date(data.updatedAt);
+        return data;
+      })
+      .catch(function(){ return GRAIN_DEMO_DATA; });
+  }
+
+  function sparklinePoints(values, w, h, pad){
+    pad = pad || 4;
+    var min = Math.min.apply(null, values);
+    var max = Math.max.apply(null, values);
+    var range = (max - min) || 1;
+    var step = (w - pad*2) / (values.length - 1);
+    return values.map(function(v, i){
+      var x = pad + i*step;
+      var y = pad + (1 - (v - min)/range) * (h - pad*2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+  }
+
+  function renderGrain(data){
+    var $ = function(id){ return document.getElementById(id); };
+    $('grainName').textContent = data.crop;
+    $('grainSubName').textContent = data.cropEn;
+    $('grainPrice').textContent = data.price.toLocaleString('ru-RU');
+    $('grainUnit').textContent = data.currency + ' / ' + data.unit;
+
+    var upEl = $('grainChange');
+    upEl.classList.remove('up','down');
+    upEl.classList.add(data.direction);
+    upEl.querySelector('svg').style.transform = data.direction === 'down' ? 'rotate(180deg)' : 'none';
+    $('grainChangeText').textContent =
+      (data.direction === 'up' ? '+' : '−') + Math.abs(data.changeAbs) + ' (' + Math.abs(data.changePercent) + '%)';
+
+    $('grainMeta').textContent = 'Обновлено: ' + data.updatedAt.toLocaleDateString('ru-RU') +
+      ', ' + data.updatedAt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+
+    $('demoBadge').style.display = data.isDemo ? '' : 'none';
+    $('grainSource').textContent = data.isDemo
+      ? 'Источник: API котировок не подключён · отображаются демонстрационные данные для проверки макета'
+      : 'Источник: ' + (data.cropEn || 'внешний API') + ' · автообновление раз в 24 часа';
+
+    var spark = $('grainSpark');
+    var pts = sparklinePoints(data.spark, 400, 64);
+    spark.innerHTML =
+      '<polyline points="' + pts + '" fill="none" stroke="#F3EFE2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>';
+  }
+
+  fetchGrainData().then(renderGrain).catch(function(){
+    var meta = document.getElementById('grainMeta');
+    if(meta) meta.textContent = 'Данные временно недоступны';
+  });
+
+  // демонстрационное значение для карточки-показателя в информационном блоке
+  (function(){
+    var el = document.getElementById('statFigure');
+    if(el) el.innerHTML = '+3.2<small>%</small>';
+  })();
+</script>
+
+<script>
+  /* =====================================================================
+     Новости — data/news.json обновляется автоматически GitHub Actions
+     раз в 24 часа (см. .github/workflows/update-data.yml и
+     scripts/update_news.py). Пока файла нет или он помечен isDemo —
+     остаются исходные образцы карточек из HTML, ничего не ломается.
+  ===================================================================== */
+  function applyNewsItem(card, item){
+    if(!card || !item) return;
+    var tag = card.querySelector('.ic-tag');
+    var title = card.querySelector('h3');
+    var desc = card.querySelector('p');
+    var footDate = card.querySelector('.ic-foot span:last-child');
+    var photoBox = card.querySelector('.ic-photo');
+
+    if(tag && item.topic) tag.textContent = item.topic;
+    if(title){
+      title.textContent = '';
+      if(item.sourceUrl){
+        var a = document.createElement('a');
+        a.href = item.sourceUrl; a.target = '_blank'; a.rel = 'noopener';
+        a.style.color = 'inherit'; a.textContent = item.title;
+        title.appendChild(a);
+      } else {
+        title.textContent = item.title;
+      }
+    }
+    if(desc && item.summary) desc.textContent = item.summary;
+    if(footDate){
+      footDate.textContent = item.publishedAt
+        ? new Date(item.publishedAt).toLocaleDateString('ru-RU')
+        : footDate.textContent;
+    }
+    if(photoBox && item.photo && item.photo.url){
+      photoBox.innerHTML = '';
+      photoBox.style.background = 'none';
+      var img = document.createElement('img');
+      img.src = item.photo.url;
+      img.alt = item.title || '';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      photoBox.appendChild(img);
+      if(item.photo.credit){
+        var credit = document.createElement('a');
+        credit.href = item.photo.creditUrl || '#';
+        credit.target = '_blank'; credit.rel = 'noopener';
+        credit.textContent = 'Фото: ' + item.photo.credit + ' / Unsplash';
+        credit.style.cssText = 'position:absolute;bottom:10px;left:10px;font-family:var(--mono);font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:12px;text-decoration:none;';
+        photoBox.appendChild(credit);
+      }
+    }
+  }
+
+  fetch('./data/news.json', {cache:'no-store'})
+    .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('bad status')); })
+    .then(function(data){
+      if(!data || data.isDemo || !Array.isArray(data.items) || data.items.length === 0){
+        return; // источник ещё не подключён — оставляем образцы карточек как есть
+      }
+      applyNewsItem(document.getElementById('newsCard1'), data.items[0]);
+      applyNewsItem(document.getElementById('newsCard2'), data.items[1]);
+    })
+    .catch(function(){ /* нет файла/сети — тихо оставляем исходные карточки-образцы */ });
+</script>
+
+</body>
+</html>

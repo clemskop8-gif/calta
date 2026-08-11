@@ -1,0 +1,13 @@
+{
+  "isDemo": true,
+  "crop": "Пшеница",
+  "cropEn": "Wheat · CBOT",
+  "price": 238,
+  "currency": "USD",
+  "unit": "т",
+  "changeAbs": 3.3,
+  "changePercent": 1.4,
+  "direction": "up",
+  "updatedAt": "2026-08-10T05:00:00.000Z",
+  "spark": [222, 225, 221, 228, 231, 227, 233, 230, 236, 232, 238, 235, 238]
+}

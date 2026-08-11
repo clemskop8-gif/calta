@@ -1,0 +1,44 @@
+name: Обновление данных сайта (раз в 24 часа)
+
+on:
+  schedule:
+    # Каждый день в 05:00 UTC (~09:00 по Астане).
+    # Поменяйте час на нужный — просто первое число (минуты 0, час 5).
+    - cron: '0 5 * * *'
+  workflow_dispatch: {}   # позволяет запустить вручную кнопкой в GitHub, для проверки
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Скачать репозиторий
+        uses: actions/checkout@v4
+
+      - name: Установить Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Установить зависимости
+        run: pip install requests feedparser
+
+      - name: Обновить котировку зерна
+        env:
+          ALPHAVANTAGE_KEY: ${{ secrets.ALPHAVANTAGE_KEY }}
+        run: python scripts/update_grain.py
+
+      - name: Обновить новости и фото
+        env:
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+        run: python scripts/update_news.py
+
+      - name: Зафиксировать изменения в репозитории
+        run: |
+          git config user.name "calta-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/grain.json data/news.json
+          git diff --cached --quiet && echo "Нет изменений" || git commit -m "Автообновление данных: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

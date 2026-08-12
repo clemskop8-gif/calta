@@ -1,29 +1,33 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-12T11:40:56.437521+00:00",
+  "updatedAt": "2026-08-12T11:43:50.382300+00:00",
   "items": [
     {
       "topic": "Новости",
-      "title": "НИИтурбокомпрессор им. В. Б. Шнеппа прошел второй этап ЭКГ-рейтинге",
-      "summary": "Предприятие получило статус \"Продвинутый\"",
-      "sourceUrl": "https://tass.ru/obschestvo/28006049",
-      "publishedAt": "Wed, 12 Aug 2026 14:38:14 +0300",
+      "title": "Бойцы \"Центра\" для штурма Торецкого скрытно прошли пешком около 30 км",
+      "summary": "По словам старшего стрелка штурмового отряда с позывным Кальмар, за день военнослужащие проходят от 5 до 10 км в зависимости от погоды",
+      "sourceUrl": "https://tass.ru/armiya-i-opk/28006061",
+      "publishedAt": "Wed, 12 Aug 2026 14:41:53 +0300",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1612112169746-6ce47edda91a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDI2MTYxfDB8MXxzZWFyY2h8MXx8JUQwJTkxJUQwJUJFJUQwJUI5JUQxJTg2JUQxJThCJTIwJTIyJUQwJUE2JUQwJUI1JUQwJUJEJUQxJTgyJUQxJTgwJUQwJUIwJTIyJTIwJUQwJUI0JUQwJUJCJUQxJThGJTIwJUQxJTg4JUQxJTgyJUQxJTgzJUQxJTgwJUQwJUJDJUQwJUIwJTIwJUQwJUEyJUQwJUJFJUQxJTgwJUQwJUI1JUQxJTg2JUQwJUJBJUQwJUJFJUQwJUIzJUQwJUJFJTIwJUQxJTgxJUQwJUJBJUQxJTgwJUQxJThCJUQxJTgyJUQwJUJEJUQwJUJFJTIwJUQwJUJGJUQxJTgwJUQwJUJFJUQxJTg4JUQwJUJCJUQwJUI4JTIwJUQwJUJGJUQwJUI1JUQxJTg4JUQwJUJBJUQwJUJFJUQwJUJDJTIwJUQwJUJFJUQwJUJBJUQwJUJFJUQwJUJCJUQwJUJFJTIwMzAlMjAlRDAlQkElRDAlQkN8ZW58MHwwfHx8MTc4NjUzNTAyOXww&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "Klaus Wright",
+        "creditUrl": "https://unsplash.com/@klausswright"
+      }
+    },
+    {
+      "topic": "Новости",
+      "title": "В Колумбии объявили национальный трехдневный траур по жертвам землетрясения",
+      "summary": "",
+      "sourceUrl": "https://tass.ru/proisshestviya/28006069",
+      "publishedAt": "Wed, 12 Aug 2026 14:41:19 +0300",
       "photo": null
     },
     {
       "topic": "Новости",
-      "title": "В Татарстане начались первые выплаты пострадавшим при атаке БПЛА",
-      "summary": "Речь идет о выплатах, анонсированных главой республики Рустамом Миннихановым",
-      "sourceUrl": "https://tass.ru/obschestvo/28006043",
-      "publishedAt": "Wed, 12 Aug 2026 14:37:51 +0300",
-      "photo": null
-    },
-    {
-      "topic": "Новости",
-      "title": "Российские кулинары разработают новое меню \"Вкус Коми\" к 105-летию региона",
-      "summary": "Его презентуют 20 августа в ресторане Сыктывкара, 21 августа - на сцене \"Шаньгафеста\"",
-      "sourceUrl": "https://tass.ru/obschestvo/28006021",
-      "publishedAt": "Wed, 12 Aug 2026 14:35:55 +0300",
+      "title": "В Ивановской области отменили беспилотную опасность",
+      "summary": "Людям рекомендовали при обнаружении не приближаться к обломкам БПЛА",
+      "sourceUrl": "https://tass.ru/proisshestviya/28006051",
+      "publishedAt": "Wed, 12 Aug 2026 14:40:25 +0300",
       "photo": null
     }
   ]

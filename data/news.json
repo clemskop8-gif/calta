@@ -1,33 +1,29 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-12T11:43:50.382300+00:00",
+  "updatedAt": "2026-08-13T08:58:15.162282+00:00",
   "items": [
     {
       "topic": "Новости",
-      "title": "Бойцы \"Центра\" для штурма Торецкого скрытно прошли пешком около 30 км",
-      "summary": "По словам старшего стрелка штурмового отряда с позывным Кальмар, за день военнослужащие проходят от 5 до 10 км в зависимости от погоды",
-      "sourceUrl": "https://tass.ru/armiya-i-opk/28006061",
-      "publishedAt": "Wed, 12 Aug 2026 14:41:53 +0300",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1612112169746-6ce47edda91a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDI2MTYxfDB8MXxzZWFyY2h8MXx8JUQwJTkxJUQwJUJFJUQwJUI5JUQxJTg2JUQxJThCJTIwJTIyJUQwJUE2JUQwJUI1JUQwJUJEJUQxJTgyJUQxJTgwJUQwJUIwJTIyJTIwJUQwJUI0JUQwJUJCJUQxJThGJTIwJUQxJTg4JUQxJTgyJUQxJTgzJUQxJTgwJUQwJUJDJUQwJUIwJTIwJUQwJUEyJUQwJUJFJUQxJTgwJUQwJUI1JUQxJTg2JUQwJUJBJUQwJUJFJUQwJUIzJUQwJUJFJTIwJUQxJTgxJUQwJUJBJUQxJTgwJUQxJThCJUQxJTgyJUQwJUJEJUQwJUJFJTIwJUQwJUJGJUQxJTgwJUQwJUJFJUQxJTg4JUQwJUJCJUQwJUI4JTIwJUQwJUJGJUQwJUI1JUQxJTg4JUQwJUJBJUQwJUJFJUQwJUJDJTIwJUQwJUJFJUQwJUJBJUQwJUJFJUQwJUJCJUQwJUJFJTIwMzAlMjAlRDAlQkElRDAlQkN8ZW58MHwwfHx8MTc4NjUzNTAyOXww&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "Klaus Wright",
-        "creditUrl": "https://unsplash.com/@klausswright"
-      }
-    },
-    {
-      "topic": "Новости",
-      "title": "В Колумбии объявили национальный трехдневный траур по жертвам землетрясения",
-      "summary": "",
-      "sourceUrl": "https://tass.ru/proisshestviya/28006069",
-      "publishedAt": "Wed, 12 Aug 2026 14:41:19 +0300",
+      "title": "МО Польши: Берлин конкурирует с Варшавой за получение лицензии на ракеты для Patriot",
+      "summary": "Замглавы министерства Магдалена Собковяк-Чарнецкая отметила, что американская сторона может принять решение по этому вопросу в середине сентября",
+      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28009067",
+      "publishedAt": "Thu, 13 Aug 2026 11:56:17 +0300",
       "photo": null
     },
     {
       "topic": "Новости",
-      "title": "В Ивановской области отменили беспилотную опасность",
-      "summary": "Людям рекомендовали при обнаружении не приближаться к обломкам БПЛА",
-      "sourceUrl": "https://tass.ru/proisshestviya/28006051",
-      "publishedAt": "Wed, 12 Aug 2026 14:40:25 +0300",
+      "title": "Армия Израиля демонтировала два форпоста еврейских поселенцев на Западном берегу",
+      "summary": "Они были незаконно построены в районе палестинских деревень Кусра и Джалуд, сообщила армейская пресс-служба",
+      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28009051",
+      "publishedAt": "Thu, 13 Aug 2026 11:56:11 +0300",
+      "photo": null
+    },
+    {
+      "topic": "Новости",
+      "title": "Чаты с DeepSeek пропали из индексации в Google по ссылке",
+      "summary": "Их можно было найти ранее по поисковому запросу типа site: /share, и у пользователей, нашедших их, они выдавались в формате Shared Conversations",
+      "sourceUrl": "https://tass.ru/ekonomika/28009017",
+      "publishedAt": "Thu, 13 Aug 2026 11:55:51 +0300",
       "photo": null
     }
   ]

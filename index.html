@@ -281,46 +281,62 @@ html {
   section.dark.section-gold .goals-visual{background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);border-color:rgba(243,239,226,0.16);}
   section.dark.section-amber{background:linear-gradient(150deg, var(--amber-1) 0%, var(--amber-bright) 68%, var(--amber-2) 130%);}
 
-  /* ---------- info feed (AI-managed content) ---------- */
-  .info-grid{
-    display:grid;grid-template-columns:repeat(6,1fr);gap:22px;
-  }
-  .info-card{
+  /* ---------- news: featured + scrollable side list ---------- */
+  .news-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:stretch;}
+
+  .news-featured{
     background:var(--sand-2);border:1px solid var(--line);border-radius:3px;
     display:flex;flex-direction:column;overflow:hidden;
   }
-  .info-card .ic-body{padding:22px 22px 24px;display:flex;flex-direction:column;gap:10px;flex:1;}
-  .info-card.media{grid-column:span 3;}
-  .info-card.stat,.info-card.fact,.info-card.trend{grid-column:span 2;}
+  .nf-body{padding:26px 26px 28px;display:flex;flex-direction:column;gap:12px;flex:1;}
+  .nf-body h3{font-size:23px;line-height:1.32;font-weight:600;}
+  .nf-body p{font-family:var(--body);font-size:15px;line-height:1.6;opacity:.75;}
+
   .ic-tag{
     align-self:flex-start;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--turquoise);background:rgba(20,149,140,.09);border:1px solid rgba(20,149,140,.25);
     padding:4px 9px;border-radius:2px;
   }
-  .info-card h3{font-size:17px;line-height:1.3;font-weight:600;}
-  .info-card p{font-family:var(--body);font-size:14px;line-height:1.6;opacity:.75;}
+  .ic-tag.small{font-size:8.5px;padding:3px 7px;}
   .ic-foot{
     margin-top:auto;padding-top:12px;border-top:1px solid var(--line);
     font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;opacity:.5;
     display:flex;justify-content:space-between;gap:10px;
   }
 
-  /* photo placeholder — filled in automatically when GitHub Actions finds an image */
-  .ic-photo{
-    position:relative;aspect-ratio:16/10;width:100%;
+  .ic-photo,.nf-photo{
+    position:relative;aspect-ratio:16/10;width:100%;flex:0 0 auto;
     background:linear-gradient(150deg,#DED4B8 0%,#EDE7D4 100%);
     display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
     color:var(--ink);
   }
-  .ic-photo svg{width:30px;height:30px;opacity:.35;}
-  .ic-photo span{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;opacity:.4;}
+  .ic-photo svg,.nf-photo svg{width:30px;height:30px;opacity:.35;}
+  .ic-photo span,.nf-photo span{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;opacity:.4;}
 
-  @media(max-width:1000px){
-    .info-grid{grid-template-columns:repeat(2,1fr);}
-    .info-card.media{grid-column:span 1;}
+  .news-side{
+    max-height:560px;overflow-y:auto;overscroll-behavior:contain;
+    display:flex;flex-direction:column;gap:12px;padding-right:4px;
+    cursor:grab;scrollbar-width:thin;
   }
-  @media(max-width:640px){
-    .info-grid{grid-template-columns:1fr;}
+  .news-side.dragging{cursor:grabbing;user-select:none;}
+  .news-mini{
+    display:flex;gap:14px;align-items:flex-start;flex:0 0 auto;
+    background:var(--sand-2);border:1px solid var(--line);border-radius:3px;padding:14px;
+  }
+  .nm-thumb{
+    width:64px;height:64px;flex:0 0 auto;border-radius:2px;overflow:hidden;
+    background:linear-gradient(150deg,#DED4B8 0%,#EDE7D4 100%);
+    display:flex;align-items:center;justify-content:center;color:var(--ink);
+  }
+  .nm-thumb svg{width:22px;height:22px;opacity:.35;}
+  .nm-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .nm-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .nm-body h4{font-size:13.5px;font-weight:600;line-height:1.35;}
+  .nm-date{font-family:var(--mono);font-size:10px;opacity:.5;}
+
+  @media(max-width:900px){
+    .news-layout{grid-template-columns:1fr;}
+    .news-side{max-height:none;cursor:auto;}
   }
 
   /* ---------- grain quotes ---------- */
@@ -363,6 +379,10 @@ html {
   }
   .grain-mini-name{font-family:var(--display);font-size:15px;font-weight:600;color:var(--cream);}
   .grain-mini-name span{display:block;font-family:var(--mono);font-size:10px;font-weight:400;opacity:.5;margin-top:3px;text-transform:uppercase;letter-spacing:.05em;}
+  .grain-mini-demo{
+    display:inline-block;margin-left:8px;font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--amber-1);background:rgba(243,239,226,.55);padding:2px 6px;border-radius:8px;vertical-align:middle;
+  }
   .grain-mini-right{text-align:right;}
   .grain-mini-price{font-family:var(--mono);font-size:16px;color:var(--cream);font-weight:500;}
   .grain-mini-change{font-family:var(--mono);font-size:11.5px;margin-top:4px;}
@@ -955,33 +975,55 @@ html {
       <h2>Новости</h2>
     </div>
 
-    <div class="info-grid reveal" id="newsGrid">
+    <div class="news-layout reveal">
 
-      <article class="info-card media" id="newsCard1" data-topic="logistics">
-        <div class="ic-photo">
+      <article class="news-featured" id="newsFeatured">
+        <div class="nf-photo" id="newsFeaturedPhoto">
           <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span>Без изображения</span>
         </div>
-        <div class="ic-body">
-          <span class="ic-tag">Логистика</span>
-          <h3>Контейнерный индекс региона за неделю</h3>
-          <p>Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.</p>
-          <div class="ic-foot"><span>Образец</span><span>—</span></div>
+        <div class="nf-body">
+          <span class="ic-tag" id="newsFeaturedTag">Логистика</span>
+          <h3 id="newsFeaturedTitle">Контейнерный индекс региона за неделю</h3>
+          <p id="newsFeaturedDesc">Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.</p>
+          <div class="ic-foot"><span id="newsFeaturedSource">Образец</span><span id="newsFeaturedDate">—</span></div>
         </div>
       </article>
 
-      <article class="info-card media" id="newsCard2" data-topic="infrastructure">
-        <div class="ic-photo">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Без изображения</span>
+      <div class="news-side" id="newsSide">
+        <div class="news-mini">
+          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="nm-body">
+            <span class="ic-tag small">Инфраструктура</span>
+            <h4>Ход строительства транспортных коридоров</h4>
+            <div class="nm-date">Образец</div>
+          </div>
         </div>
-        <div class="ic-body">
-          <span class="ic-tag">Инфраструктура</span>
-          <h3>Ход строительства транспортных коридоров</h3>
-          <p>Статусы проектов по развитию дорожной и железнодорожной инфраструктуры региона.</p>
-          <div class="ic-foot"><span>Образец</span><span>—</span></div>
+        <div class="news-mini">
+          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="nm-body">
+            <span class="ic-tag small">Логистика</span>
+            <h4>Динамика ставок фрахта на ключевых маршрутах</h4>
+            <div class="nm-date">Образец</div>
+          </div>
         </div>
-      </article>
+        <div class="news-mini">
+          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="nm-body">
+            <span class="ic-tag small">Таможня</span>
+            <h4>Изменения в порядке оформления транзитных грузов</h4>
+            <div class="nm-date">Образец</div>
+          </div>
+        </div>
+        <div class="news-mini">
+          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="nm-body">
+            <span class="ic-tag small">Порты</span>
+            <h4>Загрузка контейнерных терминалов региона</h4>
+            <div class="nm-date">Образец</div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -1030,34 +1072,8 @@ html {
         <div class="grain-source" id="grainSource">Источник: API котировок не подключён · отображаются демонстрационные данные для проверки макета</div>
       </div>
 
-      <div class="grain-list">
-        <div class="grain-mini" data-crop="corn">
-          <div class="grain-mini-name">Кукуруза<span>Corn</span></div>
-          <div class="grain-mini-right">
-            <div class="grain-mini-price">191 $/т</div>
-            <div class="grain-mini-change up">▲ 0.9%</div>
-          </div>
-        </div>
-        <div class="grain-mini" data-crop="barley">
-          <div class="grain-mini-name">Ячмень<span>Barley</span></div>
-          <div class="grain-mini-right">
-            <div class="grain-mini-price">205 $/т</div>
-            <div class="grain-mini-change down">▼ 0.6%</div>
-          </div>
-        </div>
-        <div class="grain-mini" data-crop="soy">
-          <div class="grain-mini-name">Соя<span>Soybean</span></div>
-          <div class="grain-mini-right">
-            <div class="grain-mini-price">438 $/т</div>
-            <div class="grain-mini-change up">▲ 0.3%</div>
-          </div>
-        </div>
-        <div class="grain-mini soon">
-          <div class="grain-mini-name">Другие культуры<span>Rice · Rye · Oats</span></div>
-          <div class="grain-mini-right">
-            <div class="grain-mini-price">Скоро</div>
-          </div>
-        </div>
+      <div class="grain-list" id="grainList">
+        <!-- заполняется автоматически из data/grain.json (см. renderSecondary в конце файла) -->
       </div>
     </div>
   </div>
@@ -1385,37 +1401,34 @@ html {
 
 <script>
   /* =====================================================================
-     Котировки зерна — архитектура для подключения внешнего источника данных.
-     ---------------------------------------------------------------------
-     Чтобы подключить реальный источник:
-       1) реализуйте fetchGrainData() так, чтобы она возвращала Promise,
-          резолвящийся объектом такой же формы, как GRAIN_DEMO_DATA;
-       2) уберите/скройте demo-badge и обновите grain-source текст.
-     Пока реального источника нет — используются ЯВНО помеченные демо-данные.
+     Котировки зерна. data/grain.json обновляется GitHub Actions раз в
+     24 часа (scripts/update_grain.py). Формат файла:
+       { updatedAt, featured: {...Пшеница...}, secondary: [Кукуруза, Ячмень, Соя, ...] }
+     Пшеница и Кукуруза — живые данные (Alpha Vantage). Ячмень и Соя —
+     у бесплатных API живых котировок нет, поэтому они отмечены
+     isDemo:true и берутся из значений, заданных вручную в самом
+     скрипте (MANUAL_SECONDARY) — их можно поправить прямо там.
   ===================================================================== */
   var GRAIN_DEMO_DATA = {
-    isDemo: true,
-    crop: 'Пшеница',
-    cropEn: 'Wheat · CBOT',
-    price: 238,
-    currency: 'USD',
-    unit: 'т',
-    changeAbs: 3.3,
-    changePercent: 1.4,
-    direction: 'up', // 'up' | 'down'
-    updatedAt: new Date(),
-    spark: [222,225,221,228,231,227,233,230,236,232,238,235,238]
+    updatedAt: new Date().toISOString(),
+    featured: {
+      isDemo: true, crop: 'Пшеница', cropEn: 'Wheat · CBOT',
+      price: 238, currency: 'USD', unit: 'т',
+      changeAbs: 3.3, changePercent: 1.4, direction: 'up',
+      spark: [222,225,221,228,231,227,233,230,236,232,238,235,238]
+    },
+    secondary: [
+      {isDemo:true, crop:'Кукуруза', cropEn:'Corn', price:191, currency:'USD', unit:'т', changePercent:0.9, direction:'up'},
+      {isDemo:true, crop:'Ячмень', cropEn:'Barley', price:205, currency:'USD', unit:'т', changePercent:0.6, direction:'down'},
+      {isDemo:true, crop:'Соя', cropEn:'Soybean', price:438, currency:'USD', unit:'т', changePercent:0.3, direction:'up'}
+    ]
   };
 
   function fetchGrainData(){
-    // data/grain.json обновляется автоматически GitHub Actions раз в 24 часа
-    // (см. .github/workflows/update-data.yml). Если файл недоступен —
-    // используются демо-данные, чтобы блок не сломался.
     return fetch('./data/grain.json', {cache:'no-store'})
       .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('bad status')); })
       .then(function(data){
-        if(!data || typeof data.price !== 'number') throw new Error('bad payload');
-        data.updatedAt = new Date(data.updatedAt);
+        if(!data || !data.featured || typeof data.featured.price !== 'number') throw new Error('bad payload');
         return data;
       })
       .catch(function(){ return GRAIN_DEMO_DATA; });
@@ -1434,7 +1447,7 @@ html {
     }).join(' ');
   }
 
-  function renderGrain(data){
+  function renderFeatured(data){
     var $ = function(id){ return document.getElementById(id); };
     $('grainName').textContent = data.crop;
     $('grainSubName').textContent = data.cropEn;
@@ -1448,21 +1461,42 @@ html {
     $('grainChangeText').textContent =
       (data.direction === 'up' ? '+' : '−') + Math.abs(data.changeAbs) + ' (' + Math.abs(data.changePercent) + '%)';
 
-    $('grainMeta').textContent = 'Обновлено: ' + data.updatedAt.toLocaleDateString('ru-RU') +
-      ', ' + data.updatedAt.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+    var updated = new Date(data.updatedAt || Date.now());
+    $('grainMeta').textContent = 'Обновлено: ' + updated.toLocaleDateString('ru-RU') +
+      ', ' + updated.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
 
     $('demoBadge').style.display = data.isDemo ? '' : 'none';
     $('grainSource').textContent = data.isDemo
       ? 'Источник: API котировок не подключён · отображаются демонстрационные данные для проверки макета'
       : 'Источник: ' + (data.cropEn || 'внешний API') + ' · автообновление раз в 24 часа';
 
-    var spark = $('grainSpark');
-    var pts = sparklinePoints(data.spark, 400, 64);
+    var spark = document.getElementById('grainSpark');
+    var pts = sparklinePoints(data.spark && data.spark.length ? data.spark : [data.price, data.price], 400, 64);
     spark.innerHTML =
       '<polyline points="' + pts + '" fill="none" stroke="#F3EFE2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>';
   }
 
-  fetchGrainData().then(renderGrain).catch(function(){
+  function renderSecondary(list){
+    var wrap = document.getElementById('grainList');
+    if(!wrap) return;
+    wrap.innerHTML = (list || []).map(function(c){
+      var arrow = c.direction === 'up' ? '▲' : '▼';
+      var badge = c.isDemo ? '<span class="grain-mini-demo" title="Нет бесплатного живого источника — значение задаётся вручную">ручное</span>' : '';
+      return '' +
+        '<div class="grain-mini">' +
+          '<div class="grain-mini-name">' + c.crop + badge + '<span>' + c.cropEn + '</span></div>' +
+          '<div class="grain-mini-right">' +
+            '<div class="grain-mini-price">' + c.price + ' ' + (c.currency === 'USD' ? '$' : c.currency) + '/' + c.unit + '</div>' +
+            '<div class="grain-mini-change ' + c.direction + '">' + arrow + ' ' + Math.abs(c.changePercent) + '%</div>' +
+          '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  fetchGrainData().then(function(data){
+    renderFeatured(data.featured);
+    renderSecondary(data.secondary);
+  }).catch(function(){
     var meta = document.getElementById('grainMeta');
     if(meta) meta.textContent = 'Данные временно недоступны';
   });
@@ -1472,21 +1506,18 @@ html {
   /* =====================================================================
      Новости — data/news.json обновляется автоматически GitHub Actions
      раз в 24 часа (см. .github/workflows/update-data.yml и
-     scripts/update_news.py). Пока файла нет или он помечен isDemo —
-     остаются исходные образцы карточек из HTML, ничего не ломается.
-     Карточек создаётся ровно столько, сколько элементов в data.items —
-     значит если через GitHub придёт 5 новостей, покажется 5 карточек.
+     scripts/update_news.py). Первая новость становится большой карточкой
+     слева (самая свежая/важная), остальные — компактным списком справа,
+     который можно прокручивать колесом или зажав и потянув мышью вверх/вниз.
+     Пока файла нет / он помечен isDemo — остаются образцы из HTML.
   ===================================================================== */
-  function buildCard(item){
-    function esc(s){
-      var d = document.createElement('div');
-      d.textContent = s == null ? '' : String(s);
-      return d.innerHTML;
-    }
-    var article = document.createElement('article');
-    article.className = 'info-card media';
+  function esc(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
 
-    var photoHtml;
+  function photoBlock(item, tag){
     if(item.photo && item.photo.url){
       var creditHtml = item.photo.credit
         ? '<a href="' + esc(item.photo.creditUrl || '#') + '" target="_blank" rel="noopener" ' +
@@ -1494,48 +1525,101 @@ html {
           'background:rgba(0,0,0,.55);padding:4px 8px;border-radius:12px;text-decoration:none;">' +
           'Фото: ' + esc(item.photo.credit) + ' / Unsplash</a>'
         : '';
-      photoHtml = '<div class="ic-photo" style="background:none;">' +
+      return '<' + tag + ' class="' + (tag === 'div' ? '' : '') + '" style="background:none;position:relative;">' +
         '<img src="' + esc(item.photo.url) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">' +
-        creditHtml + '</div>';
-    } else {
-      photoHtml = '<div class="ic-photo">' +
-        '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-        '<span>Без изображения</span></div>';
+        creditHtml + '</' + tag + '>';
     }
+    return '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Без изображения</span>';
+  }
 
-    var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : '';
-    var sourceHost = '';
-    if(item.sourceUrl){
-      try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){}
+  function renderFeaturedNews(item){
+    var photoEl = document.getElementById('newsFeaturedPhoto');
+    if(item.photo && item.photo.url){
+      photoEl.style.background = 'none';
+      photoEl.innerHTML = photoBlock(item, 'div').replace(/^<div[^>]*>|<\/div>$/g, function(m,i){ return i===0?'':m; });
+      // проще и надёжнее — собрать вручную:
+      photoEl.innerHTML = '';
+      var img = document.createElement('img');
+      img.src = item.photo.url; img.alt = '';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      photoEl.appendChild(img);
+      if(item.photo.credit){
+        var credit = document.createElement('a');
+        credit.href = item.photo.creditUrl || '#'; credit.target = '_blank'; credit.rel = 'noopener';
+        credit.textContent = 'Фото: ' + item.photo.credit + ' / Unsplash';
+        credit.style.cssText = 'position:absolute;bottom:10px;left:10px;font-family:var(--mono);font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:12px;text-decoration:none;';
+        photoEl.appendChild(credit);
+      }
     }
+    document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
+    var titleEl = document.getElementById('newsFeaturedTitle');
+    titleEl.innerHTML = item.sourceUrl
+      ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(item.title) + '</a>'
+      : esc(item.title);
+    document.getElementById('newsFeaturedDesc').textContent = item.summary || '';
+    var sourceHost = '';
+    if(item.sourceUrl){ try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){} }
+    document.getElementById('newsFeaturedSource').textContent = sourceHost || 'Источник';
+    document.getElementById('newsFeaturedDate').textContent = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : '—';
+  }
+
+  function buildMini(item){
+    var el = document.createElement('div');
+    el.className = 'news-mini';
+    var thumbInner = (item.photo && item.photo.url)
+      ? '<img src="' + esc(item.photo.url) + '" alt="">'
+      : '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : '';
     var titleHtml = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(item.title) + '</a>'
       : esc(item.title);
-
-    article.innerHTML = photoHtml +
-      '<div class="ic-body">' +
-        '<span class="ic-tag">' + esc(item.topic || 'Новости') + '</span>' +
-        '<h3>' + titleHtml + '</h3>' +
-        '<p>' + esc(item.summary) + '</p>' +
-        '<div class="ic-foot"><span>' + esc(sourceHost) + '</span><span>' + esc(dateText) + '</span></div>' +
+    el.innerHTML =
+      '<div class="nm-thumb">' + thumbInner + '</div>' +
+      '<div class="nm-body">' +
+        '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
+        '<h4>' + titleHtml + '</h4>' +
+        '<div class="nm-date">' + esc(dateText) + '</div>' +
       '</div>';
-    return article;
+    return el;
   }
+
+  function enableDragScroll(el){
+    var isDown = false, startY = 0, startScroll = 0, moved = false;
+    el.addEventListener('mousedown', function(e){
+      isDown = true; moved = false;
+      startY = e.pageY; startScroll = el.scrollTop;
+      el.classList.add('dragging');
+    });
+    window.addEventListener('mouseup', function(){ isDown = false; el.classList.remove('dragging'); });
+    window.addEventListener('mousemove', function(e){
+      if(!isDown) return;
+      var dy = e.pageY - startY;
+      if(Math.abs(dy) > 3) moved = true;
+      el.scrollTop = startScroll - dy;
+    });
+    el.addEventListener('click', function(e){
+      if(moved){ e.preventDefault(); e.stopPropagation(); moved = false; }
+    }, true);
+  }
+
+  var newsSideEl = document.getElementById('newsSide');
+  if(newsSideEl) enableDragScroll(newsSideEl);
 
   fetch('./data/news.json', {cache:'no-store'})
     .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('bad status')); })
     .then(function(data){
       if(!data || data.isDemo || !Array.isArray(data.items) || data.items.length === 0){
-        return; // источник ещё не подключён — оставляем два образца карточек как есть
+        return; // источник ещё не подключён — оставляем образцы из HTML как есть
       }
-      var grid = document.getElementById('newsGrid');
-      if(!grid) return;
-      grid.innerHTML = ''; // убираем образцы, дальше — только реальные данные
-      data.items.forEach(function(item){
-        grid.appendChild(buildCard(item));
-      });
+      renderFeaturedNews(data.items[0]);
+      if(newsSideEl){
+        newsSideEl.innerHTML = '';
+        data.items.slice(1).forEach(function(item){
+          newsSideEl.appendChild(buildMini(item));
+        });
+      }
     })
-    .catch(function(){ /* нет файла/сети — тихо оставляем исходные карточки-образцы */ });
+    .catch(function(){ /* нет файла/сети — тихо оставляем образцы */ });
 </script>
 
 </body>

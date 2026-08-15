@@ -1,29 +1,33 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-14T08:49:29.953494+00:00",
+  "updatedAt": "2026-08-15T05:56:47.872230+00:00",
   "items": [
     {
       "topic": "Новости",
-      "title": "Путин поздравил коллектив газеты \"Спорт-Экспресс\" с 35-летием",
-      "summary": "Глава государства отметил, что издание содействует продвижению в обществе идеалов здорового образа жизни",
-      "sourceUrl": "https://tass.ru/obschestvo/28011835",
-      "publishedAt": "Fri, 14 Aug 2026 10:36:35 +0300",
+      "title": "Итальянский пловец Д'Амброзио сравнил Корнева с ракетой",
+      "summary": "Спортсмены плыли на одном этапе в смешанной эстафете",
+      "sourceUrl": "https://tass.ru/sport/28014847",
+      "publishedAt": "Sat, 15 Aug 2026 08:53:50 +0300",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1729166240909-cfb2707997dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDI2MTYxfDB8MXxzZWFyY2h8MXx8JUQwJTk4JUQxJTgyJUQwJUIwJUQwJUJCJUQxJThDJUQxJThGJUQwJUJEJUQxJTgxJUQwJUJBJUQwJUI4JUQwJUI5JTIwJUQwJUJGJUQwJUJCJUQwJUJFJUQwJUIyJUQwJUI1JUQxJTg2JTIwJUQwJTk0JTI3JUQwJTkwJUQwJUJDJUQwJUIxJUQxJTgwJUQwJUJFJUQwJUI3JUQwJUI4JUQwJUJFJTIwJUQxJTgxJUQxJTgwJUQwJUIwJUQwJUIyJUQwJUJEJUQwJUI4JUQwJUJCJTIwJUQwJTlBJUQwJUJFJUQxJTgwJUQwJUJEJUQwJUI1JUQwJUIyJUQwJUIwJTIwJUQxJTgxJTIwJUQxJTgwJUQwJUIwJUQwJUJBJUQwJUI1JUQxJTgyJUQwJUJFJUQwJUI5fGVufDB8MHx8fDE3ODY3NzM0MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "Dmitriy Ignatenko",
+        "creditUrl": "https://unsplash.com/@vintersphoto"
+      }
+    },
+    {
+      "topic": "Новости",
+      "title": "В Белгородской области от ударов ВСУ за сутки погиб человек",
+      "summary": "Еще шестеро пострадали",
+      "sourceUrl": "https://tass.ru/proisshestviya/28014845",
+      "publishedAt": "Sat, 15 Aug 2026 08:52:28 +0300",
       "photo": null
     },
     {
       "topic": "Новости",
-      "title": "FT: Британия сократит прямую помощь странам Африки более чем на 40%",
-      "summary": "Издание отмечает, что такое решение Лондон принял в 2025 году с целью перенаправления средств на укрепление обороны",
-      "sourceUrl": "https://tass.ru/ekonomika/28011825",
-      "publishedAt": "Fri, 14 Aug 2026 10:36:03 +0300",
-      "photo": null
-    },
-    {
-      "topic": "Новости",
-      "title": "НАТО подтвердила перехват неопознанного дрона над Латвией",
-      "summary": "В альянсе сообщили, что беспилотник сбили истребители",
-      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28011815",
-      "publishedAt": "Fri, 14 Aug 2026 10:33:25 +0300",
+      "title": "С начала суток тревога объявлялась в 11 регионах России",
+      "summary": "Ракетную опасность вводили в шести регионах Приволжского федерального округа",
+      "sourceUrl": "https://tass.ru/proisshestviya/28014833",
+      "publishedAt": "Sat, 15 Aug 2026 08:50:07 +0300",
       "photo": null
     }
   ]

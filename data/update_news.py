@@ -1,18 +1,3 @@
-"""
-Получает новости из JSON-ленты PolitePaul
-и сохраняет их в data/news.json.
-
-Источник:
-https://politepaul.com/fd/bMbNMuk48rmc.json
-
-Лента уже содержит:
-- название новости
-- картинку
-- описание
-- дату
-- ссылку на новость
-"""
-
 import json
 import os
 from datetime import datetime, timezone
@@ -20,171 +5,170 @@ from datetime import datetime, timezone
 import requests
 
 
-# JSON-лента PolitePaul
-FEED_URL = "https://politepaul.com/fd/bMbNMuk48rmc.json"
+# ==========================================
+# НАСТРОЙКИ
+# ==========================================
 
-# Куда сохраняем новости
+# Ссылка берётся из GitHub:
+# Settings → Secrets and variables → Actions → Variables
+FEED_URL = os.environ.get("NEWS_FEED_URL", "").strip()
+
+# news.json находится в той же папке, что и этот файл
 OUT_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "..",
-    "data",
+    os.path.dirname(os.path.abspath(__file__)),
     "news.json"
 )
 
-# Сколько новостей показывать на сайте
+# Максимальное количество новостей
 MAX_ITEMS = 10
 
 
-def get_news():
-    """Получает новости из JSON-ленты."""
+# ==========================================
+# ПОЛУЧЕНИЕ НОВОСТЕЙ
+# ==========================================
 
-    try:
-        response = requests.get(
-            FEED_URL,
-            timeout=30,
-            headers={
-                "User-Agent": "Mozilla/5.0"
-            }
+def collect_news():
+    if not FEED_URL:
+        raise RuntimeError(
+            "Переменная NEWS_FEED_URL не задана. "
+            "Добавьте её в GitHub → Settings → Secrets and variables → Actions → Variables."
         )
 
-        response.raise_for_status()
+    print("Получаем новости из:")
+    print(FEED_URL)
 
-        data = response.json()
+    response = requests.get(
+        FEED_URL,
+        timeout=30,
+        headers={
+            "User-Agent": "Mozilla/5.0"
+        }
+    )
 
-        print("JSON успешно получен.")
+    response.raise_for_status()
 
-        return data
+    data = response.json()
 
-    except Exception as e:
-        print("Ошибка получения JSON:", e)
-        return None
+    # Ваша JSON-лента имеет структуру:
+    #
+    # {
+    #   "isDemo": false,
+    #   "updatedAt": "...",
+    #   "items": [...]
+    # }
 
+    items = data.get("items", [])
 
-def collect():
-    """Преобразует JSON PolitePaul в формат нашего сайта."""
-
-    data = get_news()
-
-    if not data:
-        return []
-
-    # PolitePaul может вернуть список или объект
-    if isinstance(data, list):
-        entries = data
-    elif isinstance(data, dict):
-        # Ищем возможный массив новостей
-        entries = (
-            data.get("items")
-            or data.get("entries")
-            or data.get("news")
-            or data.get("feed")
-            or []
+    if not isinstance(items, list):
+        raise ValueError(
+            "В JSON не найден правильный массив 'items'."
         )
-    else:
-        entries = []
 
-    items = []
+    news = []
 
-    for entry in entries:
+    for item in items:
 
-        if not isinstance(entry, dict):
+        if not isinstance(item, dict):
             continue
 
-        # Заголовок
-        title = (
-            entry.get("title")
-            or entry.get("name")
-            or entry.get("Название")
-            or ""
+        title = str(
+            item.get("title", "")
         ).strip()
 
         if not title:
             continue
 
-        # Описание
-        summary = (
-            entry.get("description")
-            or entry.get("summary")
-            or entry.get("Описание")
-            or ""
+        summary = str(
+            item.get("summary", "")
         ).strip()
 
-        # Ссылка на оригинальную новость
-        source_url = (
-            entry.get("link")
-            or entry.get("url")
-            or entry.get("sourceUrl")
-            or entry.get("Ссылка")
-            or ""
+        source_url = str(
+            item.get("sourceUrl", "")
         ).strip()
 
-        # Картинка
-        photo = (
-            entry.get("image")
-            or entry.get("photo")
-            or entry.get("picture")
-            or entry.get("Картинка")
-            or ""
+        published_at = str(
+            item.get("publishedAt", "")
         ).strip()
 
-        # Дата
-        published_at = (
-            entry.get("published")
-            or entry.get("publishedAt")
-            or entry.get("date")
-            or entry.get("Дата")
-            or ""
+        topic = str(
+            item.get("topic", "Логистика")
         ).strip()
 
-        items.append({
-            "topic": "Логистика",
+        photo = item.get("photo")
+
+        # Если картинки нет, записываем null
+        if not photo:
+            photo = None
+
+        news.append({
+            "topic": topic,
             "title": title,
             "summary": summary,
             "sourceUrl": source_url,
             "publishedAt": published_at,
-            "photo": photo if photo else None,
+            "photo": photo
         })
 
-        if len(items) >= MAX_ITEMS:
+        if len(news) >= MAX_ITEMS:
             break
 
-    return items
+    return news
 
 
-def main():
+# ==========================================
+# СОХРАНЕНИЕ
+# ==========================================
 
-    items = collect()
+def save_news(items):
 
-    data = {
+    result = {
         "isDemo": len(items) == 0,
         "updatedAt": datetime.now(timezone.utc).isoformat(),
-        "items": items,
+        "items": items
     }
-
-    os.makedirs(
-        os.path.dirname(OUT_PATH),
-        exist_ok=True
-    )
 
     with open(
         OUT_PATH,
         "w",
         encoding="utf-8"
-    ) as f:
+    ) as file:
 
         json.dump(
-            data,
-            f,
+            result,
+            file,
             ensure_ascii=False,
             indent=2
         )
 
     print(
-        "Записано:",
-        OUT_PATH,
-        "→ карточек:",
-        len(items)
+        f"Новости сохранены: {OUT_PATH}"
     )
+
+    print(
+        f"Количество новостей: {len(items)}"
+    )
+
+
+# ==========================================
+# ЗАПУСК
+# ==========================================
+
+def main():
+
+    try:
+
+        news = collect_news()
+
+        save_news(news)
+
+        print("Обновление завершено успешно.")
+
+    except Exception as error:
+
+        print("ОШИБКА:")
+        print(error)
+
+        raise
 
 
 if __name__ == "__main__":

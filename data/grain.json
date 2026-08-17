@@ -1,20 +1,62 @@
 {
-  "updatedAt": "2026-08-10T05:00:00.000Z",
+  "updatedAt": "2026-08-17T06:53:23.387478+00:00",
   "featured": {
-    "isDemo": true,
+    "isDemo": false,
     "crop": "Пшеница",
-    "cropEn": "Wheat · CBOT",
-    "price": 238,
+    "cropEn": "Wheat · Alpha Vantage",
+    "price": 199.65,
     "currency": "USD",
     "unit": "т",
-    "changeAbs": 3.3,
-    "changePercent": 1.4,
-    "direction": "up",
-    "spark": [222, 225, 221, 228, 231, 227, 233, 230, 236, 232, 238, 235, 238]
+    "changeAbs": 21.24,
+    "changePercent": 9.62,
+    "direction": "down",
+    "spark": [
+      196.8410714285714,
+      173.1947634816666,
+      165.2666224637681,
+      159.3079408380954,
+      155.1151385317461,
+      157.39233125,
+      169.2032881647058,
+      165.6266704583334,
+      169.2505145833334,
+      174.7524918912281,
+      193.8771220833334,
+      202.641496636508,
+      220.8845521666666,
+      199.6482875619048
+    ]
   },
   "secondary": [
-    {"isDemo": true, "crop": "Кукуруза", "cropEn": "Corn", "price": 191, "currency": "USD", "unit": "т", "changePercent": 0.9, "direction": "up"},
-    {"isDemo": true, "crop": "Ячмень", "cropEn": "Barley", "price": 205, "currency": "USD", "unit": "т", "changePercent": 0.6, "direction": "down"},
-    {"isDemo": true, "crop": "Соя", "cropEn": "Soybean", "price": 438, "currency": "USD", "unit": "т", "changePercent": 0.3, "direction": "up"}
+    {
+      "isDemo": true,
+      "crop": "Кукуруза",
+      "cropEn": "Corn",
+      "price": 191,
+      "currency": "USD",
+      "unit": "т",
+      "changePercent": 0.9,
+      "direction": "up"
+    },
+    {
+      "isDemo": true,
+      "currency": "USD",
+      "unit": "т",
+      "crop": "Ячмень",
+      "cropEn": "Barley",
+      "price": 205,
+      "changePercent": 0.6,
+      "direction": "down"
+    },
+    {
+      "isDemo": true,
+      "currency": "USD",
+      "unit": "т",
+      "crop": "Соя",
+      "cropEn": "Soybean",
+      "price": 438,
+      "changePercent": 0.3,
+      "direction": "up"
+    }
   ]
 }

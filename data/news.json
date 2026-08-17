@@ -1,38 +1,30 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-16T05:59:09.806185+00:00",
+  "updatedAt": "2026-08-17T06:05:22.446614+00:00",
   "items": [
     {
       "topic": "Новости",
-      "title": "В Якшино при атаки БПЛА повреждено здание церковной школы",
+      "title": "В Брянской области при атаке БПЛА ВСУ погиб человек",
       "summary": "",
-      "sourceUrl": "https://tass.ru/proisshestviya/28016387",
-      "publishedAt": "Sun, 16 Aug 2026 08:55:26 +0300",
+      "sourceUrl": "https://tass.ru/proisshestviya/28017813",
+      "publishedAt": "Mon, 17 Aug 2026 09:02:13 +0300",
       "photo": null
     },
     {
       "topic": "Новости",
-      "title": "Бразилец Пратес может стать следующим соперником Махачева",
-      "summary": "Российский боец ранее победил ирландца Иана Мачадо Гэрри и защитил титул чемпиона в полусреднем весе",
-      "sourceUrl": "https://tass.ru/sport/28016389",
-      "publishedAt": "Sun, 16 Aug 2026 08:52:40 +0300",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1779994978806-2856a0a4c32d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDI2MTYxfDB8MXxzZWFyY2h8MXx8JUQwJTkxJUQxJTgwJUQwJUIwJUQwJUI3JUQwJUI4JUQwJUJCJUQwJUI1JUQxJTg2JTIwJUQwJTlGJUQxJTgwJUQwJUIwJUQxJTgyJUQwJUI1JUQxJTgxJTIwJUQwJUJDJUQwJUJFJUQwJUI2JUQwJUI1JUQxJTgyJTIwJUQxJTgxJUQxJTgyJUQwJUIwJUQxJTgyJUQxJThDJTIwJUQxJTgxJUQwJUJCJUQwJUI1JUQwJUI0JUQxJTgzJUQxJThFJUQxJTg5JUQwJUI4JUQwJUJDJTIwJUQxJTgxJUQwJUJFJUQwJUJGJUQwJUI1JUQxJTgwJUQwJUJEJUQwJUI4JUQwJUJBJUQwJUJFJUQwJUJDJTIwJUQwJTlDJUQwJUIwJUQxJTg1JUQwJUIwJUQxJTg3JUQwJUI1JUQwJUIyJUQwJUIwfGVufDB8MHx8fDE3ODY4NTk5NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "Armwrestling Photographer",
-        "creditUrl": "https://unsplash.com/@armwrestlingphotograper"
-      }
+      "title": "Глава МИД: Таиланд рассчитывает укрепить партнерство с РФ в год юбилея дипотношений",
+      "summary": "",
+      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28017811",
+      "publishedAt": "Mon, 17 Aug 2026 09:02:05 +0300",
+      "photo": null
     },
     {
       "topic": "Новости",
-      "title": "Эксперт Полунин перечислил признаки взлома смартфона",
-      "summary": "О возможном заражении устройства шпионским программным обеспечением могут свидетельствовать перегрев телефона в режиме ожидания или резкое увеличение расхода батареи, уточнил руководитель группы защиты инфраструктурных И",
-      "sourceUrl": "https://tass.ru/obschestvo/28016379",
-      "publishedAt": "Sun, 16 Aug 2026 08:50:48 +0300",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1526045612212-70caf35c14df?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDI2MTYxfDB8MXxzZWFyY2h8MXx8JUQwJUFEJUQwJUJBJUQxJTgxJUQwJUJGJUQwJUI1JUQxJTgwJUQxJTgyJTIwJUQwJTlGJUQwJUJFJUQwJUJCJUQxJTgzJUQwJUJEJUQwJUI4JUQwJUJEJTIwJUQwJUJGJUQwJUI1JUQxJTgwJUQwJUI1JUQxJTg3JUQwJUI4JUQxJTgxJUQwJUJCJUQwJUI4JUQwJUJCJTIwJUQwJUJGJUQxJTgwJUQwJUI4JUQwJUI3JUQwJUJEJUQwJUIwJUQwJUJBJUQwJUI4JTIwJUQwJUIyJUQwJUI3JUQwJUJCJUQwJUJFJUQwJUJDJUQwJUIwJTIwJUQxJTgxJUQwJUJDJUQwJUIwJUQxJTgwJUQxJTgyJUQxJTg0JUQwJUJFJUQwJUJEJUQwJUIwfGVufDB8MHx8fDE3ODY4NTk5NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "freestocks",
-        "creditUrl": "https://unsplash.com/@freestocks"
-      }
+      "title": "Политик Шлесерс: поддержка Украины дорого обходится экономике Латвии",
+      "summary": "Рига больше не может закрывать глаза на издержки, связанные также с антироссийскими санкциями, отметил бывший вице-премьер республики",
+      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28017773",
+      "publishedAt": "Mon, 17 Aug 2026 09:01:57 +0300",
+      "photo": null
     }
   ]
 }

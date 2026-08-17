@@ -1,109 +1,190 @@
 """
-Обновляет data/news.json свежими карточками новостей.
+Получает новости из JSON-ленты PolitePaul
+и сохраняет их в data/news.json.
 
-Источники новостей: список RSS-лент ниже (бесплатно, без ключа —
-поменяйте на реальные отраслевые ленты, какие вам нужны).
+Источник:
+https://politepaul.com/fd/bMbNMuk48rmc.json
 
-Фото: Unsplash API, бесплатный тариф (до 50 запросов/час).
-Получить ключ: https://unsplash.com/developers
-Ключ берётся из переменной окружения UNSPLASH_ACCESS_KEY (GitHub Secrets),
-в коде не хранится.
-
-Если ключ не задан или запрос не удался — карточка получает
-photo: null, и сайт покажет красивый плейсхолдер вместо фото
-(как сейчас в макете).
+Лента уже содержит:
+- название новости
+- картинку
+- описание
+- дату
+- ссылку на новость
 """
+
 import json
 import os
 from datetime import datetime, timezone
-import feedparser
+
 import requests
 
-UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
-OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
-MAX_ITEMS = 5
 
-# Замените на реальные интересующие вас RSS-ленты по логистике/торговле/ЦА
-FEEDS = [
-    {"url": "https://tass.ru/rss/v2.xml", "tag": "Новости"},
-    {"url": "https://www.railfreight.com/feed", "tag": "Логистика"},
-]
+# JSON-лента PolitePaul
+FEED_URL = "https://politepaul.com/fd/bMbNMuk48rmc.json"
+
+# Куда сохраняем новости
+OUT_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "data",
+    "news.json"
+)
+
+# Сколько новостей показывать на сайте
+MAX_ITEMS = 10
 
 
-def pick_photo(topic_en):
-    if not UNSPLASH_KEY:
-        return None
+def get_news():
+    """Получает новости из JSON-ленты."""
+
     try:
-        r = requests.get(
-            "https://api.unsplash.com/search/photos",
-            params={"query": topic_en, "per_page": 1, "orientation": "landscape"},
-            headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-            timeout=15,
+        response = requests.get(
+            FEED_URL,
+            timeout=30,
+            headers={
+                "User-Agent": "Mozilla/5.0"
+            }
         )
-        r.raise_for_status()
-        results = r.json().get("results") or []
-        if not results:
-            return None
-        photo = results[0]
-        return {
-            "url": photo["urls"]["regular"],
-            "credit": photo["user"]["name"],
-            "creditUrl": photo["user"]["links"]["html"],
-        }
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        print("JSON успешно получен.")
+
+        return data
+
     except Exception as e:
-        print("Unsplash: не удалось подобрать фото для", topic_en, "-", e)
+        print("Ошибка получения JSON:", e)
         return None
-
-
-# Unsplash хорошо ищет по коротким английским темам, но плохо — по длинным
-# русским заголовкам. Поэтому картинка подбирается по теме RSS-ленты
-# (переведённой на английский), а не по тексту конкретной новости.
-TOPIC_QUERY_EN = {
-    "Новости": "business news",
-    "Логистика": "cargo logistics shipping",
-    "Инфраструктура": "infrastructure construction",
-    "Торговля": "international trade port",
-}
 
 
 def collect():
+    """Преобразует JSON PolitePaul в формат нашего сайта."""
+
+    data = get_news()
+
+    if not data:
+        return []
+
+    # PolitePaul может вернуть список или объект
+    if isinstance(data, list):
+        entries = data
+    elif isinstance(data, dict):
+        # Ищем возможный массив новостей
+        entries = (
+            data.get("items")
+            or data.get("entries")
+            or data.get("news")
+            or data.get("feed")
+            or []
+        )
+    else:
+        entries = []
+
     items = []
-    for feed in FEEDS:
-        try:
-            parsed = feedparser.parse(feed["url"])
-        except Exception as e:
-            print("Не удалось прочитать ленту", feed["url"], e)
+
+    for entry in entries:
+
+        if not isinstance(entry, dict):
             continue
-        query = TOPIC_QUERY_EN.get(feed["tag"], "business")
-        for entry in parsed.entries[:3]:
-            title = entry.get("title", "").strip()
-            if not title:
-                continue
-            summary = (entry.get("summary") or "")[:220].strip()
-            items.append({
-                "topic": feed["tag"],
-                "title": title,
-                "summary": summary,
-                "sourceUrl": entry.get("link", ""),
-                "publishedAt": entry.get("published", ""),
-                "photo": pick_photo(query),
-            })
+
+        # Заголовок
+        title = (
+            entry.get("title")
+            or entry.get("name")
+            or entry.get("Название")
+            or ""
+        ).strip()
+
+        if not title:
+            continue
+
+        # Описание
+        summary = (
+            entry.get("description")
+            or entry.get("summary")
+            or entry.get("Описание")
+            or ""
+        ).strip()
+
+        # Ссылка на оригинальную новость
+        source_url = (
+            entry.get("link")
+            or entry.get("url")
+            or entry.get("sourceUrl")
+            or entry.get("Ссылка")
+            or ""
+        ).strip()
+
+        # Картинка
+        photo = (
+            entry.get("image")
+            or entry.get("photo")
+            or entry.get("picture")
+            or entry.get("Картинка")
+            or ""
+        ).strip()
+
+        # Дата
+        published_at = (
+            entry.get("published")
+            or entry.get("publishedAt")
+            or entry.get("date")
+            or entry.get("Дата")
+            or ""
+        ).strip()
+
+        items.append({
+            "topic": "Логистика",
+            "title": title,
+            "summary": summary,
+            "sourceUrl": source_url,
+            "publishedAt": published_at,
+            "photo": photo if photo else None,
+        })
+
         if len(items) >= MAX_ITEMS:
             break
-    return items[:MAX_ITEMS]
+
+    return items
 
 
 def main():
+
     items = collect()
+
     data = {
         "isDemo": len(items) == 0,
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "items": items,
     }
-    os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    print("Записано:", OUT_PATH, "-> карточек:", len(items))
+
+    os.makedirs(
+        os.path.dirname(OUT_PATH),
+        exist_ok=True
+    )
+
+    with open(
+        OUT_PATH,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        json.dump(
+            data,
+            f,
+            ensure_ascii=False,
+            indent=2
+        )
+
+    print(
+        "Записано:",
+        OUT_PATH,
+        "→ карточек:",
+        len(items)
+    )
 
 
 if __name__ == "__main__":

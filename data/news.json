@@ -1,29 +1,29 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-17T06:05:22.446614+00:00",
+  "updatedAt": "2026-08-17T06:25:44.883987+00:00",
   "items": [
     {
       "topic": "Новости",
-      "title": "В Брянской области при атаке БПЛА ВСУ погиб человек",
-      "summary": "",
-      "sourceUrl": "https://tass.ru/proisshestviya/28017813",
-      "publishedAt": "Mon, 17 Aug 2026 09:02:13 +0300",
+      "title": "Число жертв землетрясения в Индонезии достигло 53",
+      "summary": "Повреждения получили 2,4 тыс. зданий",
+      "sourceUrl": "https://tass.ru/proisshestviya/28017843",
+      "publishedAt": "Mon, 17 Aug 2026 09:23:18 +0300",
       "photo": null
     },
     {
       "topic": "Новости",
-      "title": "Глава МИД: Таиланд рассчитывает укрепить партнерство с РФ в год юбилея дипотношений",
-      "summary": "",
-      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28017811",
-      "publishedAt": "Mon, 17 Aug 2026 09:02:05 +0300",
+      "title": "Над Брянской областью за сутки сбили 60 БПЛА",
+      "summary": "Все беспилотники были самолетного типа",
+      "sourceUrl": "https://tass.ru/proisshestviya/28017833",
+      "publishedAt": "Mon, 17 Aug 2026 09:20:30 +0300",
       "photo": null
     },
     {
       "topic": "Новости",
-      "title": "Политик Шлесерс: поддержка Украины дорого обходится экономике Латвии",
-      "summary": "Рига больше не может закрывать глаза на издержки, связанные также с антироссийскими санкциями, отметил бывший вице-премьер республики",
-      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28017773",
-      "publishedAt": "Mon, 17 Aug 2026 09:01:57 +0300",
+      "title": "Die Welt выяснил, почему ВСУ перестали сообщать статистику по воздушным ударам",
+      "summary": "Она выглядит \"катастрофично\", отметил корреспондент германского телеканала Ибрагим Набар",
+      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28017827",
+      "publishedAt": "Mon, 17 Aug 2026 09:14:52 +0300",
       "photo": null
     }
   ]

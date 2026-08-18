@@ -1,7 +1,39 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-18T10:14:22.048272+00:00",
+  "updatedAt": "2026-08-18T11:26:43.508393+00:00",
   "items": [
+    {
+      "topic": "Логистика",
+      "title": "Europe-focused DB Cargo seeks buyer for UK railfreight business",
+      "summary": "<p>DB Cargo UK is looking for a new owner, its German parent DB Cargo AG being increasingly focused on its core Central European operations. <br />\nThe UK business, which employs around 2,200 people and provides freight,",
+      "sourceUrl": "https://theloadstar.com/europe-focused-db-cargo-seeks-buyer-for-uk-railfreight-business/",
+      "publishedAt": "Tue, 18 Aug 2026 10:55:03 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "Walmart tightens grip on the first mile – suppliers’ optionality is the price",
+      "summary": "<p>In a nutshell: Bentonville&#8217;s new &#8216;Prepaid Consolidation&#8217; program, announced earlier this year, promised lower costs and simpler shipping. The trade-off now is that once you&#8217;re inside Walmart&#8",
+      "sourceUrl": "https://theloadstar.com/walmart-tightens-grip-on-the-first-mile-suppliers-optionality-is-the-price/",
+      "publishedAt": "Tue, 18 Aug 2026 10:52:41 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "GXO Logistics – from aborted sale to the ‘identity crisis’ narrative that doesn’t hold up",
+      "summary": "<p>Currently at around $47, GXO Logistics&#8217; stock price has done almost nothing since October 8, 2024 — the day before the market first heard the pure-play contract logistics (CL) operator might sell itself.<br />\nX",
+      "sourceUrl": "https://theloadstar.com/gxo-logistics-from-aborted-sale-to-the-identity-crisis-narrative-that-doesnt-hold-up/",
+      "publishedAt": "Tue, 18 Aug 2026 10:20:23 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "Seven MSC box ships ‘go dark’ as they resume Suez canal transits",
+      "summary": "<p>MSC has joined its peers in resuming Suez Canal transits, sending seven ships through the waterway this month.<br />\nContainer shipping consultancy Linerlytica’s report today shows transits were as follows:</p>\n<p>the",
+      "sourceUrl": "https://theloadstar.com/seven-msc-box-ships-go-dark-as-they-resume-suez-canal-transits/",
+      "publishedAt": "Tue, 18 Aug 2026 10:14:54 +0000",
+      "photo": null
+    },
     {
       "topic": "Логистика",
       "title": "Xeneta chief takes aim at ocean carriers over treatment of shippers",
@@ -32,38 +64,6 @@
       "summary": "<p>Digital freight platform Freightos has appointed Yaron Eldad as its chief financial officer, effective 1 September.</p>\n<p>He brings more than 25 years of financial leadership experience across technology and life sci",
       "sourceUrl": "https://theloadstar.com/freightos-appoints-yaron-eldad-its-new-cfo/",
       "publishedAt": "Mon, 17 Aug 2026 11:58:05 +0000",
-      "photo": null
-    },
-    {
-      "topic": "Логистика",
-      "title": "OceanX: Carrier earnings pushed up by rates – what is the value of ‘premium strategy’?",
-      "summary": "<p>It seems we passed day 1,000 of the Red Sea diversions.<br />\nIt&#8217;s a case that teaches us how long underlying issues can prevail unresolved.<br />\nWhilst at the beginning we would have thought this could only la",
-      "sourceUrl": "https://theloadstar.com/oceanx-carrier-earnings-pushed-up-by-rates-what-is-the-value-of-premium-strategy/",
-      "publishedAt": "Mon, 17 Aug 2026 11:13:43 +0000",
-      "photo": null
-    },
-    {
-      "topic": "Логистика",
-      "title": "Major airlines are lining up their freighters on the runway at NMIA",
-      "summary": "<p>Cargo airlines serving India are adapting and responding to the operational disruption at Mumbai Airport by reorganising services out of Navi Mumbai International (NMIA), Adani Group&#8217;s newest investment in the c",
-      "sourceUrl": "https://theloadstar.com/major-airlines-are-lining-up-their-freighters-on-the-runway-at-nmia/",
-      "publishedAt": "Mon, 17 Aug 2026 11:08:04 +0000",
-      "photo": null
-    },
-    {
-      "topic": "Логистика",
-      "title": "Red Sea transits: selectivity rules for liners as the arithmetic changes",
-      "summary": "<p>Since the Houthis began attacking ships in the Red Sea in October 2023, the Suez Canal has been the missing link for containerships sailing from Asia to Europe.<br />\nThe arithmetic was straightforward: ships could ei",
-      "sourceUrl": "https://theloadstar.com/red-sea-transits-selectivity-rules-for-liners-as-the-arithmetic-changes/",
-      "publishedAt": "Mon, 17 Aug 2026 10:45:38 +0000",
-      "photo": null
-    },
-    {
-      "topic": "Логистика",
-      "title": "BNSF adds faster intermodal service in the Southwest",
-      "summary": "<p>The Phoenix-to-Dallas-Fort Worth route is over three days long and will run six days a week due to increased shipper demand.</p>",
-      "sourceUrl": "https://www.supplychaindive.com/news/bnsf-adds-faster-intermodal-service-in-the-southwest/827814/",
-      "publishedAt": "Mon, 17 Aug 2026 10:52:00 -0400",
       "photo": null
     }
   ]

@@ -1,29 +1,69 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-18T05:59:52.747834+00:00",
+  "updatedAt": "2026-08-18T06:33:02.725943+00:00",
   "items": [
     {
-      "topic": "Новости",
-      "title": "Удар БПЛА в Энергодаре произошел вблизи остановки общественного транспорта",
-      "summary": "",
-      "sourceUrl": "https://tass.ru/proisshestviya/28021017",
-      "publishedAt": "Tue, 18 Aug 2026 08:56:29 +0300",
+      "topic": "Логистика",
+      "title": "AirZeta’s fortunes take a turn following link-up with Asiana unit",
+      "summary": "<p>AirZeta, the relaunched operation of Air Incheon following the integration of Asiana Airlines’ cargo arm, has reaped the fruits of the enlarged freight business.<br />\nRecently released financials for 2025 show AirZet",
+      "sourceUrl": "https://theloadstar.com/airzetas-fortunes-take-a-turn-following-link-up-with-asiana-unit/",
+      "publishedAt": "Mon, 17 Aug 2026 14:00:14 +0000",
       "photo": null
     },
     {
-      "topic": "Новости",
-      "title": "ТАСС: атака дронов ВСУ на РФ ночью стала одной из самых массированных за год",
-      "summary": "Над регионами России, акваториями Азовского и Черного морей сбили 791 украинский беспилотник",
-      "sourceUrl": "https://tass.ru/proisshestviya/28020979",
-      "publishedAt": "Tue, 18 Aug 2026 08:54:58 +0300",
+      "topic": "Логистика",
+      "title": "Global air freight rates take a dip as volumes lose height",
+      "summary": "<p>Global airfreight volumes declined in the first full week of August, with chargeable weight falling from all origins as pricing and capacity edged down, according to WorldACD.<br />\nGlobal tonnage dropped 4% week on w",
+      "sourceUrl": "https://theloadstar.com/global-air-freight-rates-take-a-dip-as-volumes-lose-height/",
+      "publishedAt": "Mon, 17 Aug 2026 12:55:14 +0000",
       "photo": null
     },
     {
-      "topic": "Новости",
-      "title": "Посол США заявил об отсутствии разногласий Трампа и Нетаньяху по плану в Газе",
-      "summary": "Майк Хакаби отметил, что страны едины в намерении реализовать предложенный американским лидером план по урегулированию конфликта в секторе Газа",
-      "sourceUrl": "https://tass.ru/mezhdunarodnaya-panorama/28021005",
-      "publishedAt": "Tue, 18 Aug 2026 08:54:41 +0300",
+      "topic": "Логистика",
+      "title": "Freightos appoints Yaron Eldad its new CFO",
+      "summary": "<p>Digital freight platform Freightos has appointed Yaron Eldad as its chief financial officer, effective 1 September.</p>\n<p>He brings more than 25 years of financial leadership experience across technology and life sci",
+      "sourceUrl": "https://theloadstar.com/freightos-appoints-yaron-eldad-its-new-cfo/",
+      "publishedAt": "Mon, 17 Aug 2026 11:58:05 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "OceanX: Carrier earnings pushed up by rates – what is the value of ‘premium strategy’?",
+      "summary": "<p>It seems we passed day 1,000 of the Red Sea diversions.<br />\nIt&#8217;s a case that teaches us how long underlying issues can prevail unresolved.<br />\nWhilst at the beginning we would have thought this could only la",
+      "sourceUrl": "https://theloadstar.com/oceanx-carrier-earnings-pushed-up-by-rates-what-is-the-value-of-premium-strategy/",
+      "publishedAt": "Mon, 17 Aug 2026 11:13:43 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "Major airlines are lining up their freighters on the runway at NMIA",
+      "summary": "<p>Cargo airlines serving India are adapting and responding to the operational disruption at Mumbai Airport by reorganising services out of Navi Mumbai International (NMIA), Adani Group&#8217;s newest investment in the c",
+      "sourceUrl": "https://theloadstar.com/major-airlines-are-lining-up-their-freighters-on-the-runway-at-nmia/",
+      "publishedAt": "Mon, 17 Aug 2026 11:08:04 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "Red Sea transits: selectivity rules for liners as the arithmetic changes",
+      "summary": "<p>Since the Houthis began attacking ships in the Red Sea in October 2023, the Suez Canal has been the missing link for containerships sailing from Asia to Europe.<br />\nThe arithmetic was straightforward: ships could ei",
+      "sourceUrl": "https://theloadstar.com/red-sea-transits-selectivity-rules-for-liners-as-the-arithmetic-changes/",
+      "publishedAt": "Mon, 17 Aug 2026 10:45:38 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "As DSV heals, Kuehne eyes deal",
+      "summary": "<p>&#8220;DSV share price is down 11% YTD (year to date), a meaningful underperformance vs. European logistics peers up 18-23% YTD. While investors are willing to attribute valuation multiples close to historical peaks t",
+      "sourceUrl": "https://theloadstar.com/as-dsv-heals-kuehne-eyes-deal/",
+      "publishedAt": "Mon, 17 Aug 2026 10:31:39 +0000",
+      "photo": null
+    },
+    {
+      "topic": "Логистика",
+      "title": "BNSF adds faster intermodal service in the Southwest",
+      "summary": "<p>The Phoenix-to-Dallas-Fort Worth route is over three days long and will run six days a week due to increased shipper demand.</p>",
+      "sourceUrl": "https://www.supplychaindive.com/news/bnsf-adds-faster-intermodal-service-in-the-southwest/827814/",
+      "publishedAt": "Mon, 17 Aug 2026 10:52:00 -0400",
       "photo": null
     }
   ]

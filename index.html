@@ -281,16 +281,33 @@ html {
   section.dark.section-gold .goals-visual{background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);border-color:rgba(243,239,226,0.16);}
   section.dark.section-amber{background:linear-gradient(150deg, var(--amber-1) 0%, var(--amber-bright) 68%, var(--amber-2) 130%);}
 
-  /* ---------- news: featured + side list with smooth swap ---------- */
+  /* ---------- news: swap carousel (featured <-> side rectangles) ---------- */
   .news-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:stretch;}
 
+  .news-featured-col{display:flex;flex-direction:column;height:100%;}
   .news-featured{
+    position:relative;
     background:var(--sand-2);border:1px solid var(--line);border-radius:3px;
-    display:flex;flex-direction:column;overflow:hidden;position:relative;
+    display:flex;flex-direction:column;overflow:hidden;
+    flex:1;
   }
-  .nf-body{padding:26px 26px 28px;display:flex;flex-direction:column;gap:12px;flex:1;}
+  .nf-body{padding:26px 26px 20px;display:flex;flex-direction:column;gap:12px;flex:1;}
   .nf-body h3{font-size:23px;line-height:1.32;font-weight:600;}
   .nf-body p{font-family:var(--body);font-size:15px;line-height:1.6;opacity:.75;}
+
+  .news-arrow{
+    position:absolute;bottom:14px;z-index:4;
+    width:36px;height:36px;border-radius:50%;border:1px solid var(--line);
+    background:var(--sand-2);color:var(--ink);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:background .2s,border-color .2s,transform .15s,opacity .2s;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .news-arrow.news-arrow-prev{left:14px;}
+  .news-arrow.news-arrow-next{right:14px;}
+  .news-arrow svg{width:15px;height:15px;}
+  .news-arrow:hover{background:var(--turquoise);border-color:var(--turquoise);color:#fff;}
+  .news-arrow:active{transform:scale(.92);}
+  .news-arrow:disabled{opacity:.35;pointer-events:none;}
 
   .ic-tag{
     align-self:flex-start;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
@@ -299,71 +316,48 @@ html {
   }
   .ic-tag.small{font-size:8.5px;padding:3px 7px;}
   .ic-foot{
-    margin-top:auto;padding:14px 44px 4px;border-top:1px solid var(--line);
+    margin-top:auto;padding:14px 54px 4px;border-top:1px solid var(--line);
     font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;opacity:.5;
-    display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:36px;
   }
-  .news-arrows{
-    position:absolute;left:8px;right:8px;top:50%;transform:translateY(-50%);
-    display:flex;justify-content:space-between;pointer-events:none;
-  }
-  .news-arrow{
-    width:32px;height:32px;border-radius:50%;border:1px solid var(--line);
-    background:var(--sand-2);color:var(--ink);display:flex;align-items:center;justify-content:center;
-    cursor:pointer;pointer-events:auto;transition:background .2s,border-color .2s,transform .15s;
-    box-shadow:0 2px 8px rgba(0,0,0,.06);
-  }
-  .news-arrow svg{width:14px;height:14px;}
-  .news-arrow:hover{background:var(--turquoise);border-color:var(--turquoise);color:#fff;}
-  .news-arrow:active{transform:scale(.92);}
 
-  .ic-photo,.nf-photo{
+  .nf-photo{
     position:relative;aspect-ratio:16/10;width:100%;flex:0 0 auto;
     background:linear-gradient(150deg,#DED4B8 0%,#EDE7D4 100%);
     display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;
     color:var(--ink);
   }
-  .ic-photo svg,.nf-photo svg{width:30px;height:30px;opacity:.35;}
-  .ic-photo span,.nf-photo span{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;opacity:.4;}
+  .nf-photo svg{width:30px;height:30px;opacity:.35;}
+  .nf-photo span{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;opacity:.4;}
+  .nf-photo img{width:100%;height:100%;object-fit:cover;display:block;}
 
   .news-side{
-    max-height:560px;overflow-y:auto;overscroll-behavior:contain;
-    display:flex;flex-direction:column;gap:12px;padding-right:4px;
-    cursor:grab;scrollbar-width:thin;
+    display:flex;flex-direction:column;gap:12px;
+    cursor:grab;touch-action:pan-y;
+    position:relative;
+    height:100%;
+    align-self:stretch;
   }
   .news-side.dragging{cursor:grabbing;user-select:none;}
   .news-mini{
-    display:flex;gap:14px;align-items:flex-start;flex:0 0 auto;
-    background:var(--sand-2);border:1px solid var(--line);border-radius:3px;padding:14px;
-    cursor:pointer;transition:border-color .2s,box-shadow .2s;
+    display:flex;flex-direction:column;gap:6px;justify-content:center;
+    flex:1 1 0;
+    min-height:0;
+    background:var(--sand-2);border:1px solid var(--line);border-radius:3px;padding:16px 18px;
+    cursor:pointer;transition:border-color .2s, opacity .2s;
   }
-  .news-mini:hover{border-color:var(--turquoise);box-shadow:0 4px 14px rgba(0,0,0,.06);}
-  .nm-thumb{
-    width:64px;height:64px;flex:0 0 auto;border-radius:2px;overflow:hidden;
-    background:linear-gradient(150deg,#DED4B8 0%,#EDE7D4 100%);
-    display:flex;align-items:center;justify-content:center;color:var(--ink);
-  }
-  .nm-thumb svg{width:22px;height:22px;opacity:.35;}
-  .nm-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-  .nm-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
-  .nm-body h4{font-size:13.5px;font-weight:600;line-height:1.35;}
-  .nm-date{font-family:var(--mono);font-size:10px;opacity:.5;}
-
-  /* clones used only during swap animation — never affect layout */
-  .news-anim-clone{
-    position:fixed;z-index:9000;pointer-events:none;margin:0;
-    border-radius:3px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.18);
-    will-change:transform,opacity,width,height;
-    transform-origin:top left;
-  }
+  .news-mini:hover{border-color:var(--turquoise);}
+  .news-mini h4{font-size:13.5px;font-weight:600;line-height:1.35;}
+  .nm-date{font-family:var(--mono);font-size:10px;opacity:.5;margin-top:auto;padding-top:6px;}
 
   @media(max-width:900px){
-    .news-layout{grid-template-columns:1fr;}
-    .news-side{max-height:none;cursor:auto;}
-    .news-arrows{display:none;}
-  }
-  @media (prefers-reduced-motion: reduce){
-    .news-anim-clone{transition:none !important;}
+    .news-layout{grid-template-columns:1fr;align-items:start;}
+    .news-side{cursor:auto;height:auto;}
+    .news-mini{flex:0 0 auto;}
+    .news-arrow{bottom:12px;}
+    .news-arrow.news-arrow-prev{left:12px;}
+    .news-arrow.news-arrow-next{right:12px;}
+    .ic-foot{padding:12px 48px 2px;}
   }
 
   /* ---------- grain quotes ---------- */
@@ -664,6 +658,7 @@ html {
         <a href="#events">Мероприятия</a>
         <a href="#insights">Новости</a>
         <a href="#grain">Зерно</a>
+        <a href="#contact">Контакты</a>
         <a href="#contact" class="nav-cta-mobile">Связаться</a>
       </nav>
     </div>
@@ -993,6 +988,14 @@ html {
   больше; если фото не найдено — используется нейтральный плейсхолдер.
   Пока источник не подключён (isDemo) — показаны два образца ниже как есть.
 -->
+<!--
+  Блок новостей — карусель. items[] приходит из data/news.json (см. JS в конце
+  файла). Один элемент — «активный», он показывается большим слева с картинкой;
+  остальные — маленькими текстовыми прямоугольниками справа. Клик по маленькому
+  прямоугольнику, стрелки под большим блоком или перетаскивание мышью
+  вправо/влево — меняют местами активный элемент с соседним (с анимацией).
+  Пока источник не подключён (isDemo) — показаны образцы ниже как есть.
+-->
 <section class="sand" id="insights">
   <div class="rail"></div>
   <div class="wrap">
@@ -1003,62 +1006,47 @@ html {
 
     <div class="news-layout reveal">
 
-      <article class="news-featured" id="newsFeatured">
-        <div class="nf-photo" id="newsFeaturedPhoto">
-          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Без изображения</span>
-        </div>
-        <div class="nf-body">
-          <span class="ic-tag" id="newsFeaturedTag">Логистика</span>
-          <h3 id="newsFeaturedTitle">Контейнерный индекс региона за неделю</h3>
-          <p id="newsFeaturedDesc">Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.</p>
-          <div class="ic-foot">
-            <span id="newsFeaturedSource">Образец</span>
-            <span id="newsFeaturedDate">—</span>
-            <div class="news-arrows">
-              <button type="button" class="news-arrow" id="newsPrev" aria-label="Предыдущая">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-              <button type="button" class="news-arrow" id="newsNext" aria-label="Следующая">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-            </div>
+      <div class="news-featured-col">
+        <article class="news-featured" id="newsFeatured">
+          <div class="nf-photo" id="newsFeaturedPhoto">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Без изображения</span>
           </div>
-        </div>
-      </article>
+          <div class="nf-body">
+            <span class="ic-tag" id="newsFeaturedTag">Логистика</span>
+            <h3 id="newsFeaturedTitle">Контейнерный индекс региона за неделю</h3>
+            <p id="newsFeaturedDesc">Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.</p>
+            <div class="ic-foot"><span id="newsFeaturedSource">Образец</span><span id="newsFeaturedDate">—</span></div>
+          </div>
+          <button type="button" class="news-arrow news-arrow-prev" id="newsPrev" aria-label="Предыдущая новость">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="news-arrow news-arrow-next" id="newsNext" aria-label="Следующая новость">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </article>
+      </div>
 
       <div class="news-side" id="newsSide">
-        <div class="news-mini">
-          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="nm-body">
-            <span class="ic-tag small">Инфраструктура</span>
-            <h4>Ход строительства транспортных коридоров</h4>
-            <div class="nm-date">Образец</div>
-          </div>
+        <div class="news-mini" data-idx="1">
+          <span class="ic-tag small">Инфраструктура</span>
+          <h4>Ход строительства транспортных коридоров</h4>
+          <div class="nm-date">Образец</div>
         </div>
-        <div class="news-mini">
-          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="nm-body">
-            <span class="ic-tag small">Логистика</span>
-            <h4>Динамика ставок фрахта на ключевых маршрутах</h4>
-            <div class="nm-date">Образец</div>
-          </div>
+        <div class="news-mini" data-idx="2">
+          <span class="ic-tag small">Логистика</span>
+          <h4>Динамика ставок фрахта на ключевых маршрутах</h4>
+          <div class="nm-date">Образец</div>
         </div>
-        <div class="news-mini">
-          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="nm-body">
-            <span class="ic-tag small">Таможня</span>
-            <h4>Изменения в порядке оформления транзитных грузов</h4>
-            <div class="nm-date">Образец</div>
-          </div>
+        <div class="news-mini" data-idx="3">
+          <span class="ic-tag small">Таможня</span>
+          <h4>Изменения в порядке оформления транзитных грузов</h4>
+          <div class="nm-date">Образец</div>
         </div>
-        <div class="news-mini">
-          <div class="nm-thumb"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div class="nm-body">
-            <span class="ic-tag small">Порты</span>
-            <h4>Загрузка контейнерных терминалов региона</h4>
-            <div class="nm-date">Образец</div>
-          </div>
+        <div class="news-mini" data-idx="4">
+          <span class="ic-tag small">Порты</span>
+          <h4>Загрузка контейнерных терминалов региона</h4>
+          <div class="nm-date">Образец</div>
         </div>
       </div>
 
@@ -1135,18 +1123,16 @@ html {
         </div>
         <div class="contact-item">
           <div class="ci-label">E-mail</div>
-          <div class="ci-value"><a href="mailto:info@calta.asia?subject=CALTA">info@calta.asia</a></div>
+          <div class="ci-value"><a href="mailto:info@calta.asia">info@calta.asia</a></div>
         </div>
         <div class="social-row">
           <a href="https://wa.me/77789988866" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#171712" aria-hidden="true">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20.5 3.5A10.6 10.6 0 0012 0C6 0 1.3 4.7 1.3 10.6c0 1.9.5 3.6 1.4 5.2L1 22l6.4-1.7c1.5.8 3.2 1.2 5 1.2h.1c6 0 10.9-4.7 10.9-10.6 0-2.8-1.1-5.5-3.1-7.4zM12 19.6h-.1c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3.4.9.9-3.3-.2-.3c-.9-1.4-1.4-3-1.4-4.6C3 6 7 2 12 2c2.4 0 4.6.9 6.4 2.6 1.7 1.7 2.6 3.9 2.6 6.3 0 5-4 9-8.9 9z" fill="#171712"/></svg>
           </a>
           <a href="https://www.instagram.com/tisservise" target="_blank" rel="noopener" aria-label="Instagram">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#171712" stroke-width="1.6"/><circle cx="12" cy="12" r="4.2" stroke="#171712" stroke-width="1.6"/><circle cx="17.4" cy="6.6" r="1.1" fill="#171712"/></svg>
           </a>
-          <a href="mailto:info@calta.asia?subject=CALTA" aria-label="E-mail">
+          <a href="mailto:info@calta.asia" aria-label="E-mail">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" stroke="#171712" stroke-width="1.6"/><path d="M3 6l9 7 9-7" stroke="#171712" stroke-width="1.6"/></svg>
           </a>
         </div>
@@ -1543,11 +1529,12 @@ html {
 
 <script>
   /* =====================================================================
-     Новости — плавная двухэтапная анимация обмена:
-       1) большой блок сжимается до размера мини (на месте)
-       2) уже маленький летит вниз в список; выбранный мини летит вверх
-          и растёт до размера большого
-     data/news.json обновляется GitHub Actions. Пока файла нет — демо.
+     Новости — карусель. data/news.json обновляется автоматически GitHub
+     Actions раз в 24 часа (scripts/update_news.py). Активный элемент
+     показывается большим слева с картинкой, остальные — маленькими
+     текстовыми прямоугольниками справа. Клик по прямоугольнику, стрелки
+     под большим блоком или перетаскивание мышью влево/вправо меняют
+     активный элемент местами с соседним, с плавной анимацией.
   ===================================================================== */
   function esc(s){
     var d = document.createElement('div');
@@ -1555,7 +1542,7 @@ html {
     return d.innerHTML;
   }
 
-  var NEWS_DEMO = [
+  var NEWS_DEMO_ITEMS = [
     {topic:'Логистика', title:'Контейнерный индекс региона за неделю', summary:'Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.', sourceUrl:null, publishedAt:null, photo:null},
     {topic:'Инфраструктура', title:'Ход строительства транспортных коридоров', summary:'Статусы проектов по развитию дорожной и железнодорожной инфраструктуры региона.', sourceUrl:null, publishedAt:null, photo:null},
     {topic:'Логистика', title:'Динамика ставок фрахта на ключевых маршрутах', summary:'Обзор изменения стоимости перевозок по основным направлениям.', sourceUrl:null, publishedAt:null, photo:null},
@@ -1563,14 +1550,12 @@ html {
     {topic:'Порты', title:'Загрузка контейнерных терминалов региона', summary:'Показатели пропускной способности ключевых портов и хабов.', sourceUrl:null, publishedAt:null, photo:null}
   ];
 
-  var newsItems = NEWS_DEMO.slice();
+  var newsItems = NEWS_DEMO_ITEMS;
   var newsActive = 0;
-  var newsSwapping = false;
-  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var newsIsDemo = true;
 
   function setFeaturedPhoto(item){
     var photoEl = document.getElementById('newsFeaturedPhoto');
-    if(!photoEl) return;
     photoEl.innerHTML = '';
     if(item.photo && item.photo.url){
       photoEl.style.background = 'none';
@@ -1581,7 +1566,7 @@ html {
       if(item.photo.credit){
         var credit = document.createElement('a');
         credit.href = item.photo.creditUrl || '#'; credit.target = '_blank'; credit.rel = 'noopener';
-        credit.textContent = 'Фото: ' + item.photo.credit + ' / Unsplash';
+        credit.textContent = 'Фото: ' + item.photo.credit;
         credit.style.cssText = 'position:absolute;bottom:10px;left:10px;font-family:var(--mono);font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:12px;text-decoration:none;';
         photoEl.appendChild(credit);
       }
@@ -1598,7 +1583,7 @@ html {
     titleEl.innerHTML = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(item.title) + '</a>'
       : esc(item.title);
-    document.getElementById('newsFeaturedDesc').textContent = item.summary || '';
+    document.getElementById('newsFeaturedDesc').textContent = item.summary || 'Подробности — по ссылке на источник.';
     var sourceHost = '';
     if(item.sourceUrl){ try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){} }
     document.getElementById('newsFeaturedSource').textContent = sourceHost || 'Образец';
@@ -1609,19 +1594,13 @@ html {
     var el = document.createElement('div');
     el.className = 'news-mini';
     el.setAttribute('data-idx', realIndex);
-    var thumbInner = (item.photo && item.photo.url)
-      ? '<img src="' + esc(item.photo.url) + '" alt="">'
-      : '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : 'Образец';
     el.innerHTML =
-      '<div class="nm-thumb">' + thumbInner + '</div>' +
-      '<div class="nm-body">' +
-        '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
-        '<h4>' + esc(item.title) + '</h4>' +
-        '<div class="nm-date">' + esc(dateText) + '</div>' +
-      '</div>';
+      '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
+      '<h4>' + esc(item.title) + '</h4>' +
+      '<div class="nm-date">' + esc(dateText) + '</div>';
     el.addEventListener('click', function(){
-      if(newsSideEl && newsSideEl.dataset.moved === '1') return;
+      if(newsSideEl && newsSideEl.dataset.moved === '1') return; // клик после драга — игнорируем
       swapTo(realIndex);
     });
     return el;
@@ -1637,121 +1616,103 @@ html {
     });
   }
 
-  function rectOf(el){
-    var r = el.getBoundingClientRect();
-    return {top:r.top, left:r.left, width:r.width, height:r.height, cx:r.left + r.width/2, cy:r.top + r.height/2};
+  var swapping = false;
+  var SWAP_MS = 520;
+  var SWAP_EASE = 'cubic-bezier(.22,1,.36,1)'; // мягкое ускорение и плавное "приземление"
+
+  function findMiniByIndex(index){
+    var wrap = document.getElementById('newsSide');
+    if(!wrap) return null;
+    return wrap.querySelector('.news-mini[data-idx="' + index + '"]');
   }
 
-  function makeClone(fromEl, fromRect, z){
-    var clone = fromEl.cloneNode(true);
-    clone.classList.add('news-anim-clone');
-    clone.removeAttribute('id');
-    // fixed size box, transform-origin center — natural morph
-    clone.style.cssText =
-      'position:fixed;top:' + fromRect.top + 'px;left:' + fromRect.left + 'px;' +
-      'width:' + fromRect.width + 'px;height:' + fromRect.height + 'px;' +
-      'margin:0;z-index:' + (z || 9000) + ';pointer-events:none;box-sizing:border-box;' +
-      'transform-origin:center center;overflow:hidden;border-radius:3px;' +
-      'box-shadow:0 16px 48px rgba(0,0,0,.16);opacity:1;background:var(--sand-2);';
-    document.body.appendChild(clone);
-    return clone;
+  function finishSwap(index){
+    newsActive = index;
+    renderFeatured(newsItems[newsActive]);
+    renderSide();
   }
 
-  function animateStyle(el, styles, duration, easing){
-    return new Promise(function(resolve){
-      var keys = Object.keys(styles);
-      el.style.transition = keys.map(function(k){
-        return k.replace(/[A-Z]/g, function(m){ return '-' + m.toLowerCase(); }) +
-          ' ' + duration + 'ms ' + (easing || 'cubic-bezier(.22,1,.36,1)');
-      }).join(', ');
-      el.getBoundingClientRect(); // reflow
-      keys.forEach(function(k){ el.style[k] = styles[k]; });
-      var done = false;
-      function finish(){
-        if(done) return;
-        done = true;
-        el.style.transition = '';
-        resolve();
-      }
-      el.addEventListener('transitionend', finish, {once:true});
-      setTimeout(finish, duration + 60);
-    });
+  // Запускает "полёт" элемента: мгновенно ставит его в старую позицию/размер
+  // (через transform, без влияния на layout), затем на следующем кадре
+  // анимированно убирает transform — элемент плавно долетает до своего
+  // настоящего места. Это и есть FLIP (First-Last-Invert-Play).
+  function flipFrom(el, fromRect, toRect, opts){
+    opts = opts || {};
+    var dx = fromRect.left - toRect.left;
+    var dy = fromRect.top - toRect.top;
+    var sx = fromRect.width / toRect.width;
+    var sy = fromRect.height / toRect.height;
+
+    el.style.transition = 'none';
+    el.style.transformOrigin = 'top left';
+    el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+    if(opts.fade) el.style.opacity = '0.35';
+    el.style.boxShadow = '0 26px 54px rgba(0,0,0,.2)';
+    el.style.position = 'relative';
+    el.style.zIndex = '5';
+
+    // форсируем применение стартового состояния до начала перехода
+    void el.offsetWidth;
+
+    el.style.transition =
+      'transform ' + SWAP_MS + 'ms ' + SWAP_EASE +
+      ', opacity ' + SWAP_MS + 'ms ' + SWAP_EASE +
+      ', box-shadow ' + SWAP_MS + 'ms ' + SWAP_EASE;
+    el.style.transform = 'none';
+    if(opts.fade) el.style.opacity = '1';
+
+    setTimeout(function(){
+      el.style.transition = '';
+      el.style.transform = '';
+      el.style.opacity = '';
+      el.style.boxShadow = '';
+      el.style.position = '';
+      el.style.zIndex = '';
+    }, SWAP_MS + 30);
   }
 
-  /* Simultaneous morph: big shrinks toward mini, mini grows toward big.
-     One continuous motion, center-origin, soft ease-out. No layout thrash. */
   function swapTo(index){
-    if(newsSwapping || index === newsActive || !newsItems[index]) return;
-    if(reduceMotion){
-      newsActive = index;
-      renderFeatured(newsItems[newsActive]);
-      renderSide();
-      return;
-    }
-
+    if(swapping || index === newsActive || !newsItems[index]) return;
     var featuredEl = document.getElementById('newsFeatured');
-    var sideEl = document.getElementById('newsSide');
-    if(!featuredEl || !sideEl) return;
+    var miniEl = findMiniByIndex(index);
+    if(!featuredEl) return;
 
-    var targetMini = sideEl.querySelector('.news-mini[data-idx="' + index + '"]');
-    if(!targetMini){
-      newsActive = index;
-      renderFeatured(newsItems[newsActive]);
-      renderSide();
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var prevBtn = document.getElementById('newsPrev');
+    var nextBtn = document.getElementById('newsNext');
+
+    if(!miniEl || reduceMotion){
+      finishSwap(index);
       return;
     }
 
-    newsSwapping = true;
+    swapping = true;
+    if(prevBtn) prevBtn.disabled = true;
+    if(nextBtn) nextBtn.disabled = true;
 
-    var featRect = rectOf(featuredEl);
-    var miniRect = rectOf(targetMini);
+    var oldActiveIndex = newsActive;
+    var oldFeaturedRect = featuredEl.getBoundingClientRect();
+    var oldMiniRect = miniEl.getBoundingClientRect();
 
-    var featClone = makeClone(featuredEl, featRect, 9001);
-    var miniClone = makeClone(targetMini, miniRect, 9002);
+    // Меняем содержимое мгновенно — скачок скрываем через FLIP ниже
+    finishSwap(index);
 
-    featuredEl.style.visibility = 'hidden';
-    targetMini.style.visibility = 'hidden';
+    var newFeaturedRect = featuredEl.getBoundingClientRect();
+    var landedMini = findMiniByIndex(oldActiveIndex); // старое содержимое большого блока теперь тут
 
-    // center-to-center deltas (transform-origin: center)
-    var dxF = miniRect.cx - featRect.cx;
-    var dyF = miniRect.cy - featRect.cy;
-    var scaleF = Math.min(miniRect.width / featRect.width, miniRect.height / featRect.height);
+    // Большой блок "прилетает" из точки/размера маленькой карточки, по которой кликнули
+    flipFrom(featuredEl, oldMiniRect, newFeaturedRect, {fade:true});
 
-    var dxM = featRect.cx - miniRect.cx;
-    var dyM = featRect.cy - miniRect.cy;
-    var scaleM = Math.min(featRect.width / miniRect.width, featRect.height / miniRect.height);
+    // Маленькая карточка с прежним большим содержимым "прилетает" из точки/размера большого блока
+    if(landedMini){
+      flipFrom(landedMini, oldFeaturedRect, landedMini.getBoundingClientRect(), {fade:true});
+    }
 
-    var DURATION = 480;
-    var EASE = 'cubic-bezier(.22,1,.36,1)';
-
-    Promise.all([
-      animateStyle(featClone, {
-        transform: 'translate(' + dxF + 'px,' + dyF + 'px) scale(' + scaleF + ')',
-        opacity: '0.4',
-        boxShadow: '0 4px 16px rgba(0,0,0,.08)'
-      }, DURATION, EASE),
-      animateStyle(miniClone, {
-        transform: 'translate(' + dxM + 'px,' + dyM + 'px) scale(' + scaleM + ')',
-        opacity: '1',
-        boxShadow: '0 20px 56px rgba(0,0,0,.18)'
-      }, DURATION, EASE)
-    ]).then(function(){
-      newsActive = index;
-      renderFeatured(newsItems[newsActive]);
-      renderSide();
-      featuredEl.style.visibility = '';
-      if(featClone.parentNode) featClone.parentNode.removeChild(featClone);
-      if(miniClone.parentNode) miniClone.parentNode.removeChild(miniClone);
-      newsSwapping = false;
-    }).catch(function(){
-      newsActive = index;
-      renderFeatured(newsItems[newsActive]);
-      renderSide();
-      featuredEl.style.visibility = '';
-      if(featClone && featClone.parentNode) featClone.parentNode.removeChild(featClone);
-      if(miniClone && miniClone.parentNode) miniClone.parentNode.removeChild(miniClone);
-      newsSwapping = false;
-    });
+    setTimeout(function(){
+      swapping = false;
+      if(prevBtn) prevBtn.disabled = false;
+      if(nextBtn) nextBtn.disabled = false;
+    }, SWAP_MS + 30);
   }
 
   function newsNext(){ swapTo((newsActive + 1) % newsItems.length); }
@@ -1759,30 +1720,33 @@ html {
 
   var nextBtn = document.getElementById('newsNext');
   var prevBtn = document.getElementById('newsPrev');
-  if(nextBtn) nextBtn.addEventListener('click', function(e){ e.preventDefault(); newsNext(); });
-  if(prevBtn) prevBtn.addEventListener('click', function(e){ e.preventDefault(); newsPrev(); });
+  if(nextBtn) nextBtn.addEventListener('click', newsNext);
+  if(prevBtn) prevBtn.addEventListener('click', newsPrev);
 
-  function enableDragScroll(el){
-    var isDown = false, startY = 0, startScroll = 0;
-    el.addEventListener('mousedown', function(e){
-      isDown = true;
-      el.dataset.moved = '0';
-      startY = e.pageY; startScroll = el.scrollTop;
-      el.classList.add('dragging');
+  var newsSideEl = document.getElementById('newsSide');
+  if(newsSideEl){
+    var isDown = false, startX = 0;
+    newsSideEl.addEventListener('mousedown', function(e){
+      isDown = true; startX = e.pageX; newsSideEl.dataset.moved = '0';
+      newsSideEl.classList.add('dragging');
     });
-    window.addEventListener('mouseup', function(){ isDown = false; el.classList.remove('dragging'); });
+    window.addEventListener('mouseup', function(e){
+      if(isDown){
+        var dx = e.pageX - startX;
+        if(Math.abs(dx) > 40){
+          newsSideEl.dataset.moved = '1';
+          if(dx < 0) newsNext(); else newsPrev();
+        }
+      }
+      isDown = false;
+      newsSideEl.classList.remove('dragging');
+    });
     window.addEventListener('mousemove', function(e){
       if(!isDown) return;
-      var dy = e.pageY - startY;
-      if(Math.abs(dy) > 3) el.dataset.moved = '1';
-      el.scrollTop = startScroll - dy;
+      if(Math.abs(e.pageX - startX) > 8) newsSideEl.dataset.moved = '1';
     });
   }
 
-  var newsSideEl = document.getElementById('newsSide');
-  if(newsSideEl) enableDragScroll(newsSideEl);
-
-  // initial render from demo (so clicks work without news.json)
   renderFeatured(newsItems[newsActive]);
   renderSide();
 
@@ -1791,11 +1755,12 @@ html {
     .then(function(data){
       if(!data || data.isDemo || !Array.isArray(data.items) || data.items.length === 0) return;
       newsItems = data.items;
+      newsIsDemo = false;
       newsActive = 0;
       renderFeatured(newsItems[newsActive]);
       renderSide();
     })
-    .catch(function(){ /* демо остаётся */ });
+    .catch(function(){ /* нет файла/сети — тихо оставляем образцы */ });
 </script>
 
 </body>

@@ -1,21 +1,19 @@
 """
-Обновляет data/news.json карточками новостей строго по теме логистики.
+Обновляет data/news.json карточками новостей по логистике в Центральной Азии.
 
-Источники — специализированные логистические RSS-ленты (не общие
-новостные, чтобы не попадала политика/спорт и т.п.) плюс прямой парсинг
-страницы тега «Логистика» на Казинформе (inform.kz) — без посредников
-вроде сторонних RSS-генераторов: скрипт сам ходит на inform.kz и читает
-HTML. При желании поменяйте/добавьте свои источники в FEEDS ниже.
+Требования:
+1. Только новости на РУССКОМ языке (английские отбрасываются)
+2. Только новости о странах: Казахстан, Узбекистан, Кыргызстан, Таджикистан, Туркменистан
+3. Только новости о ЛОГИСТИКЕ (транспорт, перевозки, грузы, порты, ж/д и т.д.)
+4. Каждая новость должна иметь картинку (из источника или Unsplash)
 
-Дополнительно каждая новость (кроме источников с skip_filter) проверяется
-функцией is_relevant() по списку ключевых слов LOGISTICS_KEYWORDS — даже
-если в ленте случайно окажется нерелевантный материал, он будет отброшен.
-
-Фото: Unsplash API, бесплатный тариф (до 50 запросов/час), используется
-только когда у источника нет своей картинки (Казинформ обычно даёт свою).
-Ключ берётся из переменной окружения UNSPLASH_ACCESS_KEY (GitHub Secrets),
-в коде не хранится. Если не задан/запрос не удался — photo: null,
-сайт покажет плейсхолдер вместо фото.
+Источники:
+- inform.kz (Казинформ) — основной русскоязычный источник
+- 24.kg (Кыргызстан)
+- Kun.uz (Узбекистан)  
+- Азия-Плюс (Таджикистан)
+- Туркменпортал (Туркменистан)
+- Англоязычные источники — только если новость о странах ЦА
 """
 import html
 import json
@@ -29,8 +27,6 @@ UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
 MAX_ITEMS = 8
 
-# Некоторые сайты (в т.ч. inform.kz) не любят запросы без "браузерного"
-# User-Agent — с ним запрос выглядит как обычный визит через браузер.
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -38,45 +34,147 @@ HEADERS = {
     )
 }
 
-# Специализированные логистические источники.
-# type: "rss" (по умолчанию) или "kazinform" (прямой парсинг inform.kz).
-# skip_filter: True — не прогонять через LOGISTICS_KEYWORDS (источник и так
-# уже отфильтрован по теме — например это официальный тег «Логистика» на
-# Казинформе, доп. фильтр по словам мог бы ошибочно отбросить материал,
-# который не содержит ключевых слов дословно).
+# ============================================================
+# 1. СПИСОК СТРАН ЦЕНТРАЛЬНОЙ АЗИИ (на русском и английском)
+# ============================================================
+CENTRAL_ASIA_COUNTRIES = [
+    # Казахстан
+    "казахстан", "қазақстан", "kazakhstan", "kz",
+    "астана", "алматы", "astana", "almaty",
+    # Узбекистан
+    "узбекистан", "o'zbekiston", "uzbekistan", "uz",
+    "ташкент", "tashkent", "самарканд", "samarkand",
+    # Кыргызстан
+    "кыргызстан", "kyrgyzstan", "kg",
+    "бишкек", "bishkek", "ош", "osh",
+    # Таджикистан
+    "таджикистан", "tojikiston", "tajikistan", "tj",
+    "душанбе", "dushanbe",
+    # Туркменистан
+    "туркменистан", "turkmenistan", "tm",
+    "ашхабад", "ashgabat",
+    # Общие
+    "центральная азия", "central asia", "цар",
+    "средняя азия", "middle asia",
+]
+
+# ============================================================
+# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА (только русские, чтобы
+#    отсеять английские новости)
+# ============================================================
+LOGISTICS_KEYWORDS_RU = [
+    "логист", "груз", "перевозк", "транспорт", "порт",
+    "контейнер", "таможен", "склад", "жд", "железнодорож",
+    "коридор", "экспорт", "импорт", "фрахт", "судоходств",
+    "автоперевоз", "грузопоток", "транзит", "терминал",
+    "вагон", "локомотив", "путь", "магистраль", "автотрасс",
+    "логистик", "перевалк", "хранени", "дистрибуци",
+    "торговля", "международн", "транспортн", "инфраструктур",
+    "логистический", "грузовой", "транспортный",
+]
+
+# ============================================================
+# 3. ИСТОЧНИКИ НОВОСТЕЙ
+# ============================================================
 FEEDS = [
+    # === ОСНОВНЫЕ РУССКОЯЗЫЧНЫЕ ИСТОЧНИКИ ===
     {
         "url": "https://www.inform.kz/tag/logistika_t11100",
         "tag": "Казинформ",
-        "query": "kazakhstan logistics transport",
+        "query": "kazakhstan logistics",
         "type": "kazinform",
-        "skip_filter": True,
-        "cap": 6,  # столько максимум карточек берём из этого источника
+        "cap": 4,
+        "language": "ru",
     },
-    {"url": "https://www.railfreight.com/feed", "tag": "Логистика", "query": "cargo logistics shipping", "cap": 2},
-    {"url": "https://theloadstar.com/feed/", "tag": "Логистика", "query": "freight shipping port", "cap": 2},
-    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "Логистика", "query": "supply chain freight", "cap": 2},
+    {
+        "url": "https://24.kg/feed/",
+        "tag": "24.kg",
+        "query": "kyrgyzstan transport",
+        "type": "rss",
+        "cap": 2,
+        "language": "ru",
+    },
+    {
+        "url": "https://kun.uz/ru/news/feed",
+        "tag": "Kun.uz",
+        "query": "uzbekistan logistics",
+        "type": "rss",
+        "cap": 2,
+        "language": "ru",
+    },
+    {
+        "url": "https://asiaplustj.info/ru/rss",
+        "tag": "Азия-Плюс",
+        "query": "tajikistan transport",
+        "type": "rss",
+        "cap": 2,
+        "language": "ru",
+    },
+    {
+        "url": "https://turkmenportal.com/rss",
+        "tag": "Туркменпортал",
+        "query": "turkmenistan transport",
+        "type": "rss",
+        "cap": 2,
+        "language": "ru",
+    },
+    # === ЗАПАСНЫЕ АНГЛОЯЗЫЧНЫЕ ИСТОЧНИКИ ===
+    # (только если новость о странах ЦА)
+    {
+        "url": "https://www.railfreight.com/feed",
+        "tag": "RailFreight",
+        "query": "central asia rail freight",
+        "type": "rss",
+        "cap": 1,
+        "language": "en",
+    },
+    {
+        "url": "https://theloadstar.com/feed/",
+        "tag": "The Loadstar",
+        "query": "central asia logistics",
+        "type": "rss",
+        "cap": 1,
+        "language": "en",
+    },
 ]
 
-# Новость должна содержать хотя бы одно из этих слов (в заголовке или
-# кратком описании), иначе отбрасывается — даже если пришла из
-# "логистической" ленты. Поддержаны русские и английские варианты.
-LOGISTICS_KEYWORDS = [
-    "logist", "freight", "cargo", "shipping", "supply chain", "rail", "railway",
-    "port ", "container", "customs", "truck", "warehous", "transport", "corridor",
-    "export", "import", "carrier", "vessel", "intermodal",
-    "логист", "груз", "перевозк", "транспорт", "порт", "контейнер", "таможен",
-    "склад", "жд", "железнодорож", "коридор", "экспорт", "импорт", "фрахт",
-    "судоходств", "автоперевоз", "грузопоток",
-]
 
-
-def is_relevant(title, summary):
+# ============================================================
+# 4. ФУНКЦИЯ ПРОВЕРКИ РЕЛЕВАНТНОСТИ
+# ============================================================
+def is_relevant(title, summary, language="ru"):
+    """Проверяет, что новость:
+    - о странах Центральной Азии
+    - о логистике
+    - на русском языке (если language='ru')
+    """
     text = (title + " " + summary).lower()
-    return any(kw in text for kw in LOGISTICS_KEYWORDS)
+    
+    # Проверка на русский язык (если указано)
+    if language == "ru":
+        # Если в тексте нет кириллицы — это английская новость
+        cyrillic_chars = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
+        if cyrillic_chars < 5:  # очень мало русских букв
+            return False
+    
+    # Должна быть хотя бы одна страна ЦА
+    has_country = any(country in text for country in CENTRAL_ASIA_COUNTRIES)
+    if not has_country:
+        return False
+    
+    # И хотя бы одно логистическое слово
+    has_logistics = any(kw in text for kw in LOGISTICS_KEYWORDS_RU)
+    if not has_logistics:
+        return False
+    
+    return True
 
 
+# ============================================================
+# 5. ФУНКЦИЯ ДЛЯ КАРТИНОК
+# ============================================================
 def pick_photo(query):
+    """Получает картинку из Unsplash"""
     if not UNSPLASH_KEY:
         return None
     try:
@@ -102,14 +200,16 @@ def pick_photo(query):
 
 
 def strip_html(text):
-    """Убирает HTML-теги (<p>, <br />, ссылки и т.п.) из текста RSS-описания
-    и разворачивает HTML-сущности (&amp; -> & и т.д.)."""
+    """Убирает HTML-теги из текста"""
     text = re.sub(r"<[^>]+>", " ", text or "")
     text = html.unescape(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
+# ============================================================
+# 6. ПАРСИНГ RSS
+# ============================================================
 def collect_from_rss(feed):
     out = []
     try:
@@ -117,35 +217,56 @@ def collect_from_rss(feed):
     except Exception as e:
         print("Не удалось прочитать ленту", feed["url"], e)
         return out
-    for entry in parsed.entries[:8]:
+    
+    language = feed.get("language", "ru")
+    
+    for entry in parsed.entries[:10]:
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
         summary = strip_html(entry.get("summary") or "")[:220]
-
-        if not feed.get("skip_filter") and not is_relevant(title, summary):
+        
+        # Проверяем релевантность
+        if not is_relevant(title, summary, language):
             continue
-
+        
+        # Пытаемся найти картинку
+        photo = None
+        # Сначала пробуем взять из entry
+        if hasattr(entry, 'media_content') and entry.media_content:
+            for media in entry.media_content:
+                if media.get('url'):
+                    photo = {
+                        "url": media['url'],
+                        "credit": feed["tag"],
+                        "creditUrl": entry.get("link", ""),
+                    }
+                    break
+        
+        # Если нет — через Unsplash
+        if not photo:
+            photo = pick_photo(feed["query"])
+        
         out.append({
             "topic": feed["tag"],
             "title": title,
-            "summary": summary,
+            "summary": summary or "Подробности — по ссылке на источник.",
             "sourceUrl": entry.get("link", ""),
             "publishedAt": entry.get("published", ""),
-            "photo": pick_photo(feed["query"]),
+            "photo": photo,
         })
     return out
 
 
-# Ссылки на статьи в списке тега всегда вида .../ru/<слаг>-<8-символьный хэш>
+# ============================================================
+# 7. ПАРСИНГ КАЗИНФОРМА
+# ============================================================
 KAZINFORM_ARTICLE_RE = re.compile(
     r'href="(https://www\.inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8})"'
 )
 
 
 def _meta_tag(html_text, prop):
-    """Достаёт content нужного <meta property="..."> / <meta name="...">,
-    независимо от порядка атрибутов внутри тега."""
     for pattern in (
         r'<meta[^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\'][^>]+content=["\']([^"\']*)["\']',
         r'<meta[^>]+content=["\']([^"\']*)["\'][^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\']',
@@ -157,10 +278,6 @@ def _meta_tag(html_text, prop):
 
 
 def collect_from_kazinform(feed):
-    """Прямой парсинг inform.kz: сначала список статей со страницы тега,
-    затем у каждой статьи читаются её собственные <meta> og:title/
-    og:description/og:image/article:published_time. Никаких сторонних
-    сервисов — только requests + встроенный re."""
     out = []
     try:
         r = requests.get(feed["url"], timeout=20, headers=HEADERS)
@@ -177,7 +294,7 @@ def collect_from_kazinform(feed):
         if u not in seen:
             seen.add(u)
             urls.append(u)
-    urls = urls[:8]
+    urls = urls[:10]
 
     for url in urls:
         try:
@@ -195,17 +312,18 @@ def collect_from_kazinform(feed):
         image_url = _meta_tag(article_html, "og:image")
         published = _meta_tag(article_html, "article:published_time")
 
-        if not feed.get("skip_filter") and not is_relevant(title, summary):
+        # Проверяем релевантность
+        if not is_relevant(title, summary, "ru"):
             continue
 
         photo = None
         if image_url and "plug.png" not in image_url:
-            photo = {"url": image_url, "credit": feed["tag"], "creditUrl": url}
+            photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         else:
-            photo = pick_photo(feed["query"])
+            photo = pick_photo("kazakhstan logistics transport")
 
         out.append({
-            "topic": feed["tag"],
+            "topic": "Казинформ",
             "title": title,
             "summary": summary or "Подробности — по ссылке на источник.",
             "sourceUrl": url,
@@ -215,32 +333,70 @@ def collect_from_kazinform(feed):
     return out
 
 
+# ============================================================
+# 8. СБОР ВСЕХ НОВОСТЕЙ
+# ============================================================
 def collect():
     items = []
+    # Сначала собираем русскоязычные источники
     for feed in FEEDS:
         if len(items) >= MAX_ITEMS:
             break
         feed_type = feed.get("type", "rss")
-        new_items = collect_from_kazinform(feed) if feed_type == "kazinform" else collect_from_rss(feed)
-        cap = feed.get("cap", MAX_ITEMS)  # сколько максимум взять именно из этого источника
+        if feed_type == "kazinform":
+            new_items = collect_from_kazinform(feed)
+        else:
+            new_items = collect_from_rss(feed)
+        
+        cap = feed.get("cap", MAX_ITEMS)
         for it in new_items[:cap]:
             items.append(it)
             if len(items) >= MAX_ITEMS:
                 break
+    
+    # Если мало новостей, пробуем англоязычные источники
+    if len(items) < MAX_ITEMS:
+        for feed in FEEDS:
+            if feed.get("language") != "en":
+                continue
+            if len(items) >= MAX_ITEMS:
+                break
+            feed_type = feed.get("type", "rss")
+            if feed_type == "kazinform":
+                new_items = collect_from_kazinform(feed)
+            else:
+                new_items = collect_from_rss(feed)
+            cap = feed.get("cap", MAX_ITEMS)
+            for it in new_items[:cap]:
+                items.append(it)
+                if len(items) >= MAX_ITEMS:
+                    break
+    
     return items[:MAX_ITEMS]
 
 
+# ============================================================
+# 9. MAIN
+# ============================================================
 def main():
     items = collect()
+    
+    # Если новостей нет — используем демо
+    is_demo = len(items) == 0
+    
     data = {
-        "isDemo": len(items) == 0,
+        "isDemo": is_demo,
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "items": items,
     }
+    
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print("Записано:", OUT_PATH, "-> карточек:", len(items))
+    
+    print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
+    if is_demo:
+        print("ВНИМАНИЕ: Новостей не найдено! Используются демо-данные.")
 
 
 if __name__ == "__main__":

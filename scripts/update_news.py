@@ -1,7 +1,7 @@
 """
 Обновляет data/news.json — новости с inform.kz, asiaplustj.info, 24.kg.
-Заголовки и описания переписываются. Картинки из Unsplash без подписей.
-Плашки (topic) и кредиты (credit) убраны полностью.
+Заголовки и описания переписываются с изменением структуры.
+Картинки из Unsplash без подписей. Плашки и ссылки убраны.
 """
 import html
 import json
@@ -95,23 +95,56 @@ def generate_unique_title(original_title):
         title = f"{title} в Центральной Азии"
     return title
 
+# ============================================================
+# 2. УЛУЧШЕННАЯ ФУНКЦИЯ РЕРАЙТА (МЕНЯЕТ СТРУКТУРУ)
+# ============================================================
 def generate_unique_summary(original_summary):
+    """Генерирует уникальное описание с изменением структуры"""
     if not original_summary:
         return "Подробнее в источнике."
+    
+    # 1. Замена синонимов
     summary = rewrite_text(original_summary)
+    
+    # 2. Разбиваем на предложения
+    sentences = [s.strip() for s in summary.split('.') if s.strip()]
+    
+    # 3. Если больше 2 предложений — меняем порядок
+    if len(sentences) >= 3:
+        # Переставляем предложения
+        if len(sentences) >= 3:
+            sentences[0], sentences[1] = sentences[1], sentences[0]
+        if len(sentences) >= 4:
+            sentences[2], sentences[3] = sentences[3], sentences[2]
+        summary = '. '.join(sentences) + '.'
+    
+    # 4. Если есть запятые — меняем порядок частей
+    if ',' in summary and len(summary.split(',')) >= 3:
+        parts = summary.split(',')
+        if len(parts) >= 3:
+            parts[0], parts[1] = parts[1], parts[0]
+            if len(parts) >= 4:
+                parts[2], parts[3] = parts[3], parts[2]
+            summary = ','.join(parts)
+    
+    # 5. Укорачиваем до 2-3 предложений
     sentences = summary.split('.')
     if len(sentences) > 3:
         summary = '. '.join(sentences[:3]) + '.'
+    
+    # 6. Добавляем разные вводные слова
     starters = [
-        "По информации,", "Как сообщается,", "Согласно данным,", 
-        "В ходе развития логистики,", "В рамках проектов,"
+        "По информации издания,", "Как сообщается в публикации,", 
+        "Согласно данным,", "В ходе развития логистики,", 
+        "В рамках новых проектов,", "Как отмечается в обзоре,"
     ]
     if len(summary) > 20 and not any(summary.startswith(s) for s in starters):
         summary = random.choice(starters) + " " + summary[0].lower() + summary[1:]
+    
     return summary
 
 # ============================================================
-# 2. КАРТИНКИ ИЗ UNSPLASH (БЕЗ CREDIT)
+# 3. КАРТИНКИ ИЗ UNSPLASH (БЕЗ CREDIT)
 # ============================================================
 def pick_photo_from_unsplash(title, summary):
     if not UNSPLASH_KEY:
@@ -130,7 +163,6 @@ def pick_photo_from_unsplash(title, summary):
         results = r.json().get("results") or []
         if results:
             photo = results[0]
-            # ❌ УБРАЛИ credit и creditUrl — больше нет чёрной плашки
             return {
                 "url": photo["urls"]["regular"],
             }
@@ -147,7 +179,7 @@ def pick_photo_from_unsplash(title, summary):
     }
 
 # ============================================================
-# 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ============================================================
 def strip_html(text):
     text = re.sub(r"<[^>]+>", " ", text or "")
@@ -166,7 +198,7 @@ def _meta_tag(html_text, prop):
     return ""
 
 # ============================================================
-# 4. ПАРСИНГ inform.kz
+# 5. ПАРСИНГ inform.kz
 # ============================================================
 def collect_inform_kz():
     out = []
@@ -211,7 +243,7 @@ def collect_inform_kz():
     return out
 
 # ============================================================
-# 5. ПАРСИНГ asiaplustj.info
+# 6. ПАРСИНГ asiaplustj.info
 # ============================================================
 def collect_asiaplus():
     out = []
@@ -256,7 +288,7 @@ def collect_asiaplus():
     return out
 
 # ============================================================
-# 6. ПАРСИНГ 24.kg
+# 7. ПАРСИНГ 24.kg
 # ============================================================
 def collect_24kg():
     out = []
@@ -288,7 +320,7 @@ def collect_24kg():
     return out
 
 # ============================================================
-# 7. СБОР
+# 8. СБОР
 # ============================================================
 def collect():
     items = []
@@ -311,7 +343,7 @@ def collect():
     return unique_items[:MAX_ITEMS]
 
 # ============================================================
-# 8. MAIN
+# 9. MAIN
 # ============================================================
 def main():
     print("🚀 Начинаем сбор новостей с рерайтом...")

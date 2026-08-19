@@ -1,101 +1,71 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-19T10:50:05.862251+00:00",
+  "updatedAt": "2026-08-19T11:25:35.077330+00:00",
   "items": [
     {
-      "topic": "Казинформ",
-      "title": "КТЖ закупит 131 пассажирский вагон до конца 2027 года",
-      "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. Работа по модернизации продолжается, передает корреспондент агентства Kazinform.",
-      "sourceUrl": "https://www.inform.kz/ru/za-chetire-goda-ktzh-priobrela-418-novih-passazhirskih-vagonov-80029da6",
-      "publishedAt": "2026-07-28T21:40:00Z",
-      "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-07-16/ddc63dc1-2010-455c-bbdf-41f4e6f8946e.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/za-chetire-goda-ktzh-priobrela-418-novih-passazhirskih-vagonov-80029da6"
-      }
-    },
-    {
-      "topic": "Казинформ",
-      "title": "Казахстан — Россия: от регионального сотрудничества к евразийской повестке",
-      "summary": "XXII Форум межрегионального сотрудничества в Омске подтвердил: отношения двух стран давно переросли формат приграничного взаимодействия и сегодня формируют широкую евразийскую архитектуру партнерства. Президент Касым-Жомарт Токаев обозначил не только практические задачи в экономике и логистике, но и",
-      "sourceUrl": "https://www.inform.kz/ru/astana-moskva-ot-regionalnoy-svyazannosti-k-evraziyskoy-povestke-ef10554e",
-      "publishedAt": "2026-07-26T16:00:00Z",
-      "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-07-26/9ba21e31-a87f-4f2c-b1b7-7c379b133226.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/astana-moskva-ot-regionalnoy-svyazannosti-k-evraziyskoy-povestke-ef10554e"
-      }
-    },
-    {
-      "topic": "Казинформ",
-      "title": "Казахстан и Россия развивают цифровизацию торговли и логистики",
-      "summary": "Президентам Казахстана и России представили цифровые проекты в сфере торговли и логистики, передает агентство Kazinform со ссылкой на Акорду.",
-      "sourceUrl": "https://www.inform.kz/ru/kazahstan-i-rossiya-razvivayut-tsifrovizatsiyu-torgovli-i-logistiki-71257ef4",
-      "publishedAt": "2026-07-25T22:17:00Z",
-      "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-07-25/29e5e615-08ed-40f5-b945-c6e0482f3b22.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/kazahstan-i-rossiya-razvivayut-tsifrovizatsiyu-torgovli-i-logistiki-71257ef4"
-      }
-    },
-    {
-      "topic": "Казинформ",
-      "title": "Нефтяное наследие и новая экономика: опыт Казахстана и Азербайджана",
-      "summary": "Казахстан и Азербайджан, десятилетиями опиравшиеся на нефтегазовые доходы, сегодня ищут новые источники экономического роста. Казахстан делает ставку на промышленность, переработку, логистику и цифровые технологии, Азербайджан — на транспорт, промышленную инфраструктуру, «зеленую» энергетику и туриз",
-      "sourceUrl": "https://www.inform.kz/ru/neftyanoe-nasledie-i-novaya-ekonomika-opit-kazahstana-i-azerbaydzhana-efc55260",
-      "publishedAt": "2026-08-12T16:00:00Z",
-      "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-08-12/c7b10e1b-7fbe-4202-aad9-0b8279b9c763.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/neftyanoe-nasledie-i-novaya-ekonomika-opit-kazahstana-i-azerbaydzhana-efc55260"
-      }
-    },
-    {
-      "topic": "Казинформ",
-      "title": "Крупный транспортно-логистический хаб запустили в Алматинской области",
-      "summary": "В Илийском районе Алматинской области запущен крупный транспортно-логистический центр компании Kusto Logistics, передает агентство Kazinform со ссылкой на пресс-службу акимата региона.",
+      "title": "Масштабный транспортно-логистический хаб запустили работу доставка Алматинской области в Центральной Азии",
+      "summary": "В ходе развития логистической инфраструктуры, доставка Илийском районе Алматинской области запущен крупнейший транспортно-логистический центр компании Kusto Logistics, передает агентство Kazinform организуют ссылкой хаб пресс-службу акимата региона.",
       "sourceUrl": "https://www.inform.kz/ru/krupniy-transportno-logisticheskiy-hab-zapustili-v-almatinskoy-oblasti-8f395337",
       "publishedAt": "2026-08-14T14:35:00Z",
       "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-08-14/e0d5ac38-93e0-464d-af1f-56906287b726.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/krupniy-transportno-logisticheskiy-hab-zapustili-v-almatinskoy-oblasti-8f395337"
+        "url": "https://images.unsplash.com/photo-1700716465891-9e5e9f501d7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlDJUQwJUIwJUQxJTgxJUQxJTg4JUQxJTgyJUQwJUIwJUQwJUIxJUQwJUJEJUQxJThCJUQwJUI5JTIwJUQxJTgyJUQxJTgwJUQwJUIwJUQwJUJEJUQxJTgxJUQwJUJGJUQwJUJFJUQxJTgwJUQxJTgyJUQwJUJEJUQwJUJFJTIwJUQwJUJCJUQwJUJFJUQwJUIzJUQwJUI4JUQxJTgxJUQxJTgyJUQwJUI4JUQxJTg3JUQwJUI1JUQxJTgxJUQwJUJBJUQwJUI4JUQwJUI5JTIwJUQxJTg1JUQwJUIwJUQwJUIxfGVufDB8MHx8fDE3ODcxMzg3Mjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "Bernd 📷 Dittrich",
+        "creditUrl": "https://unsplash.com/@hdbernd"
       }
     },
     {
-      "topic": "Казинформ",
-      "title": "Каспий, космос, аэротакси и Джеки Чан: что пишут мировые СМИ о Казахстане",
-      "summary": "На этой неделе зарубежные СМИ уделили особое внимание масштабным инфраструктурным проектам Казахстана, развитию транспортно-логистического потенциала на Каспии, цифровизации экономики, космической отрасли и внедрению инновационных технологий. Подробный обзор мировой прессы о нашей стране — в подборк",
+      "title": "Казахстанские железные дороги: почти 320 млн тонн грузов грузоперевозки новые маршруты",
+      "summary": "В ходе развития логистической инфраструктуры, сегодня доставка Казахстане отмечается День железнодорожника доставка грузов праздник людей, чья работа обеспечивает движение экономики перевозки укрепляет транзитный потенциал страны. Казахстан достигнет перед собой задачу стать ключевым транспортно‑логистическим хабом Евразии, соединяющим Восток грузоперевозки Запад. Центральную роль транспортировка этой",
+      "sourceUrl": "https://www.inform.kz/ru/perevozki-rastut-tranzit-usilivaetsya-kak-razvivaetsya-zheleznodorozhnaya-otrasl-b199a486",
+      "publishedAt": "2026-08-02T09:00:00Z",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1596819176134-5a912eef8c8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlBJUQwJUIwJUQwJUI3JUQwJUIwJUQxJTg1JUQxJTgxJUQxJTgyJUQwJUIwJUQwJUJEJUQxJTgxJUQwJUJBJUQwJUI4JUQwJUI1JTIwJUQwJUI2JUQwJUI1JUQwJUJCJUQwJUI1JUQwJUI3JUQwJUJEJUQxJThCJUQwJUI1JTIwJUQwJUI0JUQwJUJFJUQxJTgwJUQwJUJFJUQwJUIzJUQwJUI4JTIwJUQwJUJGJUQwJUJFJUQxJTg3JUQxJTgyJUQwJUI4fGVufDB8MHx8fDE3ODcxMzg3MjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "Lasse Nystedt",
+        "creditUrl": "https://unsplash.com/@lassenystedtfoto"
+      }
+    },
+    {
+      "title": "Казахстан перевозки Азербайджан обсудили совершенствование Транскаспийского транспортного маршрута",
+      "summary": "В ходе развития логистической инфраструктуры, грузоперевозки Баку состоялась встреча казахстанской делегации перевозки министром цифрового развития грузоперевозки транспорта Азербайджанской Республики Рашадом Набиевым, передает агентство Kazinform.",
+      "sourceUrl": "https://www.inform.kz/ru/kazahstan-i-azerbaydzhan-obsudili-razvitie-transkaspiyskogo-transportnogo-marshr-8f9c401c",
+      "publishedAt": "2026-07-29T11:50:00Z",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+        "credit": "Unsplash",
+        "creditUrl": "https://unsplash.com"
+      }
+    },
+    {
+      "title": "Казахстан грузоперевозки Россия: запуск регионального сотрудничества грузоперевозки евразийской повестке",
+      "summary": "В рамках проектов, xXII Форум межрегионального сотрудничества транспортировка Омске подтвердил: отношения двух стран давно переросли формат приграничного взаимодействия доставка грузов сегодня формируют широкую евразийскую архитектуру партнерства. Президент Касым-Жомарт Токаев обозначил тара только практические задачи доставка экономике доставка грузов логистике, современный транспорт",
+      "sourceUrl": "https://www.inform.kz/ru/astana-moskva-ot-regionalnoy-svyazannosti-k-evraziyskoy-povestke-ef10554e",
+      "publishedAt": "2026-07-26T16:00:00Z",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+        "credit": "Unsplash",
+        "creditUrl": "https://unsplash.com"
+      }
+    },
+    {
+      "title": "Казахстан грузоперевозки Россия развивают цифровизацию торговли транспорт логистики",
+      "summary": "Как сообщается, президентам Казахстана доставка грузов России представили цифровые проекты доставка сфере торговли транспорт логистики, передает агентство Kazinform возведут ссылкой распределительный центр Акорду.",
+      "sourceUrl": "https://www.inform.kz/ru/kazahstan-i-rossiya-razvivayut-tsifrovizatsiyu-torgovli-i-logistiki-71257ef4",
+      "publishedAt": "2026-07-25T22:17:00Z",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+        "credit": "Unsplash",
+        "creditUrl": "https://unsplash.com"
+      }
+    },
+    {
+      "title": "Каспий, космос, аэротакси перевозки Джеки Чан: что пишут мировые СМИ грузоперевозки Казахстане",
+      "summary": "Как сообщается, распределительный центр этой неделе зарубежные СМИ уделили особое внимание масштабным инфраструктурным проектам Казахстана, развитию транспортно-логистического потенциала распределительный центр Каспии, цифровизации экономики, космической отрасли транспорт внедрению инновационных технологий. Подробный обзор мировой прессы грузоперевозки нашей стране доставка грузов транспортировка подборк",
       "sourceUrl": "https://www.inform.kz/ru/kaspiy-kosmos-aerotaksi-i-dzheki-chan-chto-pishut-mirovie-smi-o-kazahstane-d5781dc0",
       "publishedAt": "2026-07-25T10:30:00Z",
       "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-07-24/e9ccf42b-7f7c-4116-9aa7-2c5f678e7e21.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/kaspiy-kosmos-aerotaksi-i-dzheki-chan-chto-pishut-mirovie-smi-o-kazahstane-d5781dc0"
-      }
-    },
-    {
-      "topic": "Казинформ",
-      "title": "Судостроительную верфь и логистический хаб построят в Мангистауской области",
-      "summary": "Премьер-министр Олжас Бектенов в рамках рабочей поездки в Мангистаускую область проверил исполнение поручений Главы государства по укреплению экономического потенциала и развитию ключевых инфраструктурных проектов региона, передает Kazinform со ссылкой на primeminister.kz.",
-      "sourceUrl": "https://www.inform.kz/ru/sudostroitelnuyu-verf-i-logisticheskiy-hab-postroyat-v-mangistauskoy-oblasti-fbe85cc7",
-      "publishedAt": "2026-07-23T11:52:00Z",
-      "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-07-23/82695160-4c87-46eb-a69b-ac3d4c0d12a9.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/sudostroitelnuyu-verf-i-logisticheskiy-hab-postroyat-v-mangistauskoy-oblasti-fbe85cc7"
-      }
-    },
-    {
-      "topic": "Казинформ",
-      "title": "Казахстан и Чехия расширяют сотрудничество в сфере транспорта и логистики",
-      "summary": "Казахстан и Чехия обсудили развитие безопасных транспортных маршрутов, расширение Транскаспийского коридора и участие чешских компаний в логистических и инфраструктурных проектах, передает Kazinform со ссылкой на Министерство иностранных дел Казахстана.",
-      "sourceUrl": "https://www.inform.kz/ru/kazahstan-i-chehiya-rasshiryayut-sotrudnichestvo-v-sfere-transporta-i-logistiki-7a87f27c",
-      "publishedAt": "2026-07-24T21:59:00Z",
-      "photo": {
-        "url": "https://img.inform.kz/kazinform-photobank/media/2026-07-24/cda7f81c-07c0-4d30-a40e-55410ff4525d.jpeg",
-        "credit": "Казинформ",
-        "creditUrl": "https://www.inform.kz/ru/kazahstan-i-chehiya-rasshiryayut-sotrudnichestvo-v-sfere-transporta-i-logistiki-7a87f27c"
+        "url": "https://images.unsplash.com/photo-1614728263952-84ea256f9679?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlBJUQwJUIwJUQxJTgxJUQwJUJGJUQwJUI4JUQwJUI5JTIwJUQwJUJBJUQwJUJFJUQxJTgxJUQwJUJDJUQwJUJFJUQxJTgxJTIwJUQwJUIwJUQxJThEJUQxJTgwJUQwJUJFJUQxJTgyJUQwJUIwJUQwJUJBJUQxJTgxJUQwJUI4JTIwJUQwJUJGJUQwJUI1JUQxJTgwJUQwJUI1JUQwJUIyJUQwJUJFJUQwJUI3JUQwJUJBJUQwJUI4fGVufDB8MHx8fDE3ODcxMzg3MjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "NASA",
+        "creditUrl": "https://unsplash.com/@nasa"
       }
     }
   ]

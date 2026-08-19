@@ -1,6 +1,7 @@
 """
 Обновляет data/news.json — логистические новости.
-Картинки: сначала из статьи, если нет — из Unsplash по заголовку.
+Картинки: сначала из статьи (с фильтром), потом Unsplash.
+Для каждого источника свои правила.
 """
 import html
 import json
@@ -92,109 +93,190 @@ def strip_html(text):
 
 
 # ============================================================
-# 3. ПОИСК КАРТИНКИ В СТАТЬЕ
+# 3. ПОИСК КАРТИНКИ В СТАТЬЕ (УЛУЧШЕННЫЙ)
 # ============================================================
-def is_avatar_or_logo(img_url, img_alt=""):
-    """Проверяет, является ли картинка аватаром, логотипом или иконкой"""
+def is_bad_image(img_url, img_alt=""):
+    """Проверяет, является ли картинка аватаром, логотипом, иконкой или рекламой"""
     img_lower = img_url.lower()
     alt_lower = img_alt.lower() if img_alt else ""
     
-    avatar_keywords = [
+    bad_patterns = [
         "avatar", "profile", "user", "author", "writer", "contributor",
         "logo", "brand", "icon", "favicon", "sprite", "badge",
-        "gravatar", "profil", "author-photo",
+        "gravatar", "profil", "author-photo", "headshot",
+        "ad", "ads", "banner", "sponsor", "promo",
+        "placeholder", "plug.png", "pixel", "transparent",
+        "1x1", "blank", "no-image", "noimage",
     ]
     
-    small_extensions = [".ico", ".svg"]
-    
-    for kw in avatar_keywords:
-        if kw in img_lower or kw in alt_lower:
+    # Проверяем URL и alt
+    for pattern in bad_patterns:
+        if pattern in img_lower or pattern in alt_lower:
             return True
     
-    if "avatar" in img_lower or "profile" in img_lower:
+    # Проверяем расширения
+    if img_lower.endswith(('.ico', '.svg')):
         return True
     
-    for ext in small_extensions:
-        if img_lower.endswith(ext):
+    # Проверяем размер (если есть в URL)
+    size_match = re.search(r'[=/](\d+)x(\d+)[=/]', img_lower)
+    if size_match:
+        w = int(size_match.group(1))
+        h = int(size_match.group(2))
+        if w < 100 or h < 100:
             return True
     
     return False
 
 
-def extract_image_from_article(url):
-    """Загружает статью и ищет в ней картинку (пропуская аватары)"""
+def extract_image_from_article(url, feed_tag=""):
+    """Загружает статью и ищет в ней картинку"""
     try:
         r = requests.get(url, timeout=15, headers=HEADERS)
         r.raise_for_status()
         html_content = r.text
     except Exception as e:
-        print(f"  Не удалось загрузить статью для картинки: {e}")
         return None
     
-    # 1. Ищем og:image
+    # Собираем все потенциальные картинки
+    candidates = []
+    
+    # 1. og:image
     og_match = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
     if og_match:
-        img_url = og_match.group(1)
-        if not is_avatar_or_logo(img_url) and not 'plug.png' in img_url.lower():
-            return {"url": img_url, "credit": None, "creditUrl": None}
+        candidates.append(('og:image', og_match.group(1)))
     
-    # 2. Ищем twitter:image
+    # 2. twitter:image
     tw_match = re.search(r'<meta\s+name=["\']twitter:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
     if tw_match:
-        img_url = tw_match.group(1)
-        if not is_avatar_or_logo(img_url) and not 'plug.png' in img_url.lower():
-            return {"url": img_url, "credit": None, "creditUrl": None}
+        candidates.append(('twitter:image', tw_match.group(1)))
     
-    # 3. Ищем первую картинку в статье (не логотип, не аватар)
-    img_matches = re.findall(r'<img[^>]*>', html_content, re.IGNORECASE)
-    for img_tag in img_matches:
+    # 3. Все img теги
+    for img_tag in re.findall(r'<img[^>]*>', html_content, re.IGNORECASE):
         src_match = re.search(r'src=["\']([^"\']+)["\']', img_tag, re.IGNORECASE)
         alt_match = re.search(r'alt=["\']([^"\']*)["\']', img_tag, re.IGNORECASE)
-        
-        if not src_match:
-            continue
-        
-        img_url = src_match.group(1)
-        img_alt = alt_match.group(1) if alt_match else ""
-        
-        if is_avatar_or_logo(img_url, img_alt):
-            continue
-        
-        width_match = re.search(r'width=["\'](\d+)["\']', img_tag, re.IGNORECASE)
-        height_match = re.search(r'height=["\'](\d+)["\']', img_tag, re.IGNORECASE)
-        if width_match and height_match:
-            w = int(width_match.group(1))
-            h = int(height_match.group(1))
-            if w < 100 or h < 100:
+        if src_match:
+            img_url = src_match.group(1)
+            img_alt = alt_match.group(1) if alt_match else ""
+            # Проверяем размер
+            width_match = re.search(r'width=["\'](\d+)["\']', img_tag, re.IGNORECASE)
+            height_match = re.search(r'height=["\'](\d+)["\']', img_tag, re.IGNORECASE)
+            width = int(width_match.group(1)) if width_match else None
+            height = int(height_match.group(1)) if height_match else None
+            
+            candidates.append(('img', img_url, img_alt, width, height))
+    
+    # Фильтруем кандидатов
+    for candidate in candidates:
+        if candidate[0] == 'og:image' or candidate[0] == 'twitter:image':
+            img_url = candidate[1]
+            if not is_bad_image(img_url):
+                # Делаем абсолютный URL
+                if img_url.startswith('/'):
+                    parsed = urlparse(url)
+                    base = f"{parsed.scheme}://{parsed.netloc}"
+                    img_url = urljoin(base, img_url)
+                return {"url": img_url, "credit": None, "creditUrl": None}
+        else:
+            img_url, img_alt, width, height = candidate[1], candidate[2], candidate[3], candidate[4]
+            
+            # Пропускаем маленькие картинки
+            if width and width < 200:
                 continue
-        
-        if img_url.startswith('/'):
-            parsed = urlparse(url)
-            base = f"{parsed.scheme}://{parsed.netloc}"
-            img_url = urljoin(base, img_url)
-        
-        if img_url.startswith('http') and not img_url.startswith('data:'):
-            return {"url": img_url, "credit": None, "creditUrl": None}
+            if height and height < 200:
+                continue
+            
+            if not is_bad_image(img_url, img_alt):
+                if img_url.startswith('/'):
+                    parsed = urlparse(url)
+                    base = f"{parsed.scheme}://{parsed.netloc}"
+                    img_url = urljoin(base, img_url)
+                if img_url.startswith('http') and not img_url.startswith('data:'):
+                    return {"url": img_url, "credit": None, "creditUrl": None}
     
     return None
 
 
 # ============================================================
-# 4. ПОИСК КАРТИНКИ В UNSPLASH ПО ЗАГОЛОВКУ
+# 4. СПЕЦИАЛЬНЫЕ ПРАВИЛА ДЛЯ ИСТОЧНИКОВ
+# ============================================================
+def get_photo_for_source(url, feed_tag, title="", summary="", entry=None):
+    """Ищет картинку с учетом особенностей источника"""
+    
+    # Для The Loadstar — часто avatar, лучше сразу искать в статье
+    if 'theloadstar' in url.lower():
+        # Пробуем найти картинку в статье
+        photo = extract_image_from_article(url, feed_tag)
+        if photo:
+            return photo
+        # Если нет — Unsplash
+        return pick_photo_from_unsplash(title, summary)
+    
+    # Для SupplyChainDive — похожая ситуация
+    if 'supplychaindive' in url.lower():
+        photo = extract_image_from_article(url, feed_tag)
+        if photo:
+            return photo
+        return pick_photo_from_unsplash(title, summary)
+    
+    # Для RailFreight — обычно есть media:content
+    if entry and hasattr(entry, 'media_content') and entry.media_content:
+        for media in entry.media_content:
+            img_url = media.get('url', '')
+            if img_url and not is_bad_image(img_url):
+                return {"url": img_url, "credit": feed_tag, "creditUrl": url}
+    
+    # Для остальных — стандартный поиск
+    return get_photo_standard(url, feed_tag, title, summary, entry)
+
+
+def get_photo_standard(url, feed_tag, title="", summary="", entry=None):
+    """Стандартный гибридный поиск"""
+    
+    # 1. RSS media
+    if entry and hasattr(entry, 'media_content') and entry.media_content:
+        for media in entry.media_content:
+            img_url = media.get('url', '')
+            if img_url and not is_bad_image(img_url):
+                return {"url": img_url, "credit": feed_tag, "creditUrl": url}
+    
+    if entry and hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
+        for thumb in entry.media_thumbnail:
+            img_url = thumb.get('url', '')
+            if img_url and not is_bad_image(img_url):
+                return {"url": img_url, "credit": feed_tag, "creditUrl": url}
+    
+    if entry and hasattr(entry, 'enclosures') and entry.enclosures:
+        for enc in entry.enclosures:
+            img_url = enc.get('href', '')
+            if img_url and enc.get('type', '').startswith('image/'):
+                if not is_bad_image(img_url):
+                    return {"url": img_url, "credit": feed_tag, "creditUrl": url}
+    
+    # 2. Из статьи
+    if url:
+        photo = extract_image_from_article(url, feed_tag)
+        if photo:
+            return photo
+    
+    # 3. Unsplash
+    if title:
+        return pick_photo_from_unsplash(title, summary)
+    
+    return None
+
+
+# ============================================================
+# 5. UNSPLASH
 # ============================================================
 def pick_photo_from_unsplash(title, summary):
-    """Ищет картинку в Unsplash по заголовку новости"""
+    """Ищет картинку в Unsplash по заголовку"""
     if not UNSPLASH_KEY:
         return None
     
-    # Очищаем заголовок для поиска
     clean_title = re.sub(r'[^\w\s]', ' ', title)
     words = clean_title.split()[:4]
-    search_query = ' '.join(words)
-    
-    # Если запрос слишком короткий — используем "logistics"
-    if len(search_query) < 5:
-        search_query = "logistics transport"
+    search_query = ' '.join(words) if len(words) >= 2 else "logistics transport"
     
     try:
         r = requests.get(
@@ -213,67 +295,7 @@ def pick_photo_from_unsplash(title, summary):
                 "creditUrl": photo["user"]["links"]["html"],
             }
     except Exception as e:
-        print(f"  Unsplash error: {e}")
-    
-    return None
-
-
-# ============================================================
-# 5. ГИБРИДНЫЙ ПОИСК КАРТИНКИ
-# ============================================================
-def get_photo_for_article(url, feed_tag, title="", summary="", entry=None):
-    """Гибридный поиск: сначала статья, потом Unsplash"""
-    photo = None
-    
-    # 1. Сначала пробуем взять из RSS (media:content)
-    if entry and hasattr(entry, 'media_content') and entry.media_content:
-        for media in entry.media_content:
-            img_url = media.get('url', '')
-            if img_url and not is_avatar_or_logo(img_url):
-                photo = {
-                    "url": img_url,
-                    "credit": feed_tag,
-                    "creditUrl": url,
-                }
-                return photo
-    
-    # 2. Пробуем взять из RSS (media:thumbnail)
-    if entry and hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
-        for thumb in entry.media_thumbnail:
-            img_url = thumb.get('url', '')
-            if img_url and not is_avatar_or_logo(img_url):
-                photo = {
-                    "url": img_url,
-                    "credit": feed_tag,
-                    "creditUrl": url,
-                }
-                return photo
-    
-    # 3. Пробуем взять из RSS (enclosures)
-    if entry and hasattr(entry, 'enclosures') and entry.enclosures:
-        for enc in entry.enclosures:
-            img_url = enc.get('href', '')
-            if img_url and enc.get('type', '').startswith('image/'):
-                if not is_avatar_or_logo(img_url):
-                    photo = {
-                        "url": img_url,
-                        "credit": feed_tag,
-                        "creditUrl": url,
-                    }
-                    return photo
-    
-    # 4. Загружаем статью и ищем картинку в HTML
-    if url:
-        article_photo = extract_image_from_article(url)
-        if article_photo:
-            return article_photo
-    
-    # 5. Если нет картинки в статье — ищем в Unsplash ПО ЗАГОЛОВКУ
-    if title:
-        print(f"  Нет картинки в статье, ищем в Unsplash по: {title[:40]}...")
-        unsplash_photo = pick_photo_from_unsplash(title, summary)
-        if unsplash_photo:
-            return unsplash_photo
+        pass
     
     return None
 
@@ -317,8 +339,8 @@ def collect_from_rss(feed):
         
         link = entry.get("link", "")
         
-        # ГИБРИДНЫЙ ПОИСК: статья -> Unsplash
-        photo = get_photo_for_article(link, feed["tag"], title, summary, entry)
+        # Ищем картинку с учетом источника
+        photo = get_photo_for_source(link, feed["tag"], title, summary, entry)
         
         out.append({
             "topic": feed["tag"],
@@ -386,12 +408,11 @@ def collect_from_kazinform(feed):
 
         ca_score = 2 if is_central_asia(title + " " + summary) else 1
 
-        # ГИБРИДНЫЙ ПОИСК: сначала картинка из статьи, потом Unsplash
         photo = None
-        if image_url and "plug.png" not in image_url and not is_avatar_or_logo(image_url):
+        if image_url and "plug.png" not in image_url and not is_bad_image(image_url):
             photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         else:
-            photo = get_photo_for_article(url, feed["tag"], title, summary)
+            photo = get_photo_for_source(url, feed["tag"], title, summary)
 
         out.append({
             "topic": "Казинформ",
@@ -445,7 +466,7 @@ def main():
     
     for i, item in enumerate(items):
         has_photo = "✅" if item.get("photo") else "❌"
-        source = item.get("photo", {}).get("credit", "неизвестно") if item.get("photo") else "нет"
+        source = item.get("photo", {}).get("credit", "unsplash") if item.get("photo") else "нет"
         print(f"{i+1}. {has_photo} [{source}] {item['title'][:50]}...")
 
 

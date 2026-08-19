@@ -1,7 +1,7 @@
 """
-Обновляет data/news.json — ТОЛЬКО новости о логистике в странах ЦА:
-Казахстан, Узбекистан, Кыргызстан, Таджикистан, Туркменистан.
-Языки: русский, казахский (кириллица).
+Обновляет data/news.json — логистические новости со всего мира,
+с автоматическим переводом на русский язык.
+Новости о странах ЦА получают приоритет.
 """
 import html
 import json
@@ -20,143 +20,93 @@ HEADERS = {
 }
 
 # ============================================================
-# 1. ТОЛЬКО ЭТИ СТРАНЫ (поиск в тексте новости)
+# 1. СТРАНЫ ЦА (для приоритета)
 # ============================================================
-COUNTRIES_PATTERNS = [
-    # Казахстан
-    r"казахстан|қазақстан|kazakhstan|kz",
-    r"астана|astana|алматы|almaty|шығыс|shygys",
-    # Узбекистан
-    r"узбекистан|o'zbekiston|uzbekistan|uz",
-    r"ташкент|tashkent|самарканд|samarkand",
-    # Кыргызстан
-    r"кыргызстан|kyrgyzstan|kg|кыргыз",
-    r"бишкек|bishkek|ош|osh",
-    # Таджикистан
-    r"таджикистан|tojikiston|tajikistan|tj",
-    r"душанбе|dushanbe",
-    # Туркменистан
-    r"туркменистан|turkmenistan|tm",
-    r"ашхабад|ashgabat",
-    # Общие
-    r"центральн(?:ая|ой|ую|ые|ых) ази|central asia",
-    r"средн(?:яя|ей|юю|ие|их) ази|middle asia",
+CENTRAL_ASIA = [
+    "казахстан", "kazakhstan", "kz",
+    "узбекистан", "uzbekistan", "uz",
+    "кыргызстан", "kyrgyzstan", "kg",
+    "таджикистан", "tajikistan", "tj",
+    "туркменистан", "turkmenistan", "tm",
+    "central asia", "центральная азия",
+    "астана", "astana", "алматы", "almaty",
+    "ташкент", "tashkent", "бишкек", "bishkek",
+    "душанбе", "dushanbe", "ашхабад", "ashgabat",
 ]
 
-# Объединяем в одно регулярное выражение
-COUNTRIES_REGEX = re.compile("|".join(COUNTRIES_PATTERNS), re.IGNORECASE)
-
 # ============================================================
-# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА (русский + казахский)
+# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА
 # ============================================================
-LOGISTICS_KEYWORDS = [
-    # Русские
-    "логистик", "груз", "перевозк", "транспорт", "порт",
-    "контейнер", "таможн", "склад", "жд", "железнодорож",
-    "коридор", "экспорт", "импорт", "фрахт", "судоходств",
-    "автоперевоз", "грузопоток", "транзит", "терминал",
-    "вагон", "локомотив", "магистраль", "автотрасс",
-    "дистрибуци", "инфраструктур", "логистический",
-    "транспортный", "грузовой",
-    # Казахские (кириллица)
-    "логистик", "жүк", "тасымал", "көлік", "порт",
-    "контейнер", "кеден", "қойма", "теміржол",
-    "экспорт", "импорт", "фрахт", "транзит",
-    "терминал", "вагон", "локомотив",
-    # Английские (для поиска в англоязычных источниках)
-    "logist", "freight", "cargo", "shipping", "rail",
-    "railway", "port", "container", "customs", "truck",
-    "warehous", "transport", "corridor", "export",
-    "import", "carrier", "vessel", "intermodal",
+LOGISTICS_WORDS = [
+    "logist", "freight", "cargo", "shipping", "rail", "railway",
+    "port", "container", "customs", "truck", "warehous",
+    "transport", "corridor", "export", "import", "carrier",
+    "vessel", "intermodal", "supply chain", "logistics",
+    "логист", "груз", "перевозк", "транспорт", "порт",
+    "контейнер", "таможен", "склад", "жд", "железнодорож",
+    "коридор", "экспорт", "импорт", "фрахт",
 ]
 
-LOGISTICS_REGEX = re.compile("|".join(LOGISTICS_KEYWORDS), re.IGNORECASE)
+
+def is_logistics(text):
+    text = text.lower()
+    return any(w in text for w in LOGISTICS_WORDS)
+
+
+def is_central_asia(text):
+    text = text.lower()
+    return any(c in text for c in CENTRAL_ASIA)
+
+
+def translate_text(text, target_lang='ru'):
+    """Перевод текста через бесплатный Google Translate"""
+    if not text or len(text.strip()) < 3:
+        return text
+    
+    try:
+        # Проверяем, есть ли кириллица (уже русский)
+        cyrillic = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
+        if cyrillic > len(text) * 0.3:
+            return text  # уже русский
+        
+        url = "https://translate.googleapis.com/translate_a/single"
+        params = {
+            "client": "gtx",
+            "sl": "auto",
+            "tl": target_lang,
+            "dt": "t",
+            "q": text[:500]  # ограничиваем длину
+        }
+        r = requests.get(url, params=params, timeout=10)
+        r.raise_for_status()
+        
+        data = r.json()
+        if data and len(data) > 0 and data[0]:
+            translated = ''.join([part[0] for part in data[0] if part[0]])
+            return translated.strip()
+    except Exception as e:
+        print(f"Translation error: {e}")
+    
+    return text
+
 
 # ============================================================
-# 3. ИСТОЧНИКИ (ТОЛЬКО РУССКОЯЗЫЧНЫЕ + КАЗАХСКИЕ)
+# 3. ИСТОЧНИКИ
 # ============================================================
 FEEDS = [
-    # === КАЗАХСТАН ===
-    {
-        "url": "https://www.inform.kz/tag/logistika_t11100",
-        "tag": "Казинформ",
-        "query": "казахстан логистика",
-        "type": "kazinform",
-        "cap": 4,
-    },
-    {
-        "url": "https://www.inform.kz/tag/transport_t11012",
-        "tag": "Казинформ",
-        "query": "казахстан транспорт",
-        "type": "kazinform",
-        "cap": 2,
-    },
-    # === УЗБЕКИСТАН ===
-    {
-        "url": "https://kun.uz/ru/news/feed",
-        "tag": "Kun.uz",
-        "query": "узбекистан логистика",
-        "type": "rss",
-        "cap": 2,
-    },
-    # === КЫРГЫЗСТАН ===
-    {
-        "url": "https://24.kg/feed/",
-        "tag": "24.kg",
-        "query": "кыргызстан транспорт",
-        "type": "rss",
-        "cap": 2,
-    },
-    # === ТАДЖИКИСТАН ===
-    {
-        "url": "https://asiaplustj.info/ru/rss",
-        "tag": "Азия-Плюс",
-        "query": "таджикистан логистика",
-        "type": "rss",
-        "cap": 2,
-    },
-    # === ТУРКМЕНИСТАН ===
-    {
-        "url": "https://turkmenportal.com/rss",
-        "tag": "Туркменпортал",
-        "query": "туркменистан транспорт",
-        "type": "rss",
-        "cap": 2,
-    },
-    # === ЗАПАСНОЙ: РОССИЙСКИЙ ИСТОЧНИК (может писать о ЦА) ===
-    {
-        "url": "https://www.rzd-partner.ru/export/rss-news/",
-        "tag": "РЖД Партнер",
-        "query": "центральная азия логистика",
-        "type": "rss",
-        "cap": 2,
-    },
+    {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "query": "kazakhstan logistics", "type": "kazinform", "cap": 4},
+    {"url": "https://www.inform.kz/tag/transport_t11012", "tag": "Казинформ", "query": "kazakhstan transport", "type": "kazinform", "cap": 2},
+    {"url": "https://kun.uz/ru/news/feed", "tag": "Kun.uz", "query": "uzbekistan logistics", "type": "rss", "cap": 2},
+    {"url": "https://24.kg/feed/", "tag": "24.kg", "query": "kyrgyzstan transport", "type": "rss", "cap": 2},
+    {"url": "https://asiaplustj.info/ru/rss", "tag": "Азия-Плюс", "query": "tajikistan logistics", "type": "rss", "cap": 2},
+    {"url": "https://turkmenportal.com/rss", "tag": "Туркменпортал", "query": "turkmenistan transport", "type": "rss", "cap": 2},
+    {"url": "https://www.railfreight.com/feed", "tag": "RailFreight", "query": "rail freight", "type": "rss", "cap": 2},
+    {"url": "https://theloadstar.com/feed/", "tag": "The Loadstar", "query": "logistics shipping", "type": "rss", "cap": 2},
+    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "SupplyChainDive", "query": "supply chain", "type": "rss", "cap": 2},
 ]
-
-
-# ============================================================
-# 4. ФУНКЦИЯ ПРОВЕРКИ — НОВОСТЬ ДОЛЖНА БЫТЬ О СТРАНАХ ЦА + ЛОГИСТИКА
-# ============================================================
-def is_relevant(title, summary):
-    """Проверяет, что новость:
-    1. Упоминает одну из стран ЦА
-    2. Связана с логистикой
-    """
-    text = (title + " " + summary)
-    
-    # Проверка на страны ЦА
-    if not COUNTRIES_REGEX.search(text):
-        return False
-    
-    # Проверка на логистику
-    if not LOGISTICS_REGEX.search(text):
-        return False
-    
-    return True
 
 
 def pick_photo(query):
-    """Получает картинку из Unsplash"""
     if not UNSPLASH_KEY:
         return None
     try:
@@ -188,9 +138,6 @@ def strip_html(text):
     return text
 
 
-# ============================================================
-# 5. ПАРСИНГ RSS
-# ============================================================
 def collect_from_rss(feed):
     out = []
     try:
@@ -199,26 +146,28 @@ def collect_from_rss(feed):
         print("RSS error", feed["url"], e)
         return out
     
-    for entry in parsed.entries[:15]:
+    for entry in parsed.entries[:10]:
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
         summary = strip_html(entry.get("summary") or "")[:300]
         
-        # ЖЕСТКИЙ ФИЛЬТР: только страны ЦА + логистика
-        if not is_relevant(title, summary):
+        # Пропускаем только если нет логистических слов
+        if not is_logistics(title + " " + summary):
             continue
         
-        # Пытаемся найти картинку
+        # ПЕРЕВОД на русский
+        title_ru = translate_text(title)
+        summary_ru = translate_text(summary)
+        
+        # Определяем приоритет (есть ли страны ЦА)
+        ca_score = 2 if is_central_asia(title + " " + summary) else 0
+        
         photo = None
         if hasattr(entry, 'media_content') and entry.media_content:
             for media in entry.media_content:
                 if media.get('url'):
-                    photo = {
-                        "url": media['url'],
-                        "credit": feed["tag"],
-                        "creditUrl": entry.get("link", ""),
-                    }
+                    photo = {"url": media['url'], "credit": feed["tag"], "creditUrl": entry.get("link", "")}
                     break
         
         if not photo:
@@ -226,21 +175,18 @@ def collect_from_rss(feed):
         
         out.append({
             "topic": feed["tag"],
-            "title": title,
-            "summary": summary or "Подробности — по ссылке на источник.",
+            "title": title_ru,
+            "summary": summary_ru or "Подробности — по ссылке на источник.",
             "sourceUrl": entry.get("link", ""),
             "publishedAt": entry.get("published", ""),
             "photo": photo,
+            "_ca_score": ca_score,
+            "_original_title": title,  # сохраняем оригинал для отладки
         })
     return out
 
 
-# ============================================================
-# 6. ПАРСИНГ КАЗИНФОРМА
-# ============================================================
-KAZINFORM_ARTICLE_RE = re.compile(
-    r'href="(https://www\.inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8})"'
-)
+KAZINFORM_ARTICLE_RE = re.compile(r'href="(https://www\.inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8})"')
 
 
 def _meta_tag(html_text, prop):
@@ -271,7 +217,7 @@ def collect_from_kazinform(feed):
         if u not in seen:
             seen.add(u)
             urls.append(u)
-    urls = urls[:15]
+    urls = urls[:10]
 
     for url in urls:
         try:
@@ -289,15 +235,17 @@ def collect_from_kazinform(feed):
         image_url = _meta_tag(article_html, "og:image")
         published = _meta_tag(article_html, "article:published_time")
 
-        # ЖЕСТКИЙ ФИЛЬТР
-        if not is_relevant(title, summary):
+        if not is_logistics(title + " " + summary):
             continue
+
+        # Определяем приоритет (есть ли страны ЦА)
+        ca_score = 2 if is_central_asia(title + " " + summary) else 1
 
         photo = None
         if image_url and "plug.png" not in image_url:
             photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         else:
-            photo = pick_photo(feed["query"])
+            photo = pick_photo("logistics transport")
 
         out.append({
             "topic": "Казинформ",
@@ -306,60 +254,54 @@ def collect_from_kazinform(feed):
             "sourceUrl": url,
             "publishedAt": published,
             "photo": photo,
+            "_ca_score": ca_score,
         })
     return out
 
 
-# ============================================================
-# 7. СБОР
-# ============================================================
 def collect():
     items = []
     seen_titles = set()
     
     for feed in FEEDS:
-        if len(items) >= MAX_ITEMS:
+        if len(items) >= MAX_ITEMS * 2:
             break
-        
         feed_type = feed.get("type", "rss")
-        if feed_type == "kazinform":
-            new_items = collect_from_kazinform(feed)
-        else:
-            new_items = collect_from_rss(feed)
-        
+        new_items = collect_from_kazinform(feed) if feed_type == "kazinform" else collect_from_rss(feed)
         cap = feed.get("cap", MAX_ITEMS)
         for it in new_items[:cap]:
-            # Убираем дубликаты по заголовку
             title_key = it["title"][:50].lower()
             if title_key in seen_titles:
                 continue
             seen_titles.add(title_key)
             items.append(it)
-            if len(items) >= MAX_ITEMS:
-                break
+    
+    # Сортируем: сначала новости о странах ЦА
+    items.sort(key=lambda x: x.get("_ca_score", 0), reverse=True)
+    
+    # Удаляем временные поля
+    for item in items:
+        item.pop("_ca_score", None)
+        item.pop("_original_title", None)
     
     return items[:MAX_ITEMS]
 
 
-# ============================================================
-# 8. MAIN
-# ============================================================
 def main():
     items = collect()
-    
     data = {
         "isDemo": len(items) == 0,
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "items": items,
     }
-    
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    
     print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
-    if len(items) == 0:
-        print("ВНИМАНИЕ: Новостей о логистике в странах ЦА не найдено!")
+    
+    # Показываем заголовки для проверки
+    for i, item in enumerate(items):
+        print(f"{i+1}. {item['title'][:60]}...")
 
 
 if __name__ == "__main__":

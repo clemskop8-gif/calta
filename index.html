@@ -1578,7 +1578,7 @@ html {
 
   function renderFeatured(item){
     setFeaturedPhoto(item);
-    document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
+    document.getElementById('newsFeaturedTag').style.display = 'none';
     var titleEl = document.getElementById('newsFeaturedTitle');
     titleEl.innerHTML = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(item.title) + '</a>'

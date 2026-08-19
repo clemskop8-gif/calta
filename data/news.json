@@ -1,54 +1,5 @@
 {
-  "isDemo": false,
-  "updatedAt": "2026-08-19T05:45:21.510950+00:00",
-  "items": [
-    {
-      "topic": "Логистика",
-      "title": "ID Logistics US agrees to pay $2.36 million to resolve false Claims Act allegations",
-      "summary": "For Immediate Release U.S. Attorney’s Office, Middle District of Pennsylvania Tuesday, August 18, 2026 ID Logistics US, Inc. Agrees To Pay $2.36 Million to Resolve False Claims Act Allegations Relating to a Paycheck Prot",
-      "sourceUrl": "https://theloadstar.com/id-logistics-us-agrees-to-pay-2-36-million-to-resolve-false-claims-act-allegations/",
-      "publishedAt": "Tue, 18 Aug 2026 20:04:54 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8ZnJlaWdodCUyMHNoaXBwaW5nJTIwcG9ydHxlbnwwfDB8fHwxNzg3MTE4MzIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "Andy Li",
-        "creditUrl": "https://unsplash.com/@andylid0"
-      }
-    },
-    {
-      "topic": "Логистика",
-      "title": "CNBC: HSBC’s Jain – ‘Chaos is the norm’ (VIDEO)",
-      "summary": "Parash Jain, head of T&L research at HSBC, talks to CNBC about disruption and container shipping – to watch the video please click here. The post CNBC: HSBC’s Jain – ‘Chaos is the norm’ (VIDEO) appeared first on The Load",
-      "sourceUrl": "https://theloadstar.com/cnbc-hsbcs-jain-chaos-is-the-norm-video/",
-      "publishedAt": "Tue, 18 Aug 2026 14:15:25 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8ZnJlaWdodCUyMHNoaXBwaW5nJTIwcG9ydHxlbnwwfDB8fHwxNzg3MTE4MzIwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "Andy Li",
-        "creditUrl": "https://unsplash.com/@andylid0"
-      }
-    },
-    {
-      "topic": "Логистика",
-      "title": "Amazon preps 1M-square-foot distribution center in Connecticut",
-      "summary": "The Norwich facility would store, pick, pack and ship goods to sortations centers and localized delivery centers further downstream the supply chain.",
-      "sourceUrl": "https://www.supplychaindive.com/news/amazon-preps-1m-square-foot-distribution-center-in-connecticut/828085/",
-      "publishedAt": "Tue, 18 Aug 2026 15:11:00 -0400",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1606185540834-d6e7483ee1a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8c3VwcGx5JTIwY2hhaW4lMjBmcmVpZ2h0fGVufDB8MHx8fDE3ODcxMTgzMjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "william william",
-        "creditUrl": "https://unsplash.com/@william07"
-      }
-    },
-    {
-      "topic": "Логистика",
-      "title": "Experts call FCC’s block on foreign robotics a nearshoring tactic",
-      "summary": "While cyberthreats are a growing risk to national security, the agency’s sweeping block on humanoids, quadrupeds and mobile robot imports could reinvigorate domestic suppliers.",
-      "sourceUrl": "https://www.supplychaindive.com/news/experts-call-fccs-block-on-foreign-robotics-a-nearshoring-tactic/827423/",
-      "publishedAt": "Tue, 18 Aug 2026 10:31:00 -0400",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1606185540834-d6e7483ee1a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8c3VwcGx5JTIwY2hhaW4lMjBmcmVpZ2h0fGVufDB8MHx8fDE3ODcxMTgzMjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "william william",
-        "creditUrl": "https://unsplash.com/@william07"
-      }
-    }
-  ]
+  "isDemo": true,
+  "updatedAt": "2026-08-19T05:56:54.363963+00:00",
+  "items": []
 }

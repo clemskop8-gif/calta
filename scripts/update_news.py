@@ -1,13 +1,13 @@
 """
 Обновляет data/news.json — новости ТОЛЬКО с inform.kz (Казинформ).
-Картинки берутся из самих статей.
+Расширенный поиск ссылок на статьи.
 """
 import html
 import json
 import os
 import re
 from datetime import datetime, timezone
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 import requests
 
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
@@ -18,22 +18,7 @@ HEADERS = {
 }
 
 # ============================================================
-# 1. ТОЛЬКО ЭТИ СТРАНЫ (для фильтра)
-# ============================================================
-CENTRAL_ASIA = [
-    "казахстан", "қазақстан", "kz",
-    "узбекистан", "o'zbekiston", "uzbekistan", "uz",
-    "кыргызстан", "kyrgyzstan", "kg",
-    "таджикистан", "tojikiston", "tajikistan", "tj",
-    "туркменистан", "turkmenistan", "tm",
-    "центральная азия", "средняя азия",
-    "астана", "astana", "алматы", "almaty",
-    "ташкент", "tashkent", "бишкек", "bishkek",
-    "душанбе", "dushanbe", "ашхабад", "ashgabat",
-]
-
-# ============================================================
-# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА
+# 1. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА
 # ============================================================
 LOGISTICS_WORDS = [
     "логист", "груз", "перевозк", "транспорт", "порт",
@@ -45,7 +30,7 @@ LOGISTICS_WORDS = [
 ]
 
 # ============================================================
-# 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ============================================================
 def strip_html(text):
     text = re.sub(r"<[^>]+>", " ", text or "")
@@ -53,20 +38,11 @@ def strip_html(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-def is_relevant(title, summary):
-    """Проверяет, что новость о логистике в странах ЦА"""
+def is_logistics(title, summary):
     text = (title + " " + summary).lower()
-    
-    # Должна быть хотя бы одна страна ЦА
-    has_country = any(c in text for c in CENTRAL_ASIA)
-    
-    # И хотя бы одно логистическое слово
-    has_logistics = any(w in text for w in LOGISTICS_WORDS)
-    
-    return has_country and has_logistics
+    return any(w in text for w in LOGISTICS_WORDS)
 
 def _meta_tag(html_text, prop):
-    """Достаёт content из meta тега"""
     for pattern in (
         r'<meta[^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\'][^>]+content=["\']([^"\']*)["\']',
         r'<meta[^>]+content=["\']([^"\']*)["\'][^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\']',
@@ -77,18 +53,10 @@ def _meta_tag(html_text, prop):
     return ""
 
 # ============================================================
-# 4. ПАРСИНГ КАЗИНФОРМА
+# 3. ПАРСИНГ КАЗИНФОРМА — РАСШИРЕННЫЙ ПОИСК ССЫЛОК
 # ============================================================
-# Регулярка для ссылок на статьи
-KAZINFORM_ARTICLE_RE = re.compile(
-    r'href="(https://www\.inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8})"'
-)
-
 def collect_from_kazinform():
-    """Парсит новости с inform.kz"""
     out = []
-    
-    # Страница с тегом "Логистика"
     url = "https://www.inform.kz/tag/logistika_t11100"
     
     try:
@@ -96,31 +64,61 @@ def collect_from_kazinform():
         r.raise_for_status()
         html_content = r.text
     except Exception as e:
-        print(f"Ошибка при загрузке страницы Казинформа: {e}")
+        print(f"Ошибка загрузки страницы: {e}")
         return out
     
-    # Находим все ссылки на статьи
-    seen = set()
-    urls = []
-    for m in KAZINFORM_ARTICLE_RE.finditer(html_content):
-        u = m.group(1)
-        if u not in seen:
-            seen.add(u)
-            urls.append(u)
+    # === РАСШИРЕННЫЙ ПОИСК ССЫЛОК ===
+    all_links = set()
     
-    print(f"Найдено ссылок на статьи: {len(urls)}")
+    # 1. Ищем ссылки в href
+    href_links = re.findall(
+        r'href=["\']([^"\']*/ru/[a-z0-9\-]+-[a-f0-9]{8})["\']',
+        html_content,
+        re.IGNORECASE
+    )
+    for link in href_links:
+        if link.startswith('http'):
+            all_links.add(link)
+        else:
+            all_links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
     
-    # Парсим каждую статью
-    for article_url in urls[:15]:  # Берем до 15 статей
+    # 2. Ищем ссылки в data-href (если такие есть)
+    data_href_links = re.findall(
+        r'data-href=["\']([^"\']*ru/[a-z0-9\-]+-[a-f0-9]{8})["\']',
+        html_content,
+        re.IGNORECASE
+    )
+    for link in data_href_links:
+        if link.startswith('http'):
+            all_links.add(link)
+        else:
+            all_links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
+    
+    # 3. Ищем прямые ссылки на статьи (без кавычек)
+    direct_links = re.findall(
+        r'(?:https?://)?(?:www\.)?inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8}',
+        html_content,
+        re.IGNORECASE
+    )
+    for link in direct_links:
+        if not link.startswith('http'):
+            link = "https://" + link if not link.startswith('https://') else link
+        all_links.add(link)
+    
+    print(f"Найдено уникальных ссылок: {len(all_links)}")
+    
+    # Сортируем ссылки (простейший способ — по длине, чтобы короткие шли первыми)
+    urls = sorted(list(all_links), key=len)
+    
+    for article_url in urls[:20]:  # Больше попыток
         try:
             ar = requests.get(article_url, timeout=20, headers=HEADERS)
             ar.raise_for_status()
             article_html = ar.text
         except Exception as e:
-            print(f"Ошибка при загрузке статьи {article_url}: {e}")
+            print(f"Ошибка загрузки статьи: {e}")
             continue
         
-        # Извлекаем метаданные
         title = _meta_tag(article_html, "og:title")
         if not title:
             continue
@@ -129,12 +127,12 @@ def collect_from_kazinform():
         image_url = _meta_tag(article_html, "og:image")
         published = _meta_tag(article_html, "article:published_time")
         
-        # Проверяем релевантность
-        if not is_relevant(title, summary):
-            print(f"  Пропущено (не релевантно): {title[:50]}...")
+        # Проверяем на логистику
+        if not is_logistics(title, summary):
+            print(f"  ⏭ Пропущено (не логистика): {title[:40]}...")
             continue
         
-        # Формируем картинку
+        # Ищем картинку
         photo = None
         if image_url and "plug.png" not in image_url.lower():
             photo = {
@@ -143,7 +141,7 @@ def collect_from_kazinform():
                 "creditUrl": article_url,
             }
         else:
-            # Пробуем найти картинку в статье
+            # Пробуем найти первую картинку в статье
             img_match = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', article_html)
             if img_match:
                 img_url = img_match.group(1)
@@ -156,7 +154,7 @@ def collect_from_kazinform():
                         "creditUrl": article_url,
                     }
         
-        # Если есть картинка — добавляем новость
+        # Добавляем, только если есть картинка
         if photo:
             out.append({
                 "topic": "Казинформ",
@@ -168,19 +166,18 @@ def collect_from_kazinform():
             })
             print(f"  ✅ Добавлено: {title[:50]}...")
         else:
-            print(f"  ❌ Пропущено (нет картинки): {title[:50]}...")
+            print(f"  ❌ Нет картинки: {title[:40]}...")
         
-        # Останавливаемся, если набрали достаточно
         if len(out) >= MAX_ITEMS:
             break
     
     return out[:MAX_ITEMS]
 
 # ============================================================
-# 5. MAIN
+# 4. MAIN
 # ============================================================
 def main():
-    print("Начинаем парсинг Казинформа...")
+    print("Парсинг Казинформа (расширенный поиск)...")
     items = collect_from_kazinform()
     
     data = {
@@ -193,7 +190,7 @@ def main():
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     
-    print(f"\n✅ Записано: {OUT_PATH} -> карточек: {len(items)}")
+    print(f"\n✅ Записано: {OUT_PATH} -> {len(items)} новостей")
     
     if len(items) == 0:
         print("⚠️ ВНИМАНИЕ: Новостей не найдено!")

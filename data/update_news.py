@@ -1,25 +1,19 @@
 """
-Обновляет data/news.json — логистические новости с уникальными картинками.
-Картинки сохраняются локально, чтобы не превышать лимит Unsplash.
+Обновляет data/news.json — логистические новости.
+Картинки берутся ИЗ САМИХ СТАТЕЙ (og:image, media:content, img теги).
 """
 import html
 import json
 import os
 import re
-import hashlib
-import base64
 from datetime import datetime, timezone
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 import feedparser
 import requests
 
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
-IMAGES_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "images")
 MAX_ITEMS = 8
-
-# Создаем папку для картинок
-os.makedirs(IMAGES_DIR, exist_ok=True)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -41,18 +35,8 @@ CENTRAL_ASIA = [
 ]
 
 # ============================================================
-# 2. ЗАПАСНЫЕ КАРТИНКИ (по темам)
+# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА
 # ============================================================
-FALLBACK_IMAGES = {
-    "logistics": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-    "transport": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
-    "port": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
-    "rail": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
-    "container": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-    "truck": "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
-    "default": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-}
-
 LOGISTICS_WORDS = [
     "logist", "freight", "cargo", "shipping", "rail", "railway",
     "port", "container", "customs", "truck", "warehous",
@@ -60,11 +44,8 @@ LOGISTICS_WORDS = [
     "vessel", "intermodal", "supply chain", "logistics",
     "логист", "груз", "перевозк", "транспорт", "порт",
     "контейнер", "таможен", "склад", "жд", "железнодорож",
-    "коридор", "экспорт", "импорт", "фрахт",
+    "коридор", "экспорт", "импорт", "фрахт", "автоперевоз",
 ]
-
-# Кеш картинок (чтобы не запрашивать повторно)
-_photo_cache = {}
 
 
 def is_logistics(text):
@@ -103,70 +84,6 @@ def translate_text(text, target_lang='ru'):
     return text
 
 
-def get_image_theme(title, summary):
-    """Определяет тему новости для подбора картинки"""
-    text = (title + " " + summary).lower()
-    
-    themes = {
-        "port": ["port", "порт", "terminal", "терминал", "docks", "причал"],
-        "rail": ["rail", "railway", "жд", "железнодорож", "train", "поезд", "локомотив"],
-        "container": ["container", "контейнер", "box", "ящик", "cargo"],
-        "truck": ["truck", "грузовик", "trailer", "прицеп", "highway", "трасса"],
-        "air": ["air", "авиа", "plane", "самолет", "airport", "аэропорт"],
-        "warehouse": ["warehous", "склад", "storage", "хранение", "distribution"],
-        "ship": ["ship", "vessel", "судно", "vessel", "морской"],
-    }
-    
-    for theme, keywords in themes.items():
-        if any(kw in text for kw in keywords):
-            return theme
-    
-    return "logistics"
-
-
-def get_cached_photo(theme):
-    """Возвращает картинку из кеша или скачивает новую"""
-    if theme in _photo_cache and _photo_cache[theme]:
-        return _photo_cache[theme]
-    
-    # Пробуем получить из Unsplash
-    if UNSPLASH_KEY:
-        try:
-            r = requests.get(
-                "https://api.unsplash.com/search/photos",
-                params={"query": theme, "per_page": 1, "orientation": "landscape"},
-                headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-                timeout=10,
-            )
-            r.raise_for_status()
-            results = r.json().get("results") or []
-            if results:
-                photo = results[0]
-                _photo_cache[theme] = {
-                    "url": photo["urls"]["regular"],
-                    "credit": photo["user"]["name"],
-                    "creditUrl": photo["user"]["links"]["html"],
-                }
-                return _photo_cache[theme]
-        except Exception as e:
-            print(f"Unsplash error for '{theme}':", e)
-    
-    # Запасной вариант
-    fallback_url = FALLBACK_IMAGES.get(theme, FALLBACK_IMAGES["default"])
-    _photo_cache[theme] = {
-        "url": fallback_url,
-        "credit": "Unsplash",
-        "creditUrl": "https://unsplash.com",
-    }
-    return _photo_cache[theme]
-
-
-def pick_photo_for_news(title, summary):
-    """Подбирает картинку для новости по теме"""
-    theme = get_image_theme(title, summary)
-    return get_cached_photo(theme)
-
-
 def strip_html(text):
     text = re.sub(r"<[^>]+>", " ", text or "")
     text = html.unescape(text)
@@ -175,7 +92,100 @@ def strip_html(text):
 
 
 # ============================================================
-# 3. ИСТОЧНИКИ
+# 3. ПОИСК КАРТИНКИ В СТАТЬЕ
+# ============================================================
+def extract_image_from_article(url):
+    """Загружает статью и ищет в ней картинку"""
+    try:
+        r = requests.get(url, timeout=15, headers=HEADERS)
+        r.raise_for_status()
+        html_content = r.text
+    except Exception as e:
+        print(f"  Не удалось загрузить статью для картинки: {e}")
+        return None
+    
+    # 1. Ищем og:image
+    og_match = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
+    if og_match:
+        img_url = og_match.group(1)
+        if img_url and not img_url.endswith('plug.png') and not 'placeholder' in img_url.lower():
+            return {"url": img_url, "credit": None, "creditUrl": None}
+    
+    # 2. Ищем twitter:image
+    tw_match = re.search(r'<meta\s+name=["\']twitter:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
+    if tw_match:
+        img_url = tw_match.group(1)
+        if img_url and not img_url.endswith('plug.png'):
+            return {"url": img_url, "credit": None, "creditUrl": None}
+    
+    # 3. Ищем первую картинку в статье (не логотип, не иконка)
+    img_matches = re.findall(r'<img[^>]+src=["\']([^"\']+)["\'][^>]*>', html_content, re.IGNORECASE)
+    for img_url in img_matches:
+        # Пропускаем маленькие картинки, логотипы, иконки
+        if any(x in img_url.lower() for x in ['logo', 'icon', 'avatar', 'banner', 'plug.png', 'pixel']):
+            continue
+        # Пропускаем data:image (обычно маленькие)
+        if img_url.startswith('data:'):
+            continue
+        # Если относительный URL — делаем абсолютным
+        if img_url.startswith('/'):
+            parsed = urlparse(url)
+            base = f"{parsed.scheme}://{parsed.netloc}"
+            img_url = urljoin(base, img_url)
+        if img_url.startswith('http'):
+            return {"url": img_url, "credit": None, "creditUrl": None}
+    
+    return None
+
+
+def get_photo_for_article(url, feed_tag, entry=None):
+    """Пытается найти картинку для статьи"""
+    photo = None
+    
+    # 1. Сначала пробуем взять из RSS (media:content)
+    if entry and hasattr(entry, 'media_content') and entry.media_content:
+        for media in entry.media_content:
+            if media.get('url'):
+                photo = {
+                    "url": media['url'],
+                    "credit": feed_tag,
+                    "creditUrl": url,
+                }
+                return photo
+    
+    # 2. Пробуем взять из RSS (media:thumbnail)
+    if entry and hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
+        for thumb in entry.media_thumbnail:
+            if thumb.get('url'):
+                photo = {
+                    "url": thumb['url'],
+                    "credit": feed_tag,
+                    "creditUrl": url,
+                }
+                return photo
+    
+    # 3. Пробуем взять из RSS (enclosures)
+    if entry and hasattr(entry, 'enclosures') and entry.enclosures:
+        for enc in entry.enclosures:
+            if enc.get('href') and enc.get('type', '').startswith('image/'):
+                photo = {
+                    "url": enc['href'],
+                    "credit": feed_tag,
+                    "creditUrl": url,
+                }
+                return photo
+    
+    # 4. Загружаем статью и ищем картинку в HTML
+    if url:
+        article_photo = extract_image_from_article(url)
+        if article_photo:
+            return article_photo
+    
+    return None
+
+
+# ============================================================
+# 4. ИСТОЧНИКИ
 # ============================================================
 FEEDS = [
     {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "type": "kazinform", "cap": 4},
@@ -211,21 +221,16 @@ def collect_from_rss(feed):
         summary_ru = translate_text(summary)
         ca_score = 2 if is_central_asia(title + " " + summary) else 0
         
-        photo = None
-        if hasattr(entry, 'media_content') and entry.media_content:
-            for media in entry.media_content:
-                if media.get('url'):
-                    photo = {"url": media['url'], "credit": feed["tag"], "creditUrl": entry.get("link", "")}
-                    break
+        link = entry.get("link", "")
         
-        if not photo:
-            photo = pick_photo_for_news(title, summary)
+        # Ищем картинку В СТАТЬЕ
+        photo = get_photo_for_article(link, feed["tag"], entry)
         
         out.append({
             "topic": feed["tag"],
             "title": title_ru,
             "summary": summary_ru or "Подробности — по ссылке на источник.",
-            "sourceUrl": entry.get("link", ""),
+            "sourceUrl": link,
             "publishedAt": entry.get("published", ""),
             "photo": photo,
             "_ca_score": ca_score,
@@ -291,7 +296,8 @@ def collect_from_kazinform(feed):
         if image_url and "plug.png" not in image_url:
             photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         else:
-            photo = pick_photo_for_news(title, summary)
+            # Пробуем найти картинку в статье
+            photo = get_photo_for_article(url, feed["tag"])
 
         out.append({
             "topic": "Казинформ",
@@ -343,10 +349,9 @@ def main():
     
     print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
     
-    # Показываем какие картинки подобрались
     for i, item in enumerate(items):
-        theme = "✅" if item.get("photo") else "❌"
-        print(f"{i+1}. {theme} {item['title'][:50]}...")
+        has_photo = "✅" if item.get("photo") else "❌"
+        print(f"{i+1}. {has_photo} {item['title'][:60]}...")
 
 
 if __name__ == "__main__":

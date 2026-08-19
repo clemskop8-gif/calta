@@ -1,7 +1,7 @@
 """
 Обновляет data/news.json — логистические новости со всего мира,
 с автоматическим переводом на русский язык.
-Новости о странах ЦА получают приоритет.
+Для каждой новости ищется уникальная картинка по её заголовку.
 """
 import html
 import json
@@ -64,10 +64,9 @@ def translate_text(text, target_lang='ru'):
         return text
     
     try:
-        # Проверяем, есть ли кириллица (уже русский)
         cyrillic = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
         if cyrillic > len(text) * 0.3:
-            return text  # уже русский
+            return text
         
         url = "https://translate.googleapis.com/translate_a/single"
         params = {
@@ -91,22 +90,49 @@ def translate_text(text, target_lang='ru'):
 
 
 # ============================================================
-# 3. ИСТОЧНИКИ
+# 3. УНИКАЛЬНАЯ КАРТИНКА ДЛЯ КАЖДОЙ НОВОСТИ
 # ============================================================
-FEEDS = [
-    {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "query": "kazakhstan logistics", "type": "kazinform", "cap": 4},
-    {"url": "https://www.inform.kz/tag/transport_t11012", "tag": "Казинформ", "query": "kazakhstan transport", "type": "kazinform", "cap": 2},
-    {"url": "https://kun.uz/ru/news/feed", "tag": "Kun.uz", "query": "uzbekistan logistics", "type": "rss", "cap": 2},
-    {"url": "https://24.kg/feed/", "tag": "24.kg", "query": "kyrgyzstan transport", "type": "rss", "cap": 2},
-    {"url": "https://asiaplustj.info/ru/rss", "tag": "Азия-Плюс", "query": "tajikistan logistics", "type": "rss", "cap": 2},
-    {"url": "https://turkmenportal.com/rss", "tag": "Туркменпортал", "query": "turkmenistan transport", "type": "rss", "cap": 2},
-    {"url": "https://www.railfreight.com/feed", "tag": "RailFreight", "query": "rail freight", "type": "rss", "cap": 2},
-    {"url": "https://theloadstar.com/feed/", "tag": "The Loadstar", "query": "logistics shipping", "type": "rss", "cap": 2},
-    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "SupplyChainDive", "query": "supply chain", "type": "rss", "cap": 2},
-]
+def pick_photo_for_news(title, summary, default_query="logistics"):
+    """Ищет картинку по заголовку новости, если не находит — по теме логистики"""
+    if not UNSPLASH_KEY:
+        return None
+    
+    # Очищаем заголовок от лишних слов для поиска
+    clean_title = re.sub(r'[^\w\s]', ' ', title)
+    words = clean_title.split()[:4]  # берем первые 4 слова
+    search_query = ' '.join(words)
+    
+    # Если запрос слишком короткий или пустой — используем тему
+    if len(search_query) < 5:
+        search_query = default_query
+    
+    # Пробуем найти картинку по заголовку
+    for query in [search_query, default_query]:
+        try:
+            r = requests.get(
+                "https://api.unsplash.com/search/photos",
+                params={"query": query, "per_page": 1, "orientation": "landscape"},
+                headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
+                timeout=15,
+            )
+            r.raise_for_status()
+            results = r.json().get("results") or []
+            if results:
+                photo = results[0]
+                return {
+                    "url": photo["urls"]["regular"],
+                    "credit": photo["user"]["name"],
+                    "creditUrl": photo["user"]["links"]["html"],
+                }
+        except Exception as e:
+            print(f"Unsplash error for '{query}':", e)
+            continue
+    
+    return None
 
 
 def pick_photo(query):
+    """Запасная функция для получения картинки по общему запросу"""
     if not UNSPLASH_KEY:
         return None
     try:
@@ -138,6 +164,22 @@ def strip_html(text):
     return text
 
 
+# ============================================================
+# 4. ИСТОЧНИКИ
+# ============================================================
+FEEDS = [
+    {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "query": "kazakhstan logistics", "type": "kazinform", "cap": 4},
+    {"url": "https://www.inform.kz/tag/transport_t11012", "tag": "Казинформ", "query": "kazakhstan transport", "type": "kazinform", "cap": 2},
+    {"url": "https://kun.uz/ru/news/feed", "tag": "Kun.uz", "query": "uzbekistan logistics", "type": "rss", "cap": 2},
+    {"url": "https://24.kg/feed/", "tag": "24.kg", "query": "kyrgyzstan transport", "type": "rss", "cap": 2},
+    {"url": "https://asiaplustj.info/ru/rss", "tag": "Азия-Плюс", "query": "tajikistan logistics", "type": "rss", "cap": 2},
+    {"url": "https://turkmenportal.com/rss", "tag": "Туркменпортал", "query": "turkmenistan transport", "type": "rss", "cap": 2},
+    {"url": "https://www.railfreight.com/feed", "tag": "RailFreight", "query": "rail freight", "type": "rss", "cap": 2},
+    {"url": "https://theloadstar.com/feed/", "tag": "The Loadstar", "query": "logistics shipping", "type": "rss", "cap": 2},
+    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "SupplyChainDive", "query": "supply chain", "type": "rss", "cap": 2},
+]
+
+
 def collect_from_rss(feed):
     out = []
     try:
@@ -161,15 +203,19 @@ def collect_from_rss(feed):
         
         ca_score = 2 if is_central_asia(title + " " + summary) else 0
         
+        # Ищем КАРТИНКУ ПО ЗАГОЛОВКУ новости
         photo = None
+        
+        # Сначала пробуем взять из RSS
         if hasattr(entry, 'media_content') and entry.media_content:
             for media in entry.media_content:
                 if media.get('url'):
                     photo = {"url": media['url'], "credit": feed["tag"], "creditUrl": entry.get("link", "")}
                     break
         
+        # Если нет — ищем через Unsplash ПО ЗАГОЛОВКУ
         if not photo:
-            photo = pick_photo(feed["query"])
+            photo = pick_photo_for_news(title, summary, feed["query"])
         
         out.append({
             "topic": feed["tag"],
@@ -241,7 +287,8 @@ def collect_from_kazinform(feed):
         if image_url and "plug.png" not in image_url:
             photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         else:
-            photo = pick_photo("logistics transport")
+            # Ищем картинку ПО ЗАГОЛОВКУ
+            photo = pick_photo_for_news(title, summary, "logistics transport")
 
         out.append({
             "topic": "Казинформ",
@@ -293,7 +340,8 @@ def main():
     print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
     
     for i, item in enumerate(items):
-        print(f"{i+1}. {item['title'][:60]}...")
+        has_photo = "✅" if item.get("photo") else "❌"
+        print(f"{i+1}. {has_photo} {item['title'][:60]}...")
 
 
 if __name__ == "__main__":

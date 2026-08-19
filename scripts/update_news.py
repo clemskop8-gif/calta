@@ -1,7 +1,7 @@
 """
 Обновляет data/news.json — новости с inform.kz, asiaplustj.info, 24.kg.
 Заголовки и описания автоматически переписываются (рерайт) для уникальности.
-Картинки — из Unsplash.
+Картинки — из Unsplash. Ссылки на источники убраны.
 """
 import html
 import json
@@ -11,6 +11,7 @@ import random
 from datetime import datetime, timezone
 from urllib.parse import urljoin, urlparse
 import requests
+import feedparser
 
 # ============================================================
 # НАСТРОЙКИ
@@ -70,21 +71,16 @@ def rewrite_text(text):
     if not text:
         return text
     
-    # Разбиваем на слова
     words = text.split()
     new_words = []
     
     for word in words:
-        # Убираем знаки препинания для поиска
         clean_word = re.sub(r'[^\w\s]', '', word).lower()
         replaced = False
         
-        # Ищем замену
         for key, synonyms in SYNONYMS.items():
             if clean_word == key.lower() or clean_word in key.lower():
-                # Случайно выбираем синоним
                 new_word = random.choice(synonyms)
-                # Сохраняем регистр
                 if word[0].isupper():
                     new_word = new_word.capitalize()
                 new_words.append(new_word)
@@ -101,10 +97,8 @@ def generate_unique_title(original_title):
     if not original_title:
         return ""
     
-    # 1. Замена синонимов
     title = rewrite_text(original_title)
     
-    # 2. Перестановка частей (если есть запятая или тире)
     if '—' in title:
         parts = title.split('—')
         if len(parts) == 2:
@@ -114,11 +108,9 @@ def generate_unique_title(original_title):
         if len(parts) == 2:
             title = f"{parts[1].strip()}, {parts[0].strip()}"
     
-    # 3. Добавляем контекст (если нет названия страны)
     countries = ["Казахстан", "Узбекистан", "Кыргызстан", "Таджикистан", "Туркменистан"]
     has_country = any(c in title for c in countries)
     if not has_country and len(title) > 10:
-        # Добавляем случайную страну (для регионального контекста)
         title = f"{title} в Центральной Азии"
     
     return title
@@ -128,15 +120,12 @@ def generate_unique_summary(original_summary):
     if not original_summary:
         return "Подробности — по ссылке на источник."
     
-    # 1. Замена синонимов
     summary = rewrite_text(original_summary)
     
-    # 2. Укорачиваем до 2-3 предложений
     sentences = summary.split('.')
     if len(sentences) > 3:
         summary = '. '.join(sentences[:3]) + '.'
     
-    # 3. Добавляем первое слово для разнообразия
     starters = [
         "По информации источника,", "Как сообщается,", "Согласно данным,", 
         "В ходе развития логистической инфраструктуры,", "В рамках проектов,"
@@ -176,7 +165,6 @@ def pick_photo_from_unsplash(title, summary):
     except Exception:
         pass
     
-    # Запасная картинка
     fallback_urls = [
         "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
         "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
@@ -190,7 +178,7 @@ def pick_photo_from_unsplash(title, summary):
     }
 
 # ============================================================
-# 3. ПАРСИНГ САЙТОВ
+# 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ============================================================
 def strip_html(text):
     text = re.sub(r"<[^>]+>", " ", text or "")
@@ -209,7 +197,7 @@ def _meta_tag(html_text, prop):
     return ""
 
 # ============================================================
-# 3a. inform.kz
+# 4. ПАРСИНГ inform.kz
 # ============================================================
 def collect_inform_kz():
     out = []
@@ -225,7 +213,10 @@ def collect_inform_kz():
     
     all_links = set()
     for link in re.findall(r'href=["\']([^"\']*/ru/[a-z0-9\-]+-[a-f0-9]{8})["\']', html_content, re.IGNORECASE):
-        all_links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
+        if link.startswith('http'):
+            all_links.add(link)
+        else:
+            all_links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
     
     print(f"inform.kz: найдено {len(all_links)} ссылок")
     
@@ -243,7 +234,6 @@ def collect_inform_kz():
         summary = _meta_tag(article_html, "og:description")[:300]
         published = _meta_tag(article_html, "article:published_time")
         
-        # РЕРАЙТ
         new_title = generate_unique_title(title)
         new_summary = generate_unique_summary(summary)
         photo = pick_photo_from_unsplash(new_title, new_summary)
@@ -251,17 +241,16 @@ def collect_inform_kz():
         out.append({
             "title": new_title,
             "summary": new_summary or "Подробности — по ссылке на источник.",
-            "sourceUrl": article_url,  # ← можешь убрать, если не хочешь ссылок
             "publishedAt": published,
             "photo": photo,
-            "_original": title[:50] + "..."  # для отладки
+            "_original": title[:50] + "..."
         })
         print(f"  ✅ inform.kz: {new_title[:50]}...")
     
     return out
 
 # ============================================================
-# 3b. asiaplustj.info
+# 5. ПАРСИНГ asiaplustj.info
 # ============================================================
 def collect_asiaplus():
     out = []
@@ -275,7 +264,6 @@ def collect_asiaplus():
         print(f"asiaplustj ошибка: {e}")
         return out
     
-    # Ищем ссылки на статьи
     all_links = set()
     for link in re.findall(r'href=["\'](https?://asiaplustj\.info/[^"\']+\.html)["\']', html_content, re.IGNORECASE):
         if 'economic' in link or 'logistics' in link or 'transport' in link:
@@ -297,11 +285,9 @@ def collect_asiaplus():
         summary = _meta_tag(article_html, "og:description")[:300]
         published = _meta_tag(article_html, "article:published_time")
         
-        # Проверяем на логистику
         if not any(w in (title + summary).lower() for w in ['логист', 'транспорт', 'перевозк', 'груз', 'контейнер', 'порт']):
             continue
         
-        # РЕРАЙТ
         new_title = generate_unique_title(title)
         new_summary = generate_unique_summary(summary)
         photo = pick_photo_from_unsplash(new_title, new_summary)
@@ -309,7 +295,6 @@ def collect_asiaplus():
         out.append({
             "title": new_title,
             "summary": new_summary or "Подробности — по ссылке на источник.",
-            "sourceUrl": article_url,
             "publishedAt": published,
             "photo": photo,
             "_original": title[:50] + "..."
@@ -319,14 +304,13 @@ def collect_asiaplus():
     return out
 
 # ============================================================
-# 3c. 24.kg
+# 6. ПАРСИНГ 24.kg (через RSS)
 # ============================================================
 def collect_24kg():
     out = []
     url = "https://24.kg/feed/"
     
     try:
-        import feedparser
         parsed = feedparser.parse(url, request_headers=HEADERS)
     except Exception as e:
         print(f"24.kg ошибка: {e}")
@@ -340,11 +324,9 @@ def collect_24kg():
             continue
         summary = strip_html(entry.get("summary") or "")[:300]
         
-        # Проверяем на логистику
         if not any(w in (title + summary).lower() for w in ['логист', 'транспорт', 'перевозк', 'груз', 'контейнер', 'порт', 'економик', 'инвестиц']):
             continue
         
-        # РЕРАЙТ
         new_title = generate_unique_title(title)
         new_summary = generate_unique_summary(summary)
         photo = pick_photo_from_unsplash(new_title, new_summary)
@@ -352,7 +334,6 @@ def collect_24kg():
         out.append({
             "title": new_title,
             "summary": new_summary or "Подробности — по ссылке на источник.",
-            "sourceUrl": entry.get("link", ""),
             "publishedAt": entry.get("published", ""),
             "photo": photo,
             "_original": title[:50] + "..."
@@ -362,7 +343,7 @@ def collect_24kg():
     return out
 
 # ============================================================
-# 4. СБОР
+# 7. СБОР И ОБЪЕДИНЕНИЕ
 # ============================================================
 def collect():
     items = []
@@ -395,7 +376,7 @@ def collect():
     return unique_items[:MAX_ITEMS]
 
 # ============================================================
-# 5. MAIN
+# 8. MAIN
 # ============================================================
 def main():
     print("🚀 Начинаем сбор новостей с рерайтом...")
@@ -412,6 +393,10 @@ def main():
         json.dump(data, f, ensure_ascii=False, indent=2)
     
     print(f"\n✅ Записано: {OUT_PATH} -> {len(items)} новостей")
+    
+    # Показываем примеры для проверки
+    for i, item in enumerate(items[:3]):
+        print(f"  {i+1}. {item['title'][:60]}...")
 
 if __name__ == "__main__":
     main()

@@ -1,19 +1,25 @@
 """
-Обновляет data/news.json — логистические новости со всего мира,
-с автоматическим переводом на русский язык.
-Для каждой новости ищется уникальная картинка по её заголовку.
+Обновляет data/news.json — логистические новости с уникальными картинками.
+Картинки сохраняются локально, чтобы не превышать лимит Unsplash.
 """
 import html
 import json
 import os
 import re
+import hashlib
+import base64
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 import feedparser
 import requests
 
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
+IMAGES_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "images")
 MAX_ITEMS = 8
+
+# Создаем папку для картинок
+os.makedirs(IMAGES_DIR, exist_ok=True)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
@@ -35,8 +41,18 @@ CENTRAL_ASIA = [
 ]
 
 # ============================================================
-# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА
+# 2. ЗАПАСНЫЕ КАРТИНКИ (по темам)
 # ============================================================
+FALLBACK_IMAGES = {
+    "logistics": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+    "transport": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+    "port": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+    "rail": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+    "container": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+    "truck": "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+    "default": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+}
+
 LOGISTICS_WORDS = [
     "logist", "freight", "cargo", "shipping", "rail", "railway",
     "port", "container", "customs", "truck", "warehous",
@@ -46,6 +62,9 @@ LOGISTICS_WORDS = [
     "контейнер", "таможен", "склад", "жд", "железнодорож",
     "коридор", "экспорт", "импорт", "фрахт",
 ]
+
+# Кеш картинок (чтобы не запрашивать повторно)
+_photo_cache = {}
 
 
 def is_logistics(text):
@@ -59,15 +78,12 @@ def is_central_asia(text):
 
 
 def translate_text(text, target_lang='ru'):
-    """Перевод текста через бесплатный Google Translate"""
     if not text or len(text.strip()) < 3:
         return text
-    
     try:
         cyrillic = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
         if cyrillic > len(text) * 0.3:
             return text
-        
         url = "https://translate.googleapis.com/translate_a/single"
         params = {
             "client": "gtx",
@@ -78,83 +94,77 @@ def translate_text(text, target_lang='ru'):
         }
         r = requests.get(url, params=params, timeout=10)
         r.raise_for_status()
-        
         data = r.json()
         if data and len(data) > 0 and data[0]:
             translated = ''.join([part[0] for part in data[0] if part[0]])
             return translated.strip()
     except Exception as e:
         print(f"Translation error: {e}")
-    
     return text
 
 
-# ============================================================
-# 3. УНИКАЛЬНАЯ КАРТИНКА ДЛЯ КАЖДОЙ НОВОСТИ
-# ============================================================
-def pick_photo_for_news(title, summary, default_query="logistics"):
-    """Ищет картинку по заголовку новости, если не находит — по теме логистики"""
-    if not UNSPLASH_KEY:
-        return None
+def get_image_theme(title, summary):
+    """Определяет тему новости для подбора картинки"""
+    text = (title + " " + summary).lower()
     
-    # Очищаем заголовок от лишних слов для поиска
-    clean_title = re.sub(r'[^\w\s]', ' ', title)
-    words = clean_title.split()[:4]  # берем первые 4 слова
-    search_query = ' '.join(words)
+    themes = {
+        "port": ["port", "порт", "terminal", "терминал", "docks", "причал"],
+        "rail": ["rail", "railway", "жд", "железнодорож", "train", "поезд", "локомотив"],
+        "container": ["container", "контейнер", "box", "ящик", "cargo"],
+        "truck": ["truck", "грузовик", "trailer", "прицеп", "highway", "трасса"],
+        "air": ["air", "авиа", "plane", "самолет", "airport", "аэропорт"],
+        "warehouse": ["warehous", "склад", "storage", "хранение", "distribution"],
+        "ship": ["ship", "vessel", "судно", "vessel", "морской"],
+    }
     
-    # Если запрос слишком короткий или пустой — используем тему
-    if len(search_query) < 5:
-        search_query = default_query
+    for theme, keywords in themes.items():
+        if any(kw in text for kw in keywords):
+            return theme
     
-    # Пробуем найти картинку по заголовку
-    for query in [search_query, default_query]:
+    return "logistics"
+
+
+def get_cached_photo(theme):
+    """Возвращает картинку из кеша или скачивает новую"""
+    if theme in _photo_cache and _photo_cache[theme]:
+        return _photo_cache[theme]
+    
+    # Пробуем получить из Unsplash
+    if UNSPLASH_KEY:
         try:
             r = requests.get(
                 "https://api.unsplash.com/search/photos",
-                params={"query": query, "per_page": 1, "orientation": "landscape"},
+                params={"query": theme, "per_page": 1, "orientation": "landscape"},
                 headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-                timeout=15,
+                timeout=10,
             )
             r.raise_for_status()
             results = r.json().get("results") or []
             if results:
                 photo = results[0]
-                return {
+                _photo_cache[theme] = {
                     "url": photo["urls"]["regular"],
                     "credit": photo["user"]["name"],
                     "creditUrl": photo["user"]["links"]["html"],
                 }
+                return _photo_cache[theme]
         except Exception as e:
-            print(f"Unsplash error for '{query}':", e)
-            continue
+            print(f"Unsplash error for '{theme}':", e)
     
-    return None
+    # Запасной вариант
+    fallback_url = FALLBACK_IMAGES.get(theme, FALLBACK_IMAGES["default"])
+    _photo_cache[theme] = {
+        "url": fallback_url,
+        "credit": "Unsplash",
+        "creditUrl": "https://unsplash.com",
+    }
+    return _photo_cache[theme]
 
 
-def pick_photo(query):
-    """Запасная функция для получения картинки по общему запросу"""
-    if not UNSPLASH_KEY:
-        return None
-    try:
-        r = requests.get(
-            "https://api.unsplash.com/search/photos",
-            params={"query": query, "per_page": 1, "orientation": "landscape"},
-            headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-            timeout=15,
-        )
-        r.raise_for_status()
-        results = r.json().get("results") or []
-        if not results:
-            return None
-        photo = results[0]
-        return {
-            "url": photo["urls"]["regular"],
-            "credit": photo["user"]["name"],
-            "creditUrl": photo["user"]["links"]["html"],
-        }
-    except Exception as e:
-        print("Unsplash error:", e)
-        return None
+def pick_photo_for_news(title, summary):
+    """Подбирает картинку для новости по теме"""
+    theme = get_image_theme(title, summary)
+    return get_cached_photo(theme)
 
 
 def strip_html(text):
@@ -165,18 +175,18 @@ def strip_html(text):
 
 
 # ============================================================
-# 4. ИСТОЧНИКИ
+# 3. ИСТОЧНИКИ
 # ============================================================
 FEEDS = [
-    {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "query": "kazakhstan logistics", "type": "kazinform", "cap": 4},
-    {"url": "https://www.inform.kz/tag/transport_t11012", "tag": "Казинформ", "query": "kazakhstan transport", "type": "kazinform", "cap": 2},
-    {"url": "https://kun.uz/ru/news/feed", "tag": "Kun.uz", "query": "uzbekistan logistics", "type": "rss", "cap": 2},
-    {"url": "https://24.kg/feed/", "tag": "24.kg", "query": "kyrgyzstan transport", "type": "rss", "cap": 2},
-    {"url": "https://asiaplustj.info/ru/rss", "tag": "Азия-Плюс", "query": "tajikistan logistics", "type": "rss", "cap": 2},
-    {"url": "https://turkmenportal.com/rss", "tag": "Туркменпортал", "query": "turkmenistan transport", "type": "rss", "cap": 2},
-    {"url": "https://www.railfreight.com/feed", "tag": "RailFreight", "query": "rail freight", "type": "rss", "cap": 2},
-    {"url": "https://theloadstar.com/feed/", "tag": "The Loadstar", "query": "logistics shipping", "type": "rss", "cap": 2},
-    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "SupplyChainDive", "query": "supply chain", "type": "rss", "cap": 2},
+    {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "type": "kazinform", "cap": 4},
+    {"url": "https://www.inform.kz/tag/transport_t11012", "tag": "Казинформ", "type": "kazinform", "cap": 2},
+    {"url": "https://kun.uz/ru/news/feed", "tag": "Kun.uz", "type": "rss", "cap": 2},
+    {"url": "https://24.kg/feed/", "tag": "24.kg", "type": "rss", "cap": 2},
+    {"url": "https://asiaplustj.info/ru/rss", "tag": "Азия-Плюс", "type": "rss", "cap": 2},
+    {"url": "https://turkmenportal.com/rss", "tag": "Туркменпортал", "type": "rss", "cap": 2},
+    {"url": "https://www.railfreight.com/feed", "tag": "RailFreight", "type": "rss", "cap": 2},
+    {"url": "https://theloadstar.com/feed/", "tag": "The Loadstar", "type": "rss", "cap": 2},
+    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "SupplyChainDive", "type": "rss", "cap": 2},
 ]
 
 
@@ -197,25 +207,19 @@ def collect_from_rss(feed):
         if not is_logistics(title + " " + summary):
             continue
         
-        # ПЕРЕВОД на русский
         title_ru = translate_text(title)
         summary_ru = translate_text(summary)
-        
         ca_score = 2 if is_central_asia(title + " " + summary) else 0
         
-        # Ищем КАРТИНКУ ПО ЗАГОЛОВКУ новости
         photo = None
-        
-        # Сначала пробуем взять из RSS
         if hasattr(entry, 'media_content') and entry.media_content:
             for media in entry.media_content:
                 if media.get('url'):
                     photo = {"url": media['url'], "credit": feed["tag"], "creditUrl": entry.get("link", "")}
                     break
         
-        # Если нет — ищем через Unsplash ПО ЗАГОЛОВКУ
         if not photo:
-            photo = pick_photo_for_news(title, summary, feed["query"])
+            photo = pick_photo_for_news(title, summary)
         
         out.append({
             "topic": feed["tag"],
@@ -287,8 +291,7 @@ def collect_from_kazinform(feed):
         if image_url and "plug.png" not in image_url:
             photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         else:
-            # Ищем картинку ПО ЗАГОЛОВКУ
-            photo = pick_photo_for_news(title, summary, "logistics transport")
+            photo = pick_photo_for_news(title, summary)
 
         out.append({
             "topic": "Казинформ",
@@ -337,11 +340,13 @@ def main():
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    
     print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
     
+    # Показываем какие картинки подобрались
     for i, item in enumerate(items):
-        has_photo = "✅" if item.get("photo") else "❌"
-        print(f"{i+1}. {has_photo} {item['title'][:60]}...")
+        theme = "✅" if item.get("photo") else "❌"
+        print(f"{i+1}. {theme} {item['title'][:50]}...")
 
 
 if __name__ == "__main__":

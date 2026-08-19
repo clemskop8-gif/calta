@@ -1,46 +1,5 @@
 {
-  "isDemo": false,
-  "updatedAt": "2026-08-19T10:30:15.137363+00:00",
-  "items": [
-    {
-      "topic": "The Loadstar",
-      "title": "Борьба за долю рынка среди лайнеров увеличивает портфель заказов на коробчатые суда",
-      "summary": "Борьба за долю рынка среди судоходных линий привела к тому, что соотношение количества заказов на контейнерные перевозки к парку достигло нового максимума – почти 42%. Лидер рынка MSC продолжает расширять разрыв в мощностях со своими аналогами, пополнив свой обширный портфель заказов на прошлой неделе десятью судами водоизмещением 21 850 TEU, заказанными у Hengli Heavy Indu.",
-      "sourceUrl": "https://theloadstar.com/race-for-market-share-among-liners-fattens-box-ship-orderbooks/",
-      "publishedAt": "Wed, 19 Aug 2026 10:18:35 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1685599504130-9ee12eef06eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8UmFjZSUyMGZvciUyMG1hcmtldCUyMHNoYXJlfGVufDB8MHx8fDE3ODcxMzUzOTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "Almas Salakhov",
-        "creditUrl": "https://unsplash.com/@therealslkhv"
-      }
-    },
-    {
-      "topic": "The Loadstar",
-      "title": "ID Logistics US соглашается выплатить 2,36 миллиона долларов для урегулирования ложных обвинений в Законе о претензиях",
-      "summary": "Для немедленного распространения Прокуратура США, Средний округ Пенсильвании. Вторник, 18 августа 2026 г. ID Logistics US, Inc. соглашается выплатить 2,36 миллиона долларов для разрешения обвинений в соответствии с Законом о ложных исках, связанных с кредитом по программе защиты заработной платы. ГАРРИСБУРГ – Прокуратура США по средним делам",
-      "sourceUrl": "https://theloadstar.com/id-logistics-us-agrees-to-pay-2-36-million-to-resolve-false-claims-act-allegations/",
-      "publishedAt": "Tue, 18 Aug 2026 20:04:54 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1559297434-fae8a1916a79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8SUQlMjBMb2dpc3RpY3MlMjBVUyUyMGFncmVlc3xlbnwwfDB8fHwxNzg3MTM0MjI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
-        "credit": "Bernd 📷 Dittrich",
-        "creditUrl": "https://unsplash.com/@hdbernd"
-      }
-    },
-    {
-      "topic": "SupplyChainDive",
-      "title": "Amazon готовит распределительный центр площадью 1 миллион квадратных футов в Коннектикуте",
-      "summary": "Предприятие в Норидже будет хранить, комплектовать, упаковывать и отправлять товары в сортировочные центры и локализованные центры доставки, расположенные дальше по цепочке поставок.",
-      "sourceUrl": "https://www.supplychaindive.com/news/amazon-preps-1m-square-foot-distribution-center-in-connecticut/828085/",
-      "publishedAt": "Tue, 18 Aug 2026 15:11:00 -0400",
-      "photo": null
-    },
-    {
-      "topic": "SupplyChainDive",
-      "title": "Эксперты называют блокировку FCC иностранной робототехники тактикой пришоринга",
-      "summary": "Хотя киберугрозы представляют собой растущий риск для национальной безопасности, решительный запрет агентства на импорт гуманоидов, четвероногих и мобильных роботов может оживить отечественных поставщиков.",
-      "sourceUrl": "https://www.supplychaindive.com/news/experts-call-fccs-block-on-foreign-robotics-a-nearshoring-tactic/827423/",
-      "publishedAt": "Tue, 18 Aug 2026 10:31:00 -0400",
-      "photo": null
-    }
-  ]
+  "isDemo": true,
+  "updatedAt": "2026-08-19T10:37:45.538803+00:00",
+  "items": []
 }

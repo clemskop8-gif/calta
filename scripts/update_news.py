@@ -1,6 +1,6 @@
 """
-Обновляет data/news.json — логистические новости.
-Картинки: из статьи (любая) или Unsplash.
+Обновляет data/news.json — новости ТОЛЬКО с inform.kz (Казинформ).
+Картинки берутся из самих статей.
 """
 import html
 import json
@@ -8,10 +8,8 @@ import os
 import re
 from datetime import datetime, timezone
 from urllib.parse import urljoin, urlparse
-import feedparser
 import requests
 
-UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
 MAX_ITEMS = 8
 
@@ -20,263 +18,55 @@ HEADERS = {
 }
 
 # ============================================================
-# 1. СТРАНЫ ЦА
+# 1. ТОЛЬКО ЭТИ СТРАНЫ (для фильтра)
 # ============================================================
 CENTRAL_ASIA = [
-    "казахстан", "kazakhstan", "kz", "узбекистан", "uzbekistan", "uz",
-    "кыргызстан", "kyrgyzstan", "kg", "таджикистан", "tajikistan", "tj",
-    "туркменистан", "turkmenistan", "tm", "central asia", "центральная азия",
-    "астана", "astana", "алматы", "almaty", "ташкент", "tashkent",
-    "бишкек", "bishkek", "душанбе", "dushanbe", "ашхабад", "ashgabat",
+    "казахстан", "қазақстан", "kz",
+    "узбекистан", "o'zbekiston", "uzbekistan", "uz",
+    "кыргызстан", "kyrgyzstan", "kg",
+    "таджикистан", "tojikiston", "tajikistan", "tj",
+    "туркменистан", "turkmenistan", "tm",
+    "центральная азия", "средняя азия",
+    "астана", "astana", "алматы", "almaty",
+    "ташкент", "tashkent", "бишкек", "bishkek",
+    "душанбе", "dushanbe", "ашхабад", "ashgabat",
 ]
 
+# ============================================================
+# 2. ЛОГИСТИЧЕСКИЕ КЛЮЧЕВЫЕ СЛОВА
+# ============================================================
 LOGISTICS_WORDS = [
-    "logist", "freight", "cargo", "shipping", "rail", "railway",
-    "port", "container", "customs", "truck", "warehous",
-    "transport", "corridor", "export", "import", "carrier",
-    "vessel", "intermodal", "supply chain", "logistics",
     "логист", "груз", "перевозк", "транспорт", "порт",
     "контейнер", "таможен", "склад", "жд", "железнодорож",
     "коридор", "экспорт", "импорт", "фрахт", "автоперевоз",
+    "транзит", "терминал", "вагон", "локомотив", "магистраль",
+    "логистик", "перевалк", "хранени", "дистрибуци",
+    "транспортн", "грузовой", "инфраструктур", "международн",
 ]
 
 # ============================================================
-# 2. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# 3. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ============================================================
-def is_logistics(text):
-    text = text.lower()
-    return any(w in text for w in LOGISTICS_WORDS)
-
-def is_central_asia(text):
-    text = text.lower()
-    return any(c in text for c in CENTRAL_ASIA)
-
-def translate_text(text, target_lang='ru'):
-    if not text or len(text.strip()) < 3:
-        return text
-    try:
-        cyrillic = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
-        if cyrillic > len(text) * 0.3:
-            return text
-        url = "https://translate.googleapis.com/translate_a/single"
-        params = {"client": "gtx", "sl": "auto", "tl": target_lang, "dt": "t", "q": text[:500]}
-        r = requests.get(url, params=params, timeout=10)
-        r.raise_for_status()
-        data = r.json()
-        if data and len(data) > 0 and data[0]:
-            return ''.join([part[0] for part in data[0] if part[0]]).strip()
-    except Exception as e:
-        print(f"Translation error: {e}")
-    return text
-
 def strip_html(text):
     text = re.sub(r"<[^>]+>", " ", text or "")
     text = html.unescape(text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-# ============================================================
-# 3. ПРОВЕРКА НА ПЛАТНУЮ СТАТЬЮ
-# ============================================================
-def is_premium_article(html_content):
-    """Проверяет, является ли статья платной"""
-    text = html_content.lower()
-    premium_keywords = [
-        "subscriber access",
-        "premium story",
-        "sign in",
-        "sign up",
-        "uninterrupted access",
-        "subscribe or upgrade",
-        "you must be logged in",
-        "this content is for subscribers",
-        "member only",
-        "premium content",
-        "loadstar premium",
-    ]
-    for kw in premium_keywords:
-        if kw in text:
-            return True
-    return False
-
-# ============================================================
-# 4. ПОИСК КАРТИНКИ В СТАТЬЕ (УПРОЩЕННЫЙ)
-# ============================================================
-def extract_image_from_article(url):
-    """Загружает статью и ищет первую нормальную картинку"""
-    try:
-        r = requests.get(url, timeout=15, headers=HEADERS)
-        r.raise_for_status()
-        html_content = r.text
-    except Exception as e:
-        print(f"  Не удалось загрузить статью: {e}")
-        return None
+def is_relevant(title, summary):
+    """Проверяет, что новость о логистике в странах ЦА"""
+    text = (title + " " + summary).lower()
     
-    # Проверяем на paywall
-    if is_premium_article(html_content):
-        print(f"  Статья за paywall")
-        return None
+    # Должна быть хотя бы одна страна ЦА
+    has_country = any(c in text for c in CENTRAL_ASIA)
     
-    # 1. og:image
-    og_match = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
-    if og_match:
-        img_url = og_match.group(1)
-        if img_url and not 'plug.png' in img_url.lower():
-            if not img_url.startswith('data:'):
-                return {"url": img_url, "credit": None, "creditUrl": None}
+    # И хотя бы одно логистическое слово
+    has_logistics = any(w in text for w in LOGISTICS_WORDS)
     
-    # 2. twitter:image
-    tw_match = re.search(r'<meta\s+name=["\']twitter:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
-    if tw_match:
-        img_url = tw_match.group(1)
-        if img_url and not 'plug.png' in img_url.lower():
-            if not img_url.startswith('data:'):
-                return {"url": img_url, "credit": None, "creditUrl": None}
-    
-    # 3. Первое подходящее img
-    for img_tag in re.findall(r'<img[^>]*>', html_content, re.IGNORECASE):
-        src_match = re.search(r'src=["\']([^"\']+)["\']', img_tag, re.IGNORECASE)
-        if not src_match:
-            continue
-        
-        img_url = src_match.group(1)
-        
-        # Пропускаем только явно плохие
-        img_lower = img_url.lower()
-        if 'logo' in img_lower or 'icon' in img_lower or 'avatar' in img_lower:
-            continue
-        if img_lower.endswith(('.ico', '.svg')):
-            continue
-        if img_url.startswith('data:'):
-            continue
-        
-        # Делаем абсолютный URL
-        if img_url.startswith('/'):
-            parsed = urlparse(url)
-            base = f"{parsed.scheme}://{parsed.netloc}"
-            img_url = urljoin(base, img_url)
-        
-        if img_url.startswith('http'):
-            return {"url": img_url, "credit": None, "creditUrl": None}
-    
-    return None
-
-# ============================================================
-# 5. UNSPLASH
-# ============================================================
-def pick_photo_from_unsplash(title, summary):
-    if not UNSPLASH_KEY:
-        return None
-    clean_title = re.sub(r'[^\w\s]', ' ', title)
-    words = clean_title.split()[:4]
-    search_query = ' '.join(words) if len(words) >= 2 else "logistics transport"
-    try:
-        r = requests.get(
-            "https://api.unsplash.com/search/photos",
-            params={"query": search_query, "per_page": 1, "orientation": "landscape"},
-            headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-            timeout=10,
-        )
-        r.raise_for_status()
-        results = r.json().get("results") or []
-        if results:
-            photo = results[0]
-            return {
-                "url": photo["urls"]["regular"],
-                "credit": photo["user"]["name"],
-                "creditUrl": photo["user"]["links"]["html"],
-            }
-    except Exception:
-        pass
-    return None
-
-# ============================================================
-# 6. ПОИСК КАРТИНКИ
-# ============================================================
-def get_photo_for_article(url, feed_tag, title="", summary="", entry=None):
-    # 1. Из RSS
-    if entry:
-        if hasattr(entry, 'media_content') and entry.media_content:
-            for media in entry.media_content:
-                img_url = media.get('url', '')
-                if img_url:
-                    return {"url": img_url, "credit": feed_tag, "creditUrl": url}
-        if hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
-            for thumb in entry.media_thumbnail:
-                img_url = thumb.get('url', '')
-                if img_url:
-                    return {"url": img_url, "credit": feed_tag, "creditUrl": url}
-        if hasattr(entry, 'enclosures') and entry.enclosures:
-            for enc in entry.enclosures:
-                img_url = enc.get('href', '')
-                if img_url and enc.get('type', '').startswith('image/'):
-                    return {"url": img_url, "credit": feed_tag, "creditUrl": url}
-    
-    # 2. Из статьи
-    if url:
-        photo = extract_image_from_article(url)
-        if photo:
-            return photo
-    
-    # 3. Unsplash
-    if title:
-        return pick_photo_from_unsplash(title, summary)
-    
-    return None
-
-# ============================================================
-# 7. ИСТОЧНИКИ
-# ============================================================
-FEEDS = [
-    {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "type": "kazinform", "cap": 4},
-    {"url": "https://www.inform.kz/tag/transport_t11012", "tag": "Казинформ", "type": "kazinform", "cap": 2},
-    {"url": "https://kun.uz/ru/news/feed", "tag": "Kun.uz", "type": "rss", "cap": 2},
-    {"url": "https://24.kg/feed/", "tag": "24.kg", "type": "rss", "cap": 2},
-    {"url": "https://asiaplustj.info/ru/rss", "tag": "Азия-Плюс", "type": "rss", "cap": 2},
-    {"url": "https://turkmenportal.com/rss", "tag": "Туркменпортал", "type": "rss", "cap": 2},
-    {"url": "https://www.railfreight.com/feed", "tag": "RailFreight", "type": "rss", "cap": 2},
-    {"url": "https://theloadstar.com/feed/", "tag": "The Loadstar", "type": "rss", "cap": 2},
-    {"url": "https://www.supplychaindive.com/feeds/news/", "tag": "SupplyChainDive", "type": "rss", "cap": 2},
-]
-
-def collect_from_rss(feed):
-    out = []
-    try:
-        parsed = feedparser.parse(feed["url"], request_headers=HEADERS)
-    except Exception as e:
-        print("RSS error", feed["url"], e)
-        return out
-    
-    for entry in parsed.entries[:10]:
-        title = strip_html(entry.get("title") or "")
-        if not title:
-            continue
-        summary = strip_html(entry.get("summary") or "")[:300]
-        
-        if not is_logistics(title + " " + summary):
-            continue
-        
-        title_ru = translate_text(title)
-        summary_ru = translate_text(summary)
-        ca_score = 2 if is_central_asia(title + " " + summary) else 0
-        link = entry.get("link", "")
-        
-        photo = get_photo_for_article(link, feed["tag"], title, summary, entry)
-        
-        out.append({
-            "topic": feed["tag"],
-            "title": title_ru,
-            "summary": summary_ru or "Подробности — по ссылке на источник.",
-            "sourceUrl": link,
-            "publishedAt": entry.get("published", ""),
-            "photo": photo,
-            "_ca_score": ca_score,
-        })
-    return out
-
-KAZINFORM_ARTICLE_RE = re.compile(r'href="(https://www\.inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8})"')
+    return has_country and has_logistics
 
 def _meta_tag(html_text, prop):
+    """Достаёт content из meta тега"""
     for pattern in (
         r'<meta[^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\'][^>]+content=["\']([^"\']*)["\']',
         r'<meta[^>]+content=["\']([^"\']*)["\'][^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\']',
@@ -286,98 +76,127 @@ def _meta_tag(html_text, prop):
             return html.unescape(m.group(1)).strip()
     return ""
 
-def collect_from_kazinform(feed):
-    out = []
-    try:
-        r = requests.get(feed["url"], timeout=20, headers=HEADERS)
-        r.raise_for_status()
-        listing_html = r.text
-    except Exception as e:
-        print("Kazinform error", feed["url"], e)
-        return out
+# ============================================================
+# 4. ПАРСИНГ КАЗИНФОРМА
+# ============================================================
+# Регулярка для ссылок на статьи
+KAZINFORM_ARTICLE_RE = re.compile(
+    r'href="(https://www\.inform\.kz/ru/[a-z0-9\-]+-[a-f0-9]{8})"'
+)
 
+def collect_from_kazinform():
+    """Парсит новости с inform.kz"""
+    out = []
+    
+    # Страница с тегом "Логистика"
+    url = "https://www.inform.kz/tag/logistika_t11100"
+    
+    try:
+        r = requests.get(url, timeout=20, headers=HEADERS)
+        r.raise_for_status()
+        html_content = r.text
+    except Exception as e:
+        print(f"Ошибка при загрузке страницы Казинформа: {e}")
+        return out
+    
+    # Находим все ссылки на статьи
     seen = set()
     urls = []
-    for m in KAZINFORM_ARTICLE_RE.finditer(listing_html):
+    for m in KAZINFORM_ARTICLE_RE.finditer(html_content):
         u = m.group(1)
         if u not in seen:
             seen.add(u)
             urls.append(u)
-    urls = urls[:10]
-
-    for url in urls:
+    
+    print(f"Найдено ссылок на статьи: {len(urls)}")
+    
+    # Парсим каждую статью
+    for article_url in urls[:15]:  # Берем до 15 статей
         try:
-            ar = requests.get(url, timeout=20, headers=HEADERS)
+            ar = requests.get(article_url, timeout=20, headers=HEADERS)
             ar.raise_for_status()
             article_html = ar.text
         except Exception as e:
-            print("Article error", url, e)
+            print(f"Ошибка при загрузке статьи {article_url}: {e}")
             continue
-
+        
+        # Извлекаем метаданные
         title = _meta_tag(article_html, "og:title")
         if not title:
             continue
+        
         summary = _meta_tag(article_html, "og:description")[:300]
         image_url = _meta_tag(article_html, "og:image")
         published = _meta_tag(article_html, "article:published_time")
-
-        if not is_logistics(title + " " + summary):
-            continue
-
-        ca_score = 2 if is_central_asia(title + " " + summary) else 1
-
-        photo = None
-        if image_url and "plug.png" not in image_url:
-            photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         
-        if not photo:
-            photo = get_photo_for_article(url, feed["tag"], title, summary)
-
-        out.append({
-            "topic": "Казинформ",
-            "title": title,
-            "summary": summary or "Подробности — по ссылке на источник.",
-            "sourceUrl": url,
-            "publishedAt": published,
-            "photo": photo,
-            "_ca_score": ca_score,
-        })
-    return out
-
-def collect():
-    items = []
-    seen_titles = set()
-    for feed in FEEDS:
-        if len(items) >= MAX_ITEMS * 2:
+        # Проверяем релевантность
+        if not is_relevant(title, summary):
+            print(f"  Пропущено (не релевантно): {title[:50]}...")
+            continue
+        
+        # Формируем картинку
+        photo = None
+        if image_url and "plug.png" not in image_url.lower():
+            photo = {
+                "url": image_url,
+                "credit": "Казинформ",
+                "creditUrl": article_url,
+            }
+        else:
+            # Пробуем найти картинку в статье
+            img_match = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', article_html)
+            if img_match:
+                img_url = img_match.group(1)
+                if not img_url.startswith('http'):
+                    img_url = urljoin("https://www.inform.kz", img_url)
+                if "plug.png" not in img_url.lower():
+                    photo = {
+                        "url": img_url,
+                        "credit": "Казинформ",
+                        "creditUrl": article_url,
+                    }
+        
+        # Если есть картинка — добавляем новость
+        if photo:
+            out.append({
+                "topic": "Казинформ",
+                "title": title,
+                "summary": summary or "Подробности — по ссылке на источник.",
+                "sourceUrl": article_url,
+                "publishedAt": published,
+                "photo": photo,
+            })
+            print(f"  ✅ Добавлено: {title[:50]}...")
+        else:
+            print(f"  ❌ Пропущено (нет картинки): {title[:50]}...")
+        
+        # Останавливаемся, если набрали достаточно
+        if len(out) >= MAX_ITEMS:
             break
-        feed_type = feed.get("type", "rss")
-        new_items = collect_from_kazinform(feed) if feed_type == "kazinform" else collect_from_rss(feed)
-        cap = feed.get("cap", MAX_ITEMS)
-        for it in new_items[:cap]:
-            title_key = it["title"][:50].lower()
-            if title_key in seen_titles:
-                continue
-            seen_titles.add(title_key)
-            items.append(it)
-    items.sort(key=lambda x: x.get("_ca_score", 0), reverse=True)
-    for item in items:
-        item.pop("_ca_score", None)
-    return items[:MAX_ITEMS]
+    
+    return out[:MAX_ITEMS]
 
+# ============================================================
+# 5. MAIN
+# ============================================================
 def main():
-    items = collect()
+    print("Начинаем парсинг Казинформа...")
+    items = collect_from_kazinform()
+    
     data = {
         "isDemo": len(items) == 0,
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "items": items,
     }
+    
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
-    for i, item in enumerate(items):
-        has_photo = "✅" if item.get("photo") else "❌"
-        print(f"{i+1}. {has_photo} {item['title'][:50]}...")
+    
+    print(f"\n✅ Записано: {OUT_PATH} -> карточек: {len(items)}")
+    
+    if len(items) == 0:
+        print("⚠️ ВНИМАНИЕ: Новостей не найдено!")
 
 if __name__ == "__main__":
     main()

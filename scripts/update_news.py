@@ -1,6 +1,6 @@
 """
 Обновляет data/news.json — логистические новости.
-Картинки: ищем в статье самую большую и релевантную картинку.
+Картинки: из статьи (любая) или Unsplash.
 """
 import html
 import json
@@ -76,42 +76,34 @@ def strip_html(text):
     return text
 
 # ============================================================
-# 3. ПОИСК КАРТИНКИ В СТАТЬЕ — САМАЯ БОЛЬШАЯ И РЕЛЕВАНТНАЯ
+# 3. ПРОВЕРКА НА ПЛАТНУЮ СТАТЬЮ
 # ============================================================
-def is_bad_image(img_url, img_alt=""):
-    """Проверяет, является ли картинка плохой (аватар, лого, иконка, плеер)"""
-    img_lower = img_url.lower()
-    alt_lower = img_alt.lower() if img_alt else ""
-    
-    bad_patterns = [
-        "avatar", "profile", "user", "author", "writer", "contributor",
-        "logo", "brand", "icon", "favicon", "sprite", "badge",
-        "gravatar", "profil", "headshot", "byline",
-        "ad", "ads", "banner", "sponsor", "promo",
-        "placeholder", "plug.png", "pixel", "transparent",
-        "1x1", "blank", "no-image", "noimage",
-        "player", "play", "video", "youtube", "vimeo", "embed",
-        "social", "share", "facebook", "twitter", "instagram",
-        "menu", "hamburger", "close", "button", "btn",
-        "loading", "loader", "spinner",
+def is_premium_article(html_content):
+    """Проверяет, является ли статья платной"""
+    text = html_content.lower()
+    premium_keywords = [
+        "subscriber access",
+        "premium story",
+        "sign in",
+        "sign up",
+        "uninterrupted access",
+        "subscribe or upgrade",
+        "you must be logged in",
+        "this content is for subscribers",
+        "member only",
+        "premium content",
+        "loadstar premium",
     ]
-    
-    for pattern in bad_patterns:
-        if pattern in img_lower or pattern in alt_lower:
+    for kw in premium_keywords:
+        if kw in text:
             return True
-    
-    # Плохие расширения
-    if img_lower.endswith(('.ico', '.svg', '.gif')):
-        return True
-    
-    # data:image — обычно маленькие
-    if img_url.startswith('data:'):
-        return True
-    
     return False
 
-def extract_best_image_from_article(url):
-    """Загружает статью и находит самую большую релевантную картинку"""
+# ============================================================
+# 4. ПОИСК КАРТИНКИ В СТАТЬЕ (УПРОЩЕННЫЙ)
+# ============================================================
+def extract_image_from_article(url):
+    """Загружает статью и ищет первую нормальную картинку"""
     try:
         r = requests.get(url, timeout=15, headers=HEADERS)
         r.raise_for_status()
@@ -120,30 +112,43 @@ def extract_best_image_from_article(url):
         print(f"  Не удалось загрузить статью: {e}")
         return None
     
-    candidates = []
+    # Проверяем на paywall
+    if is_premium_article(html_content):
+        print(f"  Статья за paywall")
+        return None
     
-    # 1. Собираем все img теги с размерами
+    # 1. og:image
+    og_match = re.search(r'<meta\s+property=["\']og:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
+    if og_match:
+        img_url = og_match.group(1)
+        if img_url and not 'plug.png' in img_url.lower():
+            if not img_url.startswith('data:'):
+                return {"url": img_url, "credit": None, "creditUrl": None}
+    
+    # 2. twitter:image
+    tw_match = re.search(r'<meta\s+name=["\']twitter:image["\']\s+content=["\']([^"\']+)["\']', html_content, re.IGNORECASE)
+    if tw_match:
+        img_url = tw_match.group(1)
+        if img_url and not 'plug.png' in img_url.lower():
+            if not img_url.startswith('data:'):
+                return {"url": img_url, "credit": None, "creditUrl": None}
+    
+    # 3. Первое подходящее img
     for img_tag in re.findall(r'<img[^>]*>', html_content, re.IGNORECASE):
         src_match = re.search(r'src=["\']([^"\']+)["\']', img_tag, re.IGNORECASE)
-        alt_match = re.search(r'alt=["\']([^"\']*)["\']', img_tag, re.IGNORECASE)
         if not src_match:
             continue
         
         img_url = src_match.group(1)
-        img_alt = alt_match.group(1) if alt_match else ""
         
-        # Получаем размеры
-        width_match = re.search(r'width=["\'](\d+)["\']', img_tag, re.IGNORECASE)
-        height_match = re.search(r'height=["\'](\d+)["\']', img_tag, re.IGNORECASE)
-        width = int(width_match.group(1)) if width_match else None
-        height = int(height_match.group(1)) if height_match else None
-        
-        # Если нет размеров в атрибутах — пробуем из URL
-        if not width or not height:
-            size_match = re.search(r'[=/](\d+)x(\d+)[=/]', img_url)
-            if size_match:
-                width = int(size_match.group(1))
-                height = int(size_match.group(2))
+        # Пропускаем только явно плохие
+        img_lower = img_url.lower()
+        if 'logo' in img_lower or 'icon' in img_lower or 'avatar' in img_lower:
+            continue
+        if img_lower.endswith(('.ico', '.svg')):
+            continue
+        if img_url.startswith('data:'):
+            continue
         
         # Делаем абсолютный URL
         if img_url.startswith('/'):
@@ -151,27 +156,13 @@ def extract_best_image_from_article(url):
             base = f"{parsed.scheme}://{parsed.netloc}"
             img_url = urljoin(base, img_url)
         
-        candidates.append({
-            'url': img_url,
-            'alt': img_alt,
-            'width': width,
-            'height': height,
-            'area': (width or 0) * (height or 0),
-        })
-    
-    # 2. Сортируем по размеру (самые большие сверху)
-    candidates.sort(key=lambda x: x['area'], reverse=True)
-    
-    # 3. Берем первую подходящую картинку
-    for img in candidates:
-        if img['area'] > 10000:  # минимум 100x100
-            if not is_bad_image(img['url'], img['alt']):
-                return {"url": img['url'], "credit": None, "creditUrl": None}
+        if img_url.startswith('http'):
+            return {"url": img_url, "credit": None, "creditUrl": None}
     
     return None
 
 # ============================================================
-# 4. UNSPLASH
+# 5. UNSPLASH
 # ============================================================
 def pick_photo_from_unsplash(title, summary):
     if not UNSPLASH_KEY:
@@ -200,33 +191,30 @@ def pick_photo_from_unsplash(title, summary):
     return None
 
 # ============================================================
-# 5. ПОИСК КАРТИНКИ — ГИБРИДНЫЙ
+# 6. ПОИСК КАРТИНКИ
 # ============================================================
 def get_photo_for_article(url, feed_tag, title="", summary="", entry=None):
-    """Гибридный поиск: статья -> Unsplash"""
-    
-    # 1. Пробуем из RSS
+    # 1. Из RSS
     if entry:
         if hasattr(entry, 'media_content') and entry.media_content:
             for media in entry.media_content:
                 img_url = media.get('url', '')
-                if img_url and not is_bad_image(img_url):
+                if img_url:
                     return {"url": img_url, "credit": feed_tag, "creditUrl": url}
         if hasattr(entry, 'media_thumbnail') and entry.media_thumbnail:
             for thumb in entry.media_thumbnail:
                 img_url = thumb.get('url', '')
-                if img_url and not is_bad_image(img_url):
+                if img_url:
                     return {"url": img_url, "credit": feed_tag, "creditUrl": url}
         if hasattr(entry, 'enclosures') and entry.enclosures:
             for enc in entry.enclosures:
                 img_url = enc.get('href', '')
                 if img_url and enc.get('type', '').startswith('image/'):
-                    if not is_bad_image(img_url):
-                        return {"url": img_url, "credit": feed_tag, "creditUrl": url}
+                    return {"url": img_url, "credit": feed_tag, "creditUrl": url}
     
-    # 2. Из статьи — самая большая картинка
+    # 2. Из статьи
     if url:
-        photo = extract_best_image_from_article(url)
+        photo = extract_image_from_article(url)
         if photo:
             return photo
     
@@ -237,7 +225,7 @@ def get_photo_for_article(url, feed_tag, title="", summary="", entry=None):
     return None
 
 # ============================================================
-# 6. ИСТОЧНИКИ
+# 7. ИСТОЧНИКИ
 # ============================================================
 FEEDS = [
     {"url": "https://www.inform.kz/tag/logistika_t11100", "tag": "Казинформ", "type": "kazinform", "cap": 4},
@@ -339,10 +327,8 @@ def collect_from_kazinform(feed):
         ca_score = 2 if is_central_asia(title + " " + summary) else 1
 
         photo = None
-        if image_url and "plug.png" not in image_url and not is_bad_image(image_url):
-            # Проверяем размер og:image
-            if not image_url.endswith(('.ico', '.svg')):
-                photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
+        if image_url and "plug.png" not in image_url:
+            photo = {"url": image_url, "credit": "Казинформ", "creditUrl": url}
         
         if not photo:
             photo = get_photo_for_article(url, feed["tag"], title, summary)
@@ -391,8 +377,7 @@ def main():
     print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
     for i, item in enumerate(items):
         has_photo = "✅" if item.get("photo") else "❌"
-        source = item.get("photo", {}).get("credit", "unsplash") if item.get("photo") else "нет"
-        print(f"{i+1}. {has_photo} [{source}] {item['title'][:50]}...")
+        print(f"{i+1}. {has_photo} {item['title'][:50]}...")
 
 if __name__ == "__main__":
     main()

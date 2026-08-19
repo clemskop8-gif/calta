@@ -1,7 +1,19 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-19T10:18:37.502454+00:00",
+  "updatedAt": "2026-08-19T10:30:15.137363+00:00",
   "items": [
+    {
+      "topic": "The Loadstar",
+      "title": "Борьба за долю рынка среди лайнеров увеличивает портфель заказов на коробчатые суда",
+      "summary": "Борьба за долю рынка среди судоходных линий привела к тому, что соотношение количества заказов на контейнерные перевозки к парку достигло нового максимума – почти 42%. Лидер рынка MSC продолжает расширять разрыв в мощностях со своими аналогами, пополнив свой обширный портфель заказов на прошлой неделе десятью судами водоизмещением 21 850 TEU, заказанными у Hengli Heavy Indu.",
+      "sourceUrl": "https://theloadstar.com/race-for-market-share-among-liners-fattens-box-ship-orderbooks/",
+      "publishedAt": "Wed, 19 Aug 2026 10:18:35 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1685599504130-9ee12eef06eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8UmFjZSUyMGZvciUyMG1hcmtldCUyMHNoYXJlfGVufDB8MHx8fDE3ODcxMzUzOTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "Almas Salakhov",
+        "creditUrl": "https://unsplash.com/@therealslkhv"
+      }
+    },
     {
       "topic": "The Loadstar",
       "title": "ID Logistics US соглашается выплатить 2,36 миллиона долларов для урегулирования ложных обвинений в Законе о претензиях",
@@ -9,18 +21,10 @@
       "sourceUrl": "https://theloadstar.com/id-logistics-us-agrees-to-pay-2-36-million-to-resolve-false-claims-act-allegations/",
       "publishedAt": "Tue, 18 Aug 2026 20:04:54 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1559297434-fae8a1916a79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8SUQlMjBMb2dpc3RpY3MlMjBVUyUyMGFncmVlc3xlbnwwfDB8fHwxNzg3MTM0NzA3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "url": "https://images.unsplash.com/photo-1559297434-fae8a1916a79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8SUQlMjBMb2dpc3RpY3MlMjBVUyUyMGFncmVlc3xlbnwwfDB8fHwxNzg3MTM0MjI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
         "credit": "Bernd 📷 Dittrich",
         "creditUrl": "https://unsplash.com/@hdbernd"
       }
-    },
-    {
-      "topic": "The Loadstar",
-      "title": "CNBC: Джайн из HSBC: «Хаос – это норма» (ВИДЕО)",
-      "summary": "Параш Джайн, руководитель отдела исследований T&L в HSBC, беседует с CNBC о перебоях в работе и контейнерных перевозках – чтобы посмотреть видео, нажмите здесь. Сообщение CNBC: Джайн из HSBC: «Хаос — это норма» (ВИДЕО) впервые появилось на сайте The Loadstar.",
-      "sourceUrl": "https://theloadstar.com/cnbc-hsbcs-jain-chaos-is-the-norm-video/",
-      "publishedAt": "Tue, 18 Aug 2026 14:15:25 +0000",
-      "photo": null
     },
     {
       "topic": "SupplyChainDive",
@@ -28,11 +32,7 @@
       "summary": "Предприятие в Норидже будет хранить, комплектовать, упаковывать и отправлять товары в сортировочные центры и локализованные центры доставки, расположенные дальше по цепочке поставок.",
       "sourceUrl": "https://www.supplychaindive.com/news/amazon-preps-1m-square-foot-distribution-center-in-connecticut/828085/",
       "publishedAt": "Tue, 18 Aug 2026 15:11:00 -0400",
-      "photo": {
-        "url": "https://imgproxy.divecdn.com/40wVNSJj2Kwnk9IP4P1V-VpeohSwZTF3CGE6v02N7ho/g:ce/rs:fill:1200:675:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS93bV9lY29tbS5qcGc=.webp",
-        "credit": null,
-        "creditUrl": null
-      }
+      "photo": null
     },
     {
       "topic": "SupplyChainDive",
@@ -40,11 +40,7 @@
       "summary": "Хотя киберугрозы представляют собой растущий риск для национальной безопасности, решительный запрет агентства на импорт гуманоидов, четвероногих и мобильных роботов может оживить отечественных поставщиков.",
       "sourceUrl": "https://www.supplychaindive.com/news/experts-call-fccs-block-on-foreign-robotics-a-nearshoring-tactic/827423/",
       "publishedAt": "Tue, 18 Aug 2026 10:31:00 -0400",
-      "photo": {
-        "url": "https://imgproxy.divecdn.com/NxNCdWU2dFX9X9ltbZEr_3PHxQQZoBm5awL2_Owu4Fo/g:ce/rs:fill:1200:675:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS80TkUxX2F1dG9tb3RpdmVfYXNzZW1ibHlfbGluZS5qcGc=.webp",
-        "credit": null,
-        "creditUrl": null
-      }
+      "photo": null
     }
   ]
 }

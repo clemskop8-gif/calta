@@ -75,7 +75,7 @@ def translate_text(text, target_lang='ru'):
             "sl": "auto",
             "tl": target_lang,
             "dt": "t",
-            "q": text[:500]  # ограничиваем длину
+            "q": text[:500]
         }
         r = requests.get(url, params=params, timeout=10)
         r.raise_for_status()
@@ -152,7 +152,6 @@ def collect_from_rss(feed):
             continue
         summary = strip_html(entry.get("summary") or "")[:300]
         
-        # Пропускаем только если нет логистических слов
         if not is_logistics(title + " " + summary):
             continue
         
@@ -160,7 +159,6 @@ def collect_from_rss(feed):
         title_ru = translate_text(title)
         summary_ru = translate_text(summary)
         
-        # Определяем приоритет (есть ли страны ЦА)
         ca_score = 2 if is_central_asia(title + " " + summary) else 0
         
         photo = None
@@ -181,7 +179,6 @@ def collect_from_rss(feed):
             "publishedAt": entry.get("published", ""),
             "photo": photo,
             "_ca_score": ca_score,
-            "_original_title": title,  # сохраняем оригинал для отладки
         })
     return out
 
@@ -238,7 +235,6 @@ def collect_from_kazinform(feed):
         if not is_logistics(title + " " + summary):
             continue
 
-        # Определяем приоритет (есть ли страны ЦА)
         ca_score = 2 if is_central_asia(title + " " + summary) else 1
 
         photo = None
@@ -276,13 +272,10 @@ def collect():
             seen_titles.add(title_key)
             items.append(it)
     
-    # Сортируем: сначала новости о странах ЦА
     items.sort(key=lambda x: x.get("_ca_score", 0), reverse=True)
     
-    # Удаляем временные поля
     for item in items:
         item.pop("_ca_score", None)
-        item.pop("_original_title", None)
     
     return items[:MAX_ITEMS]
 
@@ -299,7 +292,6 @@ def main():
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"Записано: {OUT_PATH} -> карточек: {len(items)}")
     
-    # Показываем заголовки для проверки
     for i, item in enumerate(items):
         print(f"{i+1}. {item['title'][:60]}...")
 

@@ -1,6 +1,6 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-19T07:31:23.253275+00:00",
+  "updatedAt": "2026-08-19T10:10:35.840953+00:00",
   "items": [
     {
       "topic": "The Loadstar",
@@ -9,9 +9,9 @@
       "sourceUrl": "https://theloadstar.com/id-logistics-us-agrees-to-pay-2-36-million-to-resolve-false-claims-act-allegations/",
       "publishedAt": "Tue, 18 Aug 2026 20:04:54 +0000",
       "photo": {
-        "url": "https://theloadstar.com/wp-content/uploads/8f8bfab4b9b26f2ba506615fb08c2817-680x0-c-default.png",
-        "credit": null,
-        "creditUrl": null
+        "url": "https://images.unsplash.com/photo-1559297434-fae8a1916a79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8SUQlMjBMb2dpc3RpY3MlMjBVUyUyMGFncmVlc3xlbnwwfDB8fHwxNzg3MTM0MjI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+        "credit": "Bernd 📷 Dittrich",
+        "creditUrl": "https://unsplash.com/@hdbernd"
       }
     },
     {
@@ -20,11 +20,7 @@
       "summary": "Параш Джайн, руководитель отдела исследований T&L в HSBC, беседует с CNBC о перебоях в работе и контейнерных перевозках – чтобы посмотреть видео, нажмите здесь. Сообщение CNBC: Джайн из HSBC: «Хаос — это норма» (ВИДЕО) впервые появилось на сайте The Loadstar.",
       "sourceUrl": "https://theloadstar.com/cnbc-hsbcs-jain-chaos-is-the-norm-video/",
       "publishedAt": "Tue, 18 Aug 2026 14:15:25 +0000",
-      "photo": {
-        "url": "https://theloadstar.com/wp-content/uploads/4e0d9dafd04c86b3195a5a1c9108cebb-680x0-c-default.jpg",
-        "credit": null,
-        "creditUrl": null
-      }
+      "photo": null
     },
     {
       "topic": "SupplyChainDive",
@@ -33,7 +29,7 @@
       "sourceUrl": "https://www.supplychaindive.com/news/amazon-preps-1m-square-foot-distribution-center-in-connecticut/828085/",
       "publishedAt": "Tue, 18 Aug 2026 15:11:00 -0400",
       "photo": {
-        "url": "https://d1b6lhn2ymmy1x.cloudfront.net/journalist-headshots/Neuffer-Phil-circle-150x150.png",
+        "url": "https://www.supplychaindive.com/static/img/play.svg?313321260226",
         "credit": null,
         "creditUrl": null
       }
@@ -45,7 +41,7 @@
       "sourceUrl": "https://www.supplychaindive.com/news/experts-call-fccs-block-on-foreign-robotics-a-nearshoring-tactic/827423/",
       "publishedAt": "Tue, 18 Aug 2026 10:31:00 -0400",
       "photo": {
-        "url": "https://d1b6lhn2ymmy1x.cloudfront.net/journalist-headshots/owens-nathan-circle-150x150.png",
+        "url": "https://imgproxy.divecdn.com/NxNCdWU2dFX9X9ltbZEr_3PHxQQZoBm5awL2_Owu4Fo/g:ce/rs:fill:1200:675:1/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS80TkUxX2F1dG9tb3RpdmVfYXNzZW1ibHlfbGluZS5qcGc=.webp",
         "credit": null,
         "creditUrl": null
       }

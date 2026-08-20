@@ -1,7 +1,6 @@
 """
-Обновляет data/news.json — новости ТОЛЬКО с logistan.info.
-Парсит все статьи, включая такие, как:
-https://logistan.info/15790-belorussiya-otpravila-pervyj-skvoznoj-gruzovoj-poezd-v-uzbekistan/
+Обновляет data/news.json — новости из RSS-ленты logistan.info.
+RSS: https://logistan.info/feed/
 """
 import html
 import json
@@ -10,20 +9,18 @@ import re
 import random
 from datetime import datetime, timezone
 import requests
+import feedparser
 
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
 MAX_ITEMS = 8
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
 
 def pick_photo_from_unsplash(title):
+    """Берет картинку из Unsplash по заголовку"""
     if not UNSPLASH_KEY:
         return None
     try:
@@ -57,76 +54,43 @@ def strip_html(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-def _meta_tag(html, prop):
-    for pattern in (
-        r'<meta[^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\'][^>]+content=["\']([^"\']*)["\']',
-        r'<meta[^>]+content=["\']([^"\']*)["\'][^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\']',
-    ):
-        m = re.search(pattern, html, re.IGNORECASE)
-        if m:
-            return html.unescape(m.group(1)).strip()
-    return ""
-
 # ============================================================
-# 1. ПАРСИНГ logistan.info (ГЛАВНАЯ СТРАНИЦА)
+# 1. ПАРСИНГ RSS ЛЕНТЫ LOGISTAN
 # ============================================================
-def collect_logistan():
+def collect_logistan_rss():
     out = []
-    url = "https://logistan.info/"
+    rss_url = "https://logistan.info/feed/"
+
     try:
-        print(f"  Загружаю {url}...")
-        r = requests.get(url, timeout=30, headers=HEADERS)
-        r.raise_for_status()
-        html_content = r.text
-        print(f"  Загружено {len(html_content)} символов")
+        print(f"  Загружаю RSS: {rss_url}...")
+        parsed = feedparser.parse(rss_url, request_headers=HEADERS)
     except Exception as e:
-        print(f"  ❌ Ошибка загрузки Logistan: {e}")
+        print(f"  ❌ Ошибка загрузки RSS: {e}")
         return out
 
-    # Ищем все ссылки на статьи (как в примере: /15790-.../)
-    links = set()
-    for link in re.findall(r'href=["\']([^"\']+)["\']', html_content, re.IGNORECASE):
-        # Ищем ссылки вида /число-текст/
-        if re.search(r'/\d+-[a-z0-9-]+/', link):
-            if link.startswith('/'):
-                link = 'https://logistan.info' + link
-            if link.startswith('http') and 'logistan.info' in link:
-                links.add(link)
+    print(f"  Найдено записей: {len(parsed.entries)}")
 
-    print(f"  Найдено {len(links)} ссылок на статьи")
-
-    for article_url in list(links)[:10]:
-        try:
-            print(f"  Загружаю статью: {article_url[:60]}...")
-            ar = requests.get(article_url, timeout=30, headers=HEADERS)
-            ar.raise_for_status()
-            article_html = ar.text
-        except Exception as e:
-            print(f"  ❌ Ошибка загрузки статьи: {e}")
+    for entry in parsed.entries[:10]:
+        title = strip_html(entry.get("title") or "")
+        if not title:
             continue
 
-        title = _meta_tag(article_html, "og:title")
-        if not title:
-            title_match = re.search(r'<h1[^>]*>([^<]+)</h1>', article_html)
-            if title_match:
-                title = title_match.group(1).strip()
-        if not title:
-            print(f"  ⏭ Нет заголовка, пропускаем")
-            continue
+        summary = strip_html(entry.get("description") or entry.get("summary") or "")[:300]
+        link = entry.get("link", "")
+        published = entry.get("published", "")
 
-        summary = _meta_tag(article_html, "og:description")[:300]
-        if not summary:
-            desc_match = re.search(r'<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']', article_html, re.IGNORECASE)
-            if desc_match:
-                summary = desc_match.group(1)[:300]
+        # Пробуем найти картинку в RSS
+        photo = None
+        if hasattr(entry, 'media_content') and entry.media_content:
+            for media in entry.media_content:
+                if media.get('url'):
+                    photo = {"url": media['url']}
+                    break
 
-        published = _meta_tag(article_html, "article:published_time")
-        if not published:
-            date_match = re.search(r'<time[^>]+datetime=["\']([^"\']+)["\']', article_html, re.IGNORECASE)
-            if date_match:
-                published = date_match.group(1)
+        # Если картинки нет — Unsplash
+        if not photo:
+            photo = pick_photo_from_unsplash(title)
 
-        photo = pick_photo_from_unsplash(title)
         out.append({
             "title": title,
             "summary": summary or "Подробнее в источнике.",
@@ -142,8 +106,8 @@ def collect_logistan():
 # ============================================================
 def collect():
     items = []
-    print("\n🔍 Парсинг logistan.info...")
-    items.extend(collect_logistan())
+    print("\n🔍 Парсинг RSS Logistan...")
+    items.extend(collect_logistan_rss())
 
     # Убираем дубликаты
     seen = set()
@@ -156,12 +120,13 @@ def collect():
 
     unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
 
+    # Если новостей нет — демо
     if len(unique) == 0:
         print("⚠️ Новостей не найдено! Добавляем демо-новости.")
         demo_items = [
             {
                 "title": "Белоруссия отправила первый сквозной грузовой поезд в Узбекистан",
-                "summary": "Первый сквозной грузовой поезд «Славянский караван» отправили 30 июля 2026 года со станции Орша-Восточная. Он везёт в Узбекистан продукцию деревообработки, продовольствие и комбикорма.",
+                "summary": "Первый сквозной грузовой поезд «Славянский караван» отправили 30 июля 2026 года со станции Орша-Восточная.",
                 "publishedAt": "2026-07-31",
                 "photo": {"url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800"},
             },
@@ -180,7 +145,7 @@ def collect():
 # 3. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей с Logistan...")
+    print("🚀 Сбор новостей из RSS Logistan...")
     items = collect()
 
     data = {

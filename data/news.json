@@ -1,5 +1,70 @@
 {
-  "isDemo": true,
-  "updatedAt": "2026-08-20T05:14:20.088049+00:00",
-  "items": []
+  "isDemo": false,
+  "updatedAt": "2026-08-20T05:48:24.919776+00:00",
+  "items": [
+    {
+      "title": "Терминал в аэропорту Андижана обещают достроить до конца года",
+      "summary": "В Андижанской области ведётся строительство нового пассажирского терминала международного аэропорта Андижан. Его площадь составляет 19,6 тысячи квадратных метров, сообщили в Uzbekistan Airports. Компания реализует проект самостоятельно, без привлечения средств частных инвесторов. Его предварительная",
+      "publishedAt": "Thu, 20 Aug 2026 05:28:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"
+      }
+    },
+    {
+      "title": "Почему Кыргызстан выбрал длинный и дорогой маршрут проекта ж/д «Китай — Кыргызстан — Узбекистан»?",
+      "summary": "Маршрут дороги через Иркештам менее выгоден для Кыргызстана, чем через Торугарт, сообщил эксперт по строительству железных дорог Марат Исаков в эфире радио. «[Дорога] через Иркештам [cделала бы Кыргызстан] фактически мостом. Протяженность нашего участка полотна составила бы около 150 км, а основная ",
+      "publishedAt": "Thu, 20 Aug 2026 04:40:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1671124918965-6d807539c9ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlGJUQwJUJFJUQxJTg3JUQwJUI1JUQwJUJDJUQxJTgzJTIwJUQwJTlBJUQxJThCJUQxJTgwJUQwJUIzJUQxJThCJUQwJUI3JUQxJTgxJUQxJTgyJUQwJUIwJUQwJUJEJTIwJUQwJUIyJUQxJThCJUQwJUIxJUQxJTgwJUQwJUIwJUQwJUJCJTIwJUQwJUI0JUQwJUJCJUQwJUI4JUQwJUJEJUQwJUJEJUQxJThCJUQwJUI5fGVufDB8MHx8fDE3ODcyMDQ5MDF8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "title": "Парадоксы энергосистемы Казахстана: дефицит на фоне роста ВИЭ",
+      "summary": "Казахстан с 2027 года хочет отказаться от импорта российской электроэнергии. Хотя ввод новых мощностей способен закрыть внутренний дефицит, достижение энергонезависимости упирается в комплекс смежных вызовов: от баланса между традиционной и «зелёной» генерацией до межгосударственной координации по в",
+      "publishedAt": "Thu, 20 Aug 2026 04:20:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800"
+      }
+    },
+    {
+      "title": "Кыргызстан договорился о поставках ГСМ с Россией",
+      "summary": "Речь идёт о 100 тысяч тонн горюче-смазочных материалов в месяц. Об этом сообщил первый зампредседателя Кабинета министров Кыргызстана Данияр Амангельдиев, пишет 24.kg. Несмотря на подписание соответствующего соглашения, стороны ещё не согласовали стоимость топлива. Какая именно продукция будет поста",
+      "publishedAt": "Fri, 31 Jul 2026 15:36:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1669476557153-7c03ee3a8f92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlBJUQxJThCJUQxJTgwJUQwJUIzJUQxJThCJUQwJUI3JUQxJTgxJUQxJTgyJUQwJUIwJUQwJUJEJTIwJUQwJUI0JUQwJUJFJUQwJUIzJUQwJUJFJUQwJUIyJUQwJUJFJUQxJTgwJUQwJUI4JUQwJUJCJUQxJTgxJUQxJThGJTIwJUQwJUJFJTIwJUQwJUJGJUQwJUJFJUQxJTgxJUQxJTgyJUQwJUIwJUQwJUIyJUQwJUJBJUQwJUIwJUQxJTg1fGVufDB8MHx8fDE3ODcyMDQ5MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "title": "В России продлили запрет на экспорт бензина до февраля 2027 года",
+      "summary": "Постановление подписал председатель правительства РФ Михаил Мишустин. Новые ограничения будут действовать до 31 января 2027 года. Запрет не распространяется на поставки российского бензина за рубеж в рамках межправительственных соглашений. При этом с 1 сентября 2026 года в России перестанут действов",
+      "publishedAt": "Fri, 31 Jul 2026 15:08:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1683831434149-aaa0da6135f6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTkyJTIwJUQwJUEwJUQwJUJFJUQxJTgxJUQxJTgxJUQwJUI4JUQwJUI4JTIwJUQwJUJGJUQxJTgwJUQwJUJFJUQwJUI0JUQwJUJCJUQwJUI4JUQwJUJCJUQwJUI4JTIwJUQwJUI3JUQwJUIwJUQwJUJGJUQxJTgwJUQwJUI1JUQxJTgyfGVufDB8MHx8fDE3ODcyMDQ5MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "title": "Кыргызстан и Узбекистан договорились увеличить число КПП до 30",
+      "summary": "Соответствующая договорённость достигнута 30 июля по итогам переговоров лидеров двух стран, сообщили в пресс-службе президента Кыргызстана. Она закреплена в протоколах к Соглашению о пунктах пропуска и о взаимных поездках граждан (документ от 24 июля 2004 года — прим. LogiStan). Где планируется разм",
+      "publishedAt": "Fri, 31 Jul 2026 14:48:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800"
+      }
+    },
+    {
+      "title": "Добыча нефти в Узбекистане сократилась на 3,1%, газа — на 16,4%",
+      "summary": "За первые шесть месяцев 2026 года в Узбекистане зафиксировано снижение объёмов добычи основных энергоресурсов, следует из отчёта Нацкомстата. В частности: • добыча природного газа сократилась на 16,4% — с 21,9 до 18,3 млрд кубометров; • добыча нефти упала на 3,1% — с 323,9 до 313,8 тысячи тонн; • до",
+      "publishedAt": "Fri, 31 Jul 2026 14:07:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"
+      }
+    },
+    {
+      "title": "SunExpress запускает рейс в «южную» столицу Казахстана",
+      "summary": "31 июля 2026 года авиакомпания SunExpress планирует запустить регулярное сообщение по маршруту «Измир – Алматы», сообщили в Минтрансе Казахстана. Частота: два раза в неделю. • из Измира — по пятницам и вторникам;• из Алматы — по субботам и средам. Полеты планируется выполнять на воздушных судах типа",
+      "publishedAt": "Fri, 31 Jul 2026 13:41:32 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800"
+      }
+    }
+  ]
 }

@@ -3,7 +3,7 @@
 Ровно 6 новостей (по 2 с каждого сайта).
 Фильтр: логистика + страны ЦА.
 БЕЗ ДЕМО-ЗАГЛУШЕК.
-Каждая новость имеет краткую фактическую выжимку (2-4 предложения).
+Каждая новость имеет УНИКАЛЬНУЮ ВЫЖИМКУ (автоматический рерайт без копирования).
 """
 import html
 import json
@@ -54,50 +54,141 @@ def is_relevant(title, summary):
     return True
 
 # ============================================================
-# 2. ГЕНЕРАЦИЯ КРАТКОЙ ВЫЖИМКИ (2-4 предложения)
+# 2. АВТОМАТИЧЕСКАЯ ГЕНЕРАЦИЯ УНИКАЛЬНОЙ ВЫЖИМКИ (РЕРАЙТ)
 # ============================================================
 
-def generate_summary(title, original_summary):
+# Словарь синонимов для рерайта
+SYNONYMS = {
+    "логистика": ["транспорт", "грузоперевозки", "перевозки", "транспортная сфера"],
+    "транспорт": ["логистика", "перевозки", "транспортная система"],
+    "груз": ["товар", "продукция", "контейнеры"],
+    "перевозки": ["транспортировка", "доставка", "грузоперевозки"],
+    "порт": ["гавань", "морской терминал", "причал"],
+    "контейнер": ["грузовой модуль", "контейнерный модуль", "тара"],
+    "терминал": ["хаб", "распределительный центр", "логистический центр"],
+    "склад": ["хранилище", "складской комплекс"],
+    "железная дорога": ["ЖД", "ж/д", "рельсовый путь"],
+    "коридор": ["маршрут", "направление", "трасса"],
+    "инвестиция": ["вложение", "финансирование", "капитал"],
+    "проект": ["программа", "инициатива", "объект"],
+    "развитие": ["рост", "прогресс", "совершенствование"],
+    "строительство": ["возведение", "создание", "постройка"],
+    "открытие": ["запуск", "введение в эксплуатацию", "старт"],
+    "крупный": ["масштабный", "значительный", "внушительный"],
+    "новый": ["современный", "перспективный", "инновационный"],
+    "важный": ["ключевой", "значимый", "существенный"],
+    "успешный": ["результативный", "эффективный", "плодотворный"],
+}
+
+def rewrite_text(text):
+    """Заменяет слова на синонимы"""
+    if not text:
+        return text
+    words = text.split()
+    new_words = []
+    for word in words:
+        clean_word = re.sub(r'[^\w\s]', '', word).lower()
+        replaced = False
+        for key, synonyms in SYNONYMS.items():
+            if clean_word == key.lower() or clean_word in key.lower():
+                new_word = random.choice(synonyms)
+                if word[0].isupper():
+                    new_word = new_word.capitalize()
+                new_words.append(new_word)
+                replaced = True
+                break
+        if not replaced:
+            new_words.append(word)
+    return ' '.join(new_words)
+
+def shuffle_sentence_parts(text):
+    """Перемешивает части предложения для уникальности"""
+    if not text or len(text) < 30:
+        return text
+    
+    # Разбиваем по запятым и союзам
+    separators = [' и ', ',', ';', ' — ']
+    parts = [text]
+    for sep in separators:
+        new_parts = []
+        for p in parts:
+            if sep in p and len(p.split(sep)) >= 2:
+                new_parts.extend(p.split(sep))
+            else:
+                new_parts.append(p)
+        parts = new_parts
+    
+    # Если есть части — перемешиваем
+    if len(parts) >= 2:
+        first = parts[0]
+        rest = parts[1:]
+        random.shuffle(rest)
+        result = first
+        for i, part in enumerate(rest):
+            if part.strip():
+                sep = random.choice(separators)
+                result += sep + part.strip()
+        return result
+    
+    return text
+
+def generate_unique_summary(title, original_summary):
     """
-    Генерирует краткую фактическую выжимку своими словами (2-4 предложения)
+    Генерирует УНИКАЛЬНУЮ выжимку (2-4 предложения) без копирования оригинала.
     """
     if not original_summary:
         original_summary = title
     
-    # Очищаем текст
+    # 1. Очищаем от шаблонных фраз
     text = strip_html(original_summary)
     text = re.sub(r'передает\s+агентство\s+[А-Яа-я]+\s*', '', text)
     text = re.sub(r'со\s+ссылкой\s+на\s+[^,.]+,?\s*', '', text)
     text = re.sub(r'как\s+сообщил[аи]?\s+[^,.]+,?\s*', '', text)
+    text = re.sub(r'передает\s+корреспондент\s+[А-Яа-я]+\s*', '', text)
+    text = re.sub(r'по\s+информации\s+[^,.]+,?\s*', '', text)
     
-    # Разбиваем на предложения
+    # 2. Замена слов на синонимы
+    text = rewrite_text(text)
+    
+    # 3. Разбиваем на предложения
     sentences = re.split(r'[.!?]', text)
     sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
     
-    # Если мало предложений — используем заголовок + первое предложение
+    # 4. Если мало предложений — создаем из заголовка
     if len(sentences) < 2:
-        # Очищаем заголовок от шаблонов
         clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
-        return f"{clean_title}. {sentences[0] if sentences else 'Подробнее в источнике.'}"
+        clean_title = rewrite_text(clean_title)
+        if sentences:
+            return f"{clean_title}. {sentences[0]}"
+        else:
+            return f"{clean_title}. Подробнее в источнике."
     
-    # Собираем 2-3 ключевых предложения
-    fact_sentences = sentences[:3]
+    # 5. Перемешиваем части предложений
+    processed_sentences = []
+    for s in sentences[:3]:
+        s = shuffle_sentence_parts(s)
+        processed_sentences.append(s)
     
-    # Убираем повторы
+    # 6. Убираем повторы
     seen = set()
     unique_sentences = []
-    for s in fact_sentences:
+    for s in processed_sentences:
         key = s[:30].lower()
         if key not in seen:
             seen.add(key)
             unique_sentences.append(s)
     
-    # Собираем результат
-    result = '. '.join(unique_sentences)
+    # 7. Собираем результат (2-3 предложения)
+    result = '. '.join(unique_sentences[:3])
     
-    # Добавляем точку в конце, если нет
+    # 8. Добавляем точку в конце
     if result and not result.endswith('.'):
         result += '.'
+    
+    # 9. Если получилось слишком коротко — используем заголовок
+    if len(result) < 30:
+        clean_title = rewrite_text(title)
+        return f"{clean_title}. Подробнее в источнике."
     
     return result
 
@@ -207,7 +298,7 @@ def collect_golos():
             "source": "golos.tj",
             "topic": detect_topic(title, summary),
             "title": title,
-            "summary": generate_summary(title, summary),
+            "summary": generate_unique_summary(title, summary),
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
@@ -238,7 +329,7 @@ def collect_logistan():
             "source": "logistan.info",
             "topic": detect_topic(title, summary),
             "title": title,
-            "summary": generate_summary(title, summary),
+            "summary": generate_unique_summary(title, summary),
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
@@ -297,7 +388,7 @@ def collect_inform():
             "source": "inform.kz",
             "topic": detect_topic(title, summary),
             "title": title,
-            "summary": generate_summary(title, summary),
+            "summary": generate_unique_summary(title, summary),
             "publishedAt": published,
             "photo": photo,
         })
@@ -310,7 +401,7 @@ def collect_inform():
 # 5. СБОР
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (только логистика + страны ЦА)...")
+    print("\n🔍 Сбор новостей (с уникальной выжимкой)...")
     items = []
 
     items.extend(collect_golos())
@@ -332,7 +423,7 @@ def collect():
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (с краткой выжимкой)...")
+    print("🚀 Сбор новостей (автоматический рерайт)...")
     items = collect()
 
     data = {

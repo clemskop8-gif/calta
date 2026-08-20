@@ -1,65 +1,25 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-20T06:24:20.646524+00:00",
+  "updatedAt": "2026-08-20T06:34:14.435134+00:00",
   "items": [
     {
-      "source": "golos.tj",
-      "topic": "Железная дорога",
-      "title": "Ключевой финансовый форум Евразии пройдет в Астане 9–10 сентября",
-      "summary": "9–10 сентября 2026 года столица Казахстана вновь станет площадкой, где формируется инвестиционная и финансовая повестка Евразийского региона, сообщает Trend. Международный финансовый центр «Астана» (МФЦА) проведет IX форум Astana Finance Days 2026:…",
-      "publishedAt": "Wed, 19 Aug 2026 01:48:26 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1728022873385-1b48bbc41ecc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlBJUQwJUJCJUQxJThFJUQxJTg3JUQwJUI1JUQwJUIyJUQwJUJFJUQwJUI5JTIwJUQxJTg0JUQwJUI4JUQwJUJEJUQwJUIwJUQwJUJEJUQxJTgxJUQwJUJFJUQwJUIyJUQxJThCJUQwJUI5fGVufDB8MHx8fDE3ODcyMDcwNTR8MA&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
-      "source": "golos.tj",
-      "topic": "Железная дорога",
-      "title": "Шестой Открытый международный шахматный кубок Михаила Ботвинника среди юношеских команд СНГ",
-      "summary": "С 11 по 18 августа в Москве проходил шестой открытый международный Кубок чемпиона мира Михаила Ботвинника среди юношеских команд стран СНГ, сообщает Интернет-портал СНГ. Турнир проводился Ассоциацией шахматных федераций при…",
-      "publishedAt": "Tue, 18 Aug 2026 20:17:23 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/uploads/1413387158190559d80f7/6108b580?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8cmFpbHdheXxlbnwwfDB8fHwxNzg3MjA3MDU0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
-      "source": "logistan.info",
-      "topic": "Инфраструктура",
-      "title": "Терминал в аэропорту Андижана обещают достроить до конца года",
-      "summary": "В Андижанской области ведётся строительство нового пассажирского терминала международного аэропорта Андижан. Его площадь составляет 19,6 тысячи квадратных метров, сообщили в Uzbekistan Airports. Компания реализует проект самостоятельно, без привлечения средств частных инвесторов. Его предварительная",
-      "publishedAt": "Thu, 20 Aug 2026 05:28:00 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1556740720-776b84291f8e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDF8MXxzZWFyY2h8MXx8dGVybWluYWx8ZW58MHwwfHx8MTc4NzIwNzA1Nnww&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
-      "source": "logistan.info",
-      "topic": "Железная дорога",
-      "title": "Парадоксы энергосистемы Казахстана: дефицит на фоне роста ВИЭ",
-      "summary": "Казахстан с 2027 года хочет отказаться от импорта российской электроэнергии. Хотя ввод новых мощностей способен закрыть внутренний дефицит, достижение энергонезависимости упирается в комплекс смежных вызовов: от баланса между традиционной и «зелёной» генерацией до межгосударственной координации по в",
-      "publishedAt": "Thu, 20 Aug 2026 04:20:00 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1583159557200-9fe0cbcaae19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTlGJUQwJUIwJUQxJTgwJUQwJUIwJUQwJUI0JUQwJUJFJUQwJUJBJUQxJTgxJUQxJThCJTIwJUQxJThEJUQwJUJEJUQwJUI1JUQxJTgwJUQwJUIzJUQwJUJFJUQxJTgxJUQwJUI4JUQxJTgxJUQxJTgyJUQwJUI1JUQwJUJDJUQxJThCfGVufDB8MHx8fDE3ODcyMDcwNTd8MA&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
       "source": "inform.kz",
-      "topic": "Железная дорога",
-      "title": "КТЖ закупит 131 пассажирский вагон до конца 2027 года",
-      "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. Работа по модернизации продолжается, передает корреспондент агентства Kazinform.",
-      "publishedAt": "2026-07-28T21:40:00Z",
+      "topic": "Логистика",
+      "title": "Казахстан — Россия: от регионального сотрудничества к евразийской повестке",
+      "summary": "XXII Форум межрегионального сотрудничества в Омске подтвердил: отношения двух стран давно переросли формат приграничного взаимодействия и сегодня формируют широкую евразийскую архитектуру партнерства. Президент Касым-Жомарт Токаев обозначил не только практические задачи в экономике и логистике, но и",
+      "publishedAt": "2026-07-26T16:00:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1535535112387-56ffe8db21ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8dHJhaW58ZW58MHwwfHx8MTc4NzIwNzA1OXww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Логистика",
-      "title": "Более девяти тысяч рабочих мест создано в Мангистауской области с начала года",
-      "summary": "В рамках реализации поручений Главы государства по диверсификации национальной экономики и раскрытию транспортно-логистического потенциала страны, в Мангистауской области проводится системная работа по укреплению обрабатывающего сектора и инфраструктурного каркаса, передает Kazinform со ссылкой на p",
-      "publishedAt": "2026-07-24T08:34:00Z",
+      "title": "Казахстан и Чехия расширяют сотрудничество в сфере транспорта и логистики",
+      "summary": "Казахстан и Чехия обсудили развитие безопасных транспортных маршрутов, расширение Транскаспийского коридора и участие чешских компаний в логистических и инфраструктурных проектах, передает Kazinform со ссылкой на Министерство иностранных дел Казахстана.",
+      "publishedAt": "2026-07-24T21:59:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1650709800178-1f3f5b44b10a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8JUQwJTkxJUQwJUJFJUQwJUJCJUQwJUI1JUQwJUI1JTIwJUQwJUI0JUQwJUI1JUQwJUIyJUQxJThGJUQxJTgyJUQwJUI4fGVufDB8MHx8fDE3ODcyMDcwNjB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"
       }
     }
   ]

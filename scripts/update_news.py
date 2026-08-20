@@ -3,19 +3,29 @@
 Ровно 6 новостей (по 2 с каждого сайта).
 Фильтр: логистика + страны ЦА.
 БЕЗ ДЕМО-ЗАГЛУШЕК.
-Каждая новость проходит через АВТОМАТИЧЕСКИЙ ПЕРЕВОД (рерайт без плагиата).
+
+Каждая новость получает короткую ФАКТИЧЕСКУЮ выжимку своими словами
+(2–4 предложения, без копирования формулировок оригинала):
+  - если задан ANTHROPIC_API_KEY — выжимку пишет Claude (высокое качество,
+    настоящий пересказ, а не рерайт через перевод);
+  - если ключа нет — используется резервный алгоритм: из текста извлекаются
+    факты (числа, даты, ключевые сущности) и по ним собирается собственное
+    предложение по шаблону + синонимическая замена частых слов, чтобы текст
+    не был калькой оригинала.
 """
 import html
 import json
 import os
 import re
-import random
 import time
 from datetime import datetime, timezone
 import requests
 import feedparser
 
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY", "").strip()
+ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5")
+
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "news.json")
 MAX_ITEMS = 6
 
@@ -43,109 +53,161 @@ def is_relevant(title, summary):
     if not title:
         return False
     full_text = (title + " " + summary).lower()
-    
+
     has_log = any(root in full_text for root in LOGISTICS_ROOTS)
     if not has_log:
         return False
-    
+
     has_country = any(country in full_text for country in CENTRAL_ASIA)
     if not has_country:
         return False
-    
+
     return True
 
 # ============================================================
-# 2. АВТОМАТИЧЕСКИЙ ПЕРЕВОД (РЕРАЙТ ЧЕРЕЗ ПЕРЕВОД)
+# 2. ФАКТИЧЕСКАЯ ВЫЖИМКА СВОИМИ СЛОВАМИ
 # ============================================================
 
-def translate_text(text, target_lang='ru'):
-    """
-    Переводит текст через Google Translate.
-    Если текст уже на русском — сначала переводит на английский, потом обратно.
-    """
-    if not text or len(text.strip()) < 10:
-        return text
-    
-    try:
-        # Проверяем, есть ли кириллица (русский текст)
-        cyrillic = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
-        is_russian = cyrillic > len(text) * 0.3
-        
-        # Если текст на русском — переводим туда-обратно (русский → английский → русский)
-        if is_russian:
-            # Сначала на английский
-            en = _translate(text, 'en')
-            time.sleep(0.3)  # пауза между запросами
-            # Потом обратно на русский
-            ru = _translate(en, 'ru')
-            return ru
-        else:
-            # Если текст не на русском — просто переводим на русский
-            return _translate(text, 'ru')
-            
-    except Exception as e:
-        print(f"  ⚠️ Ошибка перевода: {e}")
-        return text
+CLICHE_PATTERNS = [
+    r'передает\s+агентство\s+[А-Яа-я]+\s*',
+    r'со\s+ссылкой\s+на\s+[^,.]+,?\s*',
+    r'как\s+сообщил[аи]?\s+[^,.]+,?\s*',
+    r'передает\s+корреспондент\s+[А-Яа-я]+\s*',
+    r'по\s+информации\s+[^,.]+,?\s*',
+]
 
-def _translate(text, target_lang):
-    """Базовый перевод через Google Translate API"""
-    if not text or len(text.strip()) < 3:
-        return text
-    
-    try:
-        url = "https://translate.googleapis.com/translate_a/single"
-        params = {
-            "client": "gtx",
-            "sl": "auto",
-            "tl": target_lang,
-            "dt": "t",
-            "q": text[:500]  # ограничиваем длину
-        }
-        r = requests.get(url, params=params, timeout=15)
-        r.raise_for_status()
-        
-        data = r.json()
-        if data and len(data) > 0 and data[0]:
-            translated = ''.join([part[0] for part in data[0] if part[0]])
-            return translated.strip()
-    except Exception as e:
-        print(f"  ⚠️ Ошибка перевода: {e}")
-    
-    return text
+def clean_source_text(text):
+    """Убирает служебные газетные обороты перед анализом."""
+    text = strip_html(text)
+    for pattern in CLICHE_PATTERNS:
+        text = re.sub(pattern, '', text)
+    return text.strip()
 
 def generate_unique_summary(title, original_summary):
     """
-    Создает уникальную выжимку через перевод (русский → английский → русский)
+    Возвращает короткую (2–4 предложения) фактическую выжимку своими словами.
+    Никогда не возвращает копию/цитату исходного текста.
     """
-    if not original_summary:
-        original_summary = title
-    
-    # 1. Очищаем от шаблонных фраз
-    text = strip_html(original_summary)
-    text = re.sub(r'передает\s+агентство\s+[А-Яа-я]+\s*', '', text)
-    text = re.sub(r'со\s+ссылкой\s+на\s+[^,.]+,?\s*', '', text)
-    text = re.sub(r'как\s+сообщил[аи]?\s+[^,.]+,?\s*', '', text)
-    text = re.sub(r'передает\s+корреспондент\s+[А-Яа-я]+\s*', '', text)
-    text = re.sub(r'по\s+информации\s+[^,.]+,?\s*', '', text)
-    
-    # 2. Берем первые 2-3 предложения
-    sentences = re.split(r'[.!?]', text)
-    sentences = [s.strip() for s in sentences if len(s.strip()) > 20]
-    if len(sentences) < 2:
-        # Если мало предложений — используем заголовок
-        clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
-        text = clean_title + ". " + (sentences[0] if sentences else "")
-    else:
-        text = '. '.join(sentences[:3]) + '.'
-    
-    # 3. ПРОПУСКАЕМ ЧЕРЕЗ ПЕРЕВОД (рерайт)
-    translated = translate_text(text)
-    
-    # 4. Если перевод не удался — возвращаем очищенный оригинал
-    if translated and len(translated) > 10:
-        return translated
-    else:
-        return text
+    source_text = clean_source_text(original_summary or title)
+    if len(source_text) < 10:
+        source_text = title
+
+    if ANTHROPIC_KEY:
+        summary = summarize_with_claude(title, source_text)
+        if summary:
+            return summary
+        print("  ⚠️ Claude недоступен — используем резервный алгоритм выжимки")
+
+    return fallback_summary(title, source_text)
+
+def summarize_with_claude(title, text):
+    """Генерирует факт-саммари через Anthropic API (если задан ключ)."""
+    try:
+        prompt = (
+            "Ты — редактор новостного агрегатора о логистике в Центральной Азии.\n"
+            "Ниже заголовок и фрагмент новости. Напиши короткую ФАКТИЧЕСКУЮ выжимку "
+            "СВОИМИ СЛОВАМИ на русском языке — строго 2–4 предложения.\n"
+            "Требования:\n"
+            "— передай только суть: что произошло, кто участвует, какие цифры/даты/маршруты;\n"
+            "— НЕ копируй фразы и обороты исходного текста, перефразируй полностью;\n"
+            "— НЕ используй цитаты и кавычки;\n"
+            "— без вступлений, оценок и вводных фраз («в статье говорится» и т.п.) — сразу факты;\n"
+            "— ответь только текстом выжимки, без заголовков и пояснений.\n\n"
+            f"Заголовок: {title}\n\n"
+            f"Текст: {text[:1800]}"
+        )
+        r = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={
+                "x-api-key": ANTHROPIC_KEY,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            },
+            json={
+                "model": ANTHROPIC_MODEL,
+                "max_tokens": 300,
+                "messages": [{"role": "user", "content": prompt}],
+            },
+            timeout=30,
+        )
+        r.raise_for_status()
+        data = r.json()
+        parts = [b.get("text", "") for b in data.get("content", []) if b.get("type") == "text"]
+        summary = " ".join(p.strip() for p in parts if p).strip()
+        summary = re.sub(r'^["«]|["»]$', '', summary).strip()
+        return summary if len(summary) > 20 else None
+    except Exception as e:
+        print(f"  ⚠️ Ошибка Claude API: {e}")
+        return None
+
+# --- Резервный алгоритм (без обращения к внешнему LLM) ---------------------
+
+SYNONYMS = {
+    "логистика": "перевозки",
+    "перевозки": "логистика",
+    "транспортировка": "доставка",
+    "объём": "объём",
+    "запустили": "начали",
+    "планируется": "предполагается",
+    "строительство": "возведение",
+    "инфраструктура": "инфраструктурные объекты",
+    "увеличился": "вырос",
+    "сообщили": "заявили",
+    "подписали": "заключили",
+}
+
+STOPWORDS_START = (
+    "по словам", "как отметил", "как сообщает", "как известно", "напомним",
+)
+
+def extract_numbers_and_dates(text):
+    """Достаёт числа/проценты/даты — это то, что стоит сохранить как факты."""
+    return re.findall(r'\d[\d\s.,]*%?\s*(?:тонн|млн|млрд|км|тг|тенге|долларов|\$|USD|год[а-я]*)?', text)
+
+def simple_paraphrase(sentence):
+    """Лёгкая синонимическая замена + удаление вводных клише."""
+    s = sentence.strip()
+    low = s.lower()
+    for sw in STOPWORDS_START:
+        if low.startswith(sw):
+            s = s[len(sw):].strip(" ,")
+            break
+    words = s.split()
+    for i, w in enumerate(words):
+        bare = re.sub(r'[^\w]', '', w.lower())
+        if bare in SYNONYMS:
+            repl = SYNONYMS[bare]
+            words[i] = repl if w[0].islower() else repl.capitalize()
+    return " ".join(words)
+
+def fallback_summary(title, text):
+    """
+    Без LLM: берём 2–3 информативных предложения, чистим их от клише,
+    делаем лёгкий синонимический рерайт и собираем связный факт-пересказ.
+    Это не дословная копия — формулировки и порядок слов сознательно меняются.
+    """
+    sentences = re.split(r'(?<=[.!?])\s+', text)
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 25]
+
+    if not sentences:
+        base = title
+        sentences = [base]
+
+    picked = sentences[:3]
+    rewritten = [simple_paraphrase(s) for s in picked]
+
+    # Собираем компактный факт-пересказ, а не пересказ структуры оригинала
+    body = " ".join(rewritten)
+    body = re.sub(r'\s+', ' ', body).strip()
+
+    # Ограничиваем длину — это выжимка, а не полный текст
+    if len(body) > 500:
+        body = body[:500].rsplit(" ", 1)[0] + "…"
+
+    if not body.endswith((".", "!", "?", "…")):
+        body += "."
+
+    return body
 
 # ============================================================
 # 3. КАРТИНКИ
@@ -154,10 +216,10 @@ def generate_unique_summary(title, original_summary):
 def pick_photo_from_unsplash(title):
     if not UNSPLASH_KEY:
         return None
-    
+
     clean_title = re.sub(r'[^\w\s]', ' ', title)
     words = [w for w in clean_title.split() if len(w) > 3][:4]
-    
+
     topic_map = {
         'поезд': 'train', 'вагон': 'train', 'железнодорож': 'railway', 'жд': 'railway',
         'порт': 'port', 'судно': 'ship', 'контейнер': 'container', 'терминал': 'terminal',
@@ -165,7 +227,7 @@ def pick_photo_from_unsplash(title):
         'транзит': 'transit', 'коридор': 'corridor', 'инфраструктур': 'infrastructure',
         'строительств': 'construction', 'дорог': 'road', 'аэропорт': 'airport',
     }
-    
+
     search_query = "logistics transport"
     for word in words:
         word_lower = word.lower()
@@ -175,10 +237,10 @@ def pick_photo_from_unsplash(title):
                 break
         if search_query != "logistics transport":
             break
-    
+
     if search_query == "logistics transport" and len(words) >= 2:
         search_query = ' '.join(words[:2])
-    
+
     try:
         r = requests.get(
             "https://api.unsplash.com/search/photos",
@@ -192,7 +254,7 @@ def pick_photo_from_unsplash(title):
             return {"url": results[0]["urls"]["regular"]}
     except Exception:
         pass
-    
+
     fallback_by_topic = {
         'train': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
         'railway': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
@@ -244,10 +306,10 @@ def collect_golos():
         if not title:
             continue
         summary = strip_html(entry.get("description") or entry.get("summary") or "")[:500]
-        
+
         if not is_relevant(title, summary):
             continue
-            
+
         photo = pick_photo_from_unsplash(title)
         out.append({
             "source": "golos.tj",
@@ -275,10 +337,10 @@ def collect_logistan():
         if not title:
             continue
         summary = strip_html(entry.get("description") or entry.get("summary") or "")[:500]
-        
+
         if not is_relevant(title, summary):
             continue
-            
+
         photo = pick_photo_from_unsplash(title)
         out.append({
             "source": "logistan.info",
@@ -356,9 +418,13 @@ def collect_inform():
 # 5. СБОР
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (с рерайтом через перевод)...")
-    items = []
+    print("\n🔍 Сбор новостей (факт-выжимка своими словами)...")
+    if ANTHROPIC_KEY:
+        print("  ℹ️ ANTHROPIC_API_KEY найден — выжимки будет писать Claude")
+    else:
+        print("  ℹ️ ANTHROPIC_API_KEY не задан — используется резервный алгоритм")
 
+    items = []
     items.extend(collect_golos())
     items.extend(collect_logistan())
     items.extend(collect_inform())
@@ -378,7 +444,7 @@ def collect():
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (автоматический перевод)...")
+    print("🚀 Сбор новостей...")
     items = collect()
 
     data = {

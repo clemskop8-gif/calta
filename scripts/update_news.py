@@ -3,6 +3,7 @@
 Собирает ПО ОЧЕРЕДИ с каждого сайта (по кругу).
 Фильтр: логистика + страны ЦА + стоп-слова.
 НИКАКИХ ДЕМО-ЗАГЛУШЕК.
+У каждой новости СВОЯ картинка по смыслу.
 """
 import html
 import json
@@ -47,6 +48,7 @@ STOP_WORDS = [
     "политик", "выбор", "президент", "парламент",
     "криминал", "убийств", "арест", "суд", "расследован",
     "погод", "климат", "землетрясени", "наводнен",
+    "бюст", "памятник", "возложени", "цветов",
 ]
 
 def is_stop_word(text):
@@ -90,8 +92,109 @@ def is_relevant(title, summary):
     return True
 
 # ============================================================
-# 2. ГЕНЕРАЦИЯ КОРОТКОЙ ВЫЖИМКИ
+# 2. УНИКАЛЬНАЯ КАРТИНКА ПО СМЫСЛУ
 # ============================================================
+
+_used_photos = set()
+
+def get_search_query(title, summary):
+    """Определяет поисковый запрос для Unsplash по смыслу новости"""
+    text = (title + " " + summary).lower()
+    
+    # Карта ключевых слов → темы для поиска
+    topic_map = [
+        # Железная дорога
+        (["поезд", "вагон", "локомотив", "жд", "железнодорож", "рельс", "состав", "электровоз", "магистраль"], "train railway"),
+        # Порт и суда
+        (["порт", "судно", "контейнеровоз", "паром", "причал", "гавань", "морской", "флот", "танкер"], "port ship"),
+        # Терминалы и склады
+        (["терминал", "склад", "хаб", "логистический центр", "распределительный центр", "складской"], "warehouse logistics"),
+        # Контейнеры и грузы
+        (["контейнер", "груз", "контейнерный", "teu"], "container cargo"),
+        # Коридоры и транзит
+        (["коридор", "транзит", "маршрут", "транскаспий"], "corridor route"),
+        # Таможня
+        (["таможня", "оформление", "пошлины"], "customs"),
+        # Перевозки
+        (["перевозк", "транспортировк", "доставк"], "delivery transport"),
+        # Авиация
+        (["авиа", "рейс", "самолет", "аэропорт"], "airport plane"),
+        # Форум
+        (["форум", "конференц", "встреч"], "conference business"),
+        # Инфраструктура
+        (["инфраструктур", "строительств", "дорог"], "construction road"),
+    ]
+    
+    for keywords, query in topic_map:
+        for kw in keywords:
+            if kw in text:
+                return query
+    
+    # Если ничего не подошло — используем заголовок
+    words = re.sub(r'[^\w\s]', ' ', title).split()[:3]
+    return ' '.join(words) if len(words) >= 2 else "logistics transport"
+
+def pick_photo_from_unsplash(title, summary):
+    """Ищет картинку ПО СМЫСЛУ новости"""
+    if not UNSPLASH_KEY:
+        return None
+    
+    # Получаем запрос по смыслу
+    search_query = get_search_query(title, summary)
+    
+    photo_url = None
+    for attempt in range(3):
+        try:
+            r = requests.get(
+                "https://api.unsplash.com/search/photos",
+                params={"query": search_query, "per_page": 5, "orientation": "landscape"},
+                headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
+                timeout=10,
+            )
+            r.raise_for_status()
+            results = r.json().get("results") or []
+            
+            for photo in results:
+                url = photo["urls"]["regular"]
+                if url not in _used_photos:
+                    _used_photos.add(url)
+                    photo_url = url
+                    break
+            
+            if photo_url:
+                break
+                
+        except Exception:
+            pass
+        
+        # Если не нашли — меняем запрос
+        search_query = search_query + " " + random.choice(["transport", "logistics", "cargo"])
+    
+    # Запасные картинки
+    if not photo_url:
+        fallback_urls = [
+            "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+            "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+            "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+            "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+            "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
+        ]
+        for url in fallback_urls:
+            if url not in _used_photos:
+                _used_photos.add(url)
+                photo_url = url
+                break
+    
+    return {"url": photo_url} if photo_url else None
+
+def strip_html(text):
+    if not text:
+        return ""
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html.unescape(text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 def generate_unique_summary(title, original_summary):
     if not original_summary:
@@ -141,92 +244,6 @@ def generate_unique_summary(title, original_summary):
     
     return result
 
-# ============================================================
-# 3. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)
-# ============================================================
-
-_used_photos = set()
-
-def pick_photo_from_unsplash(title):
-    if not UNSPLASH_KEY:
-        return None
-    
-    clean_title = re.sub(r'[^\w\s]', ' ', title)
-    words = [w for w in clean_title.split() if len(w) > 3][:4]
-    
-    topic_map = {
-        'поезд': 'train', 'вагон': 'train', 'железнодорож': 'railway', 'жд': 'railway',
-        'порт': 'port', 'судно': 'ship', 'контейнер': 'container', 'терминал': 'terminal',
-        'склад': 'warehouse', 'хаб': 'logistics hub', 'груз': 'cargo', 'фрахт': 'freight',
-        'транзит': 'transit', 'коридор': 'corridor', 'инфраструктур': 'infrastructure',
-        'строительств': 'construction', 'дорог': 'road', 'аэропорт': 'airport',
-    }
-    
-    search_query = "logistics transport"
-    for word in words:
-        word_lower = word.lower()
-        for key, topic in topic_map.items():
-            if key in word_lower:
-                search_query = topic
-                break
-        if search_query != "logistics transport":
-            break
-    
-    if search_query == "logistics transport" and len(words) >= 2:
-        search_query = ' '.join(words[:2])
-    
-    photo_url = None
-    for attempt in range(3):
-        try:
-            r = requests.get(
-                "https://api.unsplash.com/search/photos",
-                params={"query": search_query, "per_page": 5, "orientation": "landscape"},
-                headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-                timeout=10,
-            )
-            r.raise_for_status()
-            results = r.json().get("results") or []
-            
-            for photo in results:
-                url = photo["urls"]["regular"]
-                if url not in _used_photos:
-                    _used_photos.add(url)
-                    photo_url = url
-                    break
-            
-            if photo_url:
-                break
-                
-        except Exception:
-            pass
-        
-        search_query = search_query + " " + random.choice(["transport", "logistics", "cargo"])
-    
-    if not photo_url:
-        fallback_urls = [
-            "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
-            "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-            "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
-            "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
-            "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
-        ]
-        for url in fallback_urls:
-            if url not in _used_photos:
-                _used_photos.add(url)
-                photo_url = url
-                break
-    
-    return {"url": photo_url} if photo_url else None
-
-def strip_html(text):
-    if not text:
-        return ""
-    text = re.sub(r"<[^>]+>", " ", text)
-    text = html.unescape(text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
-
 def detect_topic(title, summary):
     text = (title + " " + summary).lower()
     topics = {
@@ -266,7 +283,7 @@ def collect_golos(limit=6):
         if not is_relevant(title, summary):
             continue
             
-        photo = pick_photo_from_unsplash(title)
+        photo = pick_photo_from_unsplash(title, summary)
         out.append({
             "source": "golos.tj",
             "topic": detect_topic(title, summary),
@@ -298,7 +315,7 @@ def collect_logistan(limit=6):
         if not is_relevant(title, summary):
             continue
             
-        photo = pick_photo_from_unsplash(title)
+        photo = pick_photo_from_unsplash(title, summary)
         out.append({
             "source": "logistan.info",
             "topic": detect_topic(title, summary),
@@ -358,7 +375,7 @@ def collect_inform(limit=6):
         if not is_relevant(title, summary):
             continue
 
-        photo = pick_photo_from_unsplash(title)
+        photo = pick_photo_from_unsplash(title, summary)
         out.append({
             "source": "inform.kz",
             "topic": detect_topic(title, summary),
@@ -422,14 +439,13 @@ def collect():
         if len(result) >= MAX_ITEMS:
             break
     
-    # ❌ НИКАКИХ ДЕМО-ЗАГЛУШЕК
     return result[:MAX_ITEMS]
 
 # ============================================================
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (только логистика, без демо)...")
+    print("🚀 Сбор новостей (уникальные картинки по смыслу)...")
     items = collect()
 
     data = {

@@ -1,8 +1,8 @@
 """
 Обновляет data/news.json — новости ТОЛЬКО с golos.tj, logistan.info, inform.kz.
 Собирает ПО ОЧЕРЕДИ с каждого сайта (по кругу).
-Если на сайте нет новостей — пропускает и берет со следующего.
-Добивает до 6 демо-новостями, если не хватает.
+Фильтр: логистика + страны ЦА + стоп-слова.
+НИКАКИХ ДЕМО-ЗАГЛУШЕК.
 """
 import html
 import json
@@ -41,6 +41,20 @@ STRICT_LOGISTICS = [
     "перевозк", "транспортировк", "доставк", "логистик",
 ]
 
+STOP_WORDS = [
+    "цирк", "фестиваль", "искусство", "кино", "музык", "концерт",
+    "выставк", "спорт", "футбол", "хоккей", "теннис",
+    "политик", "выбор", "президент", "парламент",
+    "криминал", "убийств", "арест", "суд", "расследован",
+    "погод", "климат", "землетрясени", "наводнен",
+]
+
+def is_stop_word(text):
+    if not text:
+        return False
+    text_lower = text.lower()
+    return any(kw in text_lower for kw in STOP_WORDS)
+
 def is_logistics(text):
     if not text:
         return False
@@ -65,6 +79,10 @@ def is_relevant(title, summary):
     if not title:
         return False
     full_text = (title + " " + summary).lower()
+    
+    if is_stop_word(full_text):
+        return False
+    
     if not is_logistics(full_text):
         return False
     if not has_country(full_text):
@@ -226,11 +244,10 @@ def detect_topic(title, summary):
     return "Логистика"
 
 # ============================================================
-# 4. ПАРСИНГ ТРЁХ САЙТОВ (ВОЗВРАЩАЮТ СПИСКИ НОВОСТЕЙ)
+# 4. ПАРСИНГ ТРЁХ САЙТОВ
 # ============================================================
 
 def collect_golos(limit=6):
-    """Собирает логистические новости с golos.tj (не больше limit)"""
     out = []
     try:
         parsed = feedparser.parse("https://golos.tj/feed/", request_headers=HEADERS)
@@ -263,7 +280,6 @@ def collect_golos(limit=6):
     return out
 
 def collect_logistan(limit=6):
-    """Собирает логистические новости с logistan.info (не больше limit)"""
     out = []
     try:
         parsed = feedparser.parse("https://logistan.info/feed/", request_headers=HEADERS)
@@ -296,7 +312,6 @@ def collect_logistan(limit=6):
     return out
 
 def collect_inform(limit=6):
-    """Собирает логистические новости с inform.kz (не больше limit)"""
     out = []
     url = "https://www.inform.kz/tag/logistika_t11100"
     try:
@@ -357,12 +372,11 @@ def collect_inform(limit=6):
     return out
 
 # ============================================================
-# 5. СБОР ПО ОЧЕРЕДИ (ПО КРУГУ)
+# 5. СБОР ПО ОЧЕРЕДИ (БЕЗ ДЕМО)
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (по очереди с каждого сайта)...")
+    print("\n🔍 Сбор новостей (только реальные, без заглушек)...")
     
-    # Собираем новости с каждого сайта (до 6 штук)
     golos_news = collect_golos(6)
     logistan_news = collect_logistan(6)
     inform_news = collect_inform(6)
@@ -371,7 +385,6 @@ def collect():
     print(f"  logistan.info: {len(logistan_news)}")
     print(f"  inform.kz: {len(inform_news)}")
     
-    # Убираем дубликаты по заголовку (внутри каждого списка)
     def unique_list(items):
         seen = set()
         result = []
@@ -386,12 +399,10 @@ def collect():
     logistan_news = unique_list(logistan_news)
     inform_news = unique_list(inform_news)
     
-    # Перемешиваем каждый список, чтобы не брать одни и те же новости
     random.shuffle(golos_news)
     random.shuffle(logistan_news)
     random.shuffle(inform_news)
     
-    # Собираем по очереди (по кругу)
     result = []
     sources = [
         ("golos.tj", golos_news),
@@ -399,14 +410,11 @@ def collect():
         ("inform.kz", inform_news),
     ]
     
-    # Идем по кругу, пока не наберем 6 или не закончатся новости
-    max_rounds = 6  # максимум кругов
-    for round_num in range(max_rounds):
+    for round_num in range(6):
         for source_name, source_news in sources:
             if len(result) >= MAX_ITEMS:
                 break
             if source_news:
-                # Берем первую новость из источника
                 item = source_news.pop(0)
                 result.append(item)
                 print(f"  📌 [{source_name}] {item['title'][:50]}...")
@@ -414,74 +422,14 @@ def collect():
         if len(result) >= MAX_ITEMS:
             break
     
-    # Если всё ещё меньше 6 — добиваем демо
-    if len(result) < MAX_ITEMS:
-        print(f"\n⚠️ Не хватает новостей ({len(result)}/{MAX_ITEMS}). Добавляем демо...")
-        demo_items = [
-            {
-                "source": "demo",
-                "topic": "Логистика",
-                "title": "Развитие транспортных коридоров в Центральной Азии",
-                "summary": "Страны региона обсуждают совместные проекты по модернизации логистики.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800"},
-            },
-            {
-                "source": "demo",
-                "topic": "Инфраструктура",
-                "title": "Новый логистический хаб открылся в регионе",
-                "summary": "Объект будет способствовать развитию грузоперевозок.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"},
-            },
-            {
-                "source": "demo",
-                "topic": "Железная дорога",
-                "title": "Казахстан обновляет парк пассажирских поездов",
-                "summary": "За последние годы приобретено более 400 новых вагонов.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800"},
-            },
-            {
-                "source": "demo",
-                "topic": "Экономика",
-                "title": "Экономический рост в Центральной Азии",
-                "summary": "Регион показывает устойчивое развитие.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800"},
-            },
-            {
-                "source": "demo",
-                "topic": "Порты",
-                "title": "Модернизация портовой инфраструктуры",
-                "summary": "В регионе планируется обновление портовых мощностей.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800"},
-            },
-            {
-                "source": "demo",
-                "topic": "Логистика",
-                "title": "Новые логистические маршруты в регионе",
-                "summary": "Развитие транспортных коридоров продолжается.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800"},
-            },
-        ]
-        
-        # Добавляем демо-новости, пока не наберем 6
-        for demo in demo_items:
-            if len(result) >= MAX_ITEMS:
-                break
-            result.append(demo)
-            print(f"  📌 [demo] {demo['title'][:50]}...")
-    
+    # ❌ НИКАКИХ ДЕМО-ЗАГЛУШЕК
     return result[:MAX_ITEMS]
 
 # ============================================================
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (по очереди с трёх сайтов)...")
+    print("🚀 Сбор новостей (только логистика, без демо)...")
     items = collect()
 
     data = {
@@ -494,13 +442,11 @@ def main():
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ Записано: {OUT_PATH} -> {len(items)} новостей")
+    print(f"\n✅ Записано: {OUT_PATH} -> {len(items)} новостей (реальных)")
     for i, item in enumerate(items[:6]):
         has_photo = "✅" if item.get("photo") else "❌"
         source = item.get("source", "?")
         print(f"  {i+1}. {has_photo} [{source}] {item['title'][:50]}...")
-        if item.get('summary'):
-            print(f"      📝 {item['summary'][:80]}...")
 
 if __name__ == "__main__":
     main()

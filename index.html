@@ -1348,159 +1348,93 @@ html {
 
 <script>
   // ============================================================
-  // КУРСЫ ВАЛЮТ - ОФИЦИАЛЬНЫЙ КУРС НАЦБАНКА РК
-  // ============================================================
-  (function(){
-    const codes = ['USD', 'EUR', 'RUB', 'CNY'];
-    const currencyMap = {
-      'USD': 'r-KZT',
-      'EUR': 'r-EUR',
-      'RUB': 'r-RUB',
-      'CNY': 'r-CNY'
-    };
-    
-    // Добавляем недостающие элементы для EUR, RUB, CNY
-    const ticker = document.getElementById('rateTicker');
-    if (ticker) {
-      // Проверяем, есть ли уже EUR, RUB, CNY
-      const existingLabels = ['USD/KZT', 'USD/UZS', 'USD/KGS', 'USD/TJS', 'USD/TMT'];
-      const newCurrencies = [
-        { label: 'EUR/KZT', id: 'r-EUR' },
-        { label: 'RUB/KZT', id: 'r-RUB' },
-        { label: 'CNY/KZT', id: 'r-CNY' }
-      ];
-      
-      // Добавляем новые валюты, если их нет
-      newCurrencies.forEach(curr => {
-        if (!document.getElementById(curr.id)) {
-          const span = document.createElement('span');
-          span.className = 'rate-item';
-          span.innerHTML = `<span class="rate-label">${curr.label}</span><span class="rate-value" id="${curr.id}">—</span>`;
-          // Вставляем перед обновлением
-          const updated = document.getElementById('rateUpdated');
-          if (updated) {
-            ticker.insertBefore(span, updated);
-          } else {
-            ticker.appendChild(span);
+// КУРСЫ ВАЛЮТ - ТОЛЬКО ТО, ЧТО ЕСТЬ В HTML
+// ============================================================
+(function(){
+  // 1. Пробуем Нацбанк РК
+  function fetchNBK() {
+    const url = 'https://www.nationalbank.kz/rss/rates_all.xml';
+    fetch(url)
+      .then(response => response.text())
+      .then(xml => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xml, 'text/xml');
+        const items = doc.querySelectorAll('item');
+        const rates = {};
+        
+        items.forEach(item => {
+          const title = item.querySelector('title')?.textContent || '';
+          const description = item.querySelector('description')?.textContent || '';
+          const codeMatch = title.match(/\(([A-Z]+)\)/);
+          const rateMatch = description.match(/([\d,]+\.\d+)/);
+          if (codeMatch && rateMatch) {
+            const code = codeMatch[1];
+            const rate = parseFloat(rateMatch[1].replace(',', '.'));
+            rates[code] = rate;
           }
+        });
+        
+        // Обновляем USD/KZT (если есть в HTML)
+        const usdKztEl = document.getElementById('r-KZT');
+        if (usdKztEl && rates['USD']) {
+          usdKztEl.textContent = rates['USD'].toFixed(2);
         }
+        
+        // Обновляем остальные валюты через кросс-курсы (если есть в HTML)
+        if (rates['USD'] && rates['USD'] > 0) {
+          const usdKzt = rates['USD'];
+          
+          const uzsEl = document.getElementById('r-UZS');
+          if (uzsEl) uzsEl.textContent = (usdKzt / 12500).toFixed(2);
+          
+          const kgsEl = document.getElementById('r-KGS');
+          if (kgsEl) kgsEl.textContent = (usdKzt / 87.5).toFixed(2);
+          
+          const tjsEl = document.getElementById('r-TJS');
+          if (tjsEl) tjsEl.textContent = (usdKzt / 9.23).toFixed(2);
+          
+          const tmtEl = document.getElementById('r-TMT');
+          if (tmtEl) tmtEl.textContent = (usdKzt / 3.5).toFixed(2);
+        }
+        
+        const upd = document.getElementById('rateUpdated');
+        if (upd) {
+          const now = new Date();
+          upd.textContent = 'Нацбанк РК, ' + now.toLocaleDateString('ru-RU') + ', ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+        }
+      })
+      .catch(() => { fetchFallbackAPI(); });
+  }
+
+  // 2. Запасной API
+  function fetchFallbackAPI() {
+    const codes = ['KZT', 'UZS', 'KGS', 'TJS', 'TMT'];
+    fetch('https://open.er-api.com/v6/latest/USD')
+      .then(r => r.json())
+      .then(data => {
+        if (!data || data.result !== 'success' || !data.rates) throw new Error('bad payload');
+        codes.forEach(code => {
+          const el = document.getElementById('r-' + code);
+          if (el && typeof data.rates[code] === 'number') {
+            el.textContent = data.rates[code].toLocaleString('ru-RU', {maximumFractionDigits: 2});
+          }
+        });
+        const upd = document.getElementById('rateUpdated');
+        if (upd) {
+          const d = data.time_last_update_utc ? new Date(data.time_last_update_utc) : new Date();
+          upd.textContent = 'Обновлено ' + d.toLocaleDateString('ru-RU') + ', ' + d.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+        }
+      })
+      .catch(() => {
+        document.querySelectorAll('.rate-value').forEach(el => el.textContent = 'н/д');
+        const upd = document.getElementById('rateUpdated');
+        if (upd) upd.textContent = 'Курсы временно недоступны';
       });
-    }
+  }
 
-    // 1. Пробуем Нацбанк РК (официальный курс)
-    function fetchNBK() {
-      const url = 'https://www.nationalbank.kz/rss/rates_all.xml';
-      fetch(url)
-        .then(response => response.text())
-        .then(xml => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(xml, 'text/xml');
-          const items = doc.querySelectorAll('item');
-          const rates = {};
-          
-          items.forEach(item => {
-            const title = item.querySelector('title')?.textContent || '';
-            const description = item.querySelector('description')?.textContent || '';
-            
-            // Парсим код валюты и курс
-            const codeMatch = title.match(/\(([A-Z]+)\)/);
-            const rateMatch = description.match(/([\d,]+\.\d+)/);
-            
-            if (codeMatch && rateMatch) {
-              const code = codeMatch[1];
-              const rate = parseFloat(rateMatch[1].replace(',', '.'));
-              rates[code] = rate;
-            }
-          });
-          
-          // Обновляем USD/KZT
-          if (rates['USD']) {
-            document.getElementById('r-KZT').textContent = rates['USD'].toFixed(2);
-          }
-          if (rates['EUR']) {
-            const el = document.getElementById('r-EUR');
-            if (el) el.textContent = rates['EUR'].toFixed(2);
-          }
-          if (rates['RUB']) {
-            const el = document.getElementById('r-RUB');
-            if (el) el.textContent = rates['RUB'].toFixed(2);
-          }
-          if (rates['CNY']) {
-            const el = document.getElementById('r-CNY');
-            if (el) el.textContent = rates['CNY'].toFixed(2);
-          }
-          
-          // Обновляем остальные валюты через кросс-курсы
-          if (rates['USD'] && rates['USD'] > 0) {
-            const usdKzt = rates['USD'];
-            
-            // USD/UZS (примерный курс, т.к. Нацбанк РК не дает узбекский сум)
-            // Используем фиксированный курс или берем из другого источника
-            const uzsRate = usdKzt * 0.00012; // приблизительно
-            document.getElementById('r-UZS').textContent = (1 / 0.00012).toFixed(2);
-            
-            // USD/KGS
-            const kgsRate = usdKzt * 0.0012;
-            document.getElementById('r-KGS').textContent = (1 / 0.0012).toFixed(2);
-            
-            // USD/TJS
-            const tjsRate = usdKzt * 0.0011;
-            document.getElementById('r-TJS').textContent = (1 / 0.0011).toFixed(2);
-            
-            // USD/TMT
-            const tmtRate = usdKzt * 0.0035;
-            document.getElementById('r-TMT').textContent = (1 / 0.0035).toFixed(2);
-          }
-          
-          const upd = document.getElementById('rateUpdated');
-          if (upd) {
-            const now = new Date();
-            upd.textContent = 'Нацбанк РК, ' + now.toLocaleDateString('ru-RU') + ', ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
-          }
-        })
-        .catch(() => {
-          // Если Нацбанк не ответил — используем запасной API
-          fetchFallbackAPI();
-        });
-    }
-
-    // 2. Запасной API (open.er-api.com)
-    function fetchFallbackAPI() {
-      const codes = ['KZT', 'UZS', 'KGS', 'TJS', 'TMT'];
-      fetch('https://open.er-api.com/v6/latest/USD')
-        .then(function(r){ return r.json(); })
-        .then(function(data){
-          if(!data || data.result !== 'success' || !data.rates) throw new Error('bad payload');
-          codes.forEach(function(code){
-            var el = document.getElementById('r-'+code);
-            if(el && typeof data.rates[code] === 'number'){
-              el.textContent = data.rates[code].toLocaleString('ru-RU',{maximumFractionDigits:2});
-            } else if(el){
-              el.textContent = 'н/д';
-            }
-          });
-          var upd = document.getElementById('rateUpdated');
-          if(upd){
-            var d = data.time_last_update_utc ? new Date(data.time_last_update_utc) : new Date();
-            upd.textContent = 'Обновлено ' + d.toLocaleDateString('ru-RU') + ', ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-          }
-        })
-        .catch(function(){
-          codes.forEach(function(code){
-            var el = document.getElementById('r-'+code);
-            if(el) el.textContent = 'н/д';
-          });
-          var upd = document.getElementById('rateUpdated');
-          if(upd) upd.textContent = 'Курсы временно недоступны';
-        });
-    }
-
-    // Запускаем сначала Нацбанк, если не ответит — запасной API
-    fetchNBK();
-    
-    // Обновляем раз в час
-    setInterval(fetchNBK, 3600000);
-  })();
+  fetchNBK();
+  setInterval(fetchNBK, 3600000);
+})();
 </script>
 
 <script>

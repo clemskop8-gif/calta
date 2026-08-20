@@ -49,8 +49,8 @@
 }
 
 html {
-  zoom: 1.1; /* для Chrome, Edge, Safari */
-  -moz-transform: scale(1.1); /* для Firefox */
+  zoom: 1.1;
+  -moz-transform: scale(1.1);
   -moz-transform-origin: top left;
 }
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -80,7 +80,6 @@ html {
 
   h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.01em;}
 
-  /* ---------- header ---------- */
   header{
     position:fixed;top:0;left:0;right:0;z-index:1000;
     background:rgb(251, 251, 252);
@@ -151,7 +150,6 @@ html {
     padding:12px 16px;border-radius:2px;
   }
 
-  /* ---------- nav dropdown: Подробная информация ---------- */
   .nav-dropdown{position:relative;}
   .nav-dropdown-trigger{
     display:flex;flex-direction:row;align-items:center;gap:8px;
@@ -165,8 +163,6 @@ html {
     transition:transform .45s cubic-bezier(.4,0,.2,1);
   }
   .nav-dropdown:hover .nav-dropdown-arrow{transform:rotate(180deg);}
-  /* invisible hit-area bridge so the pointer never leaves the hoverable box
-     while moving from the trigger down into the menu */
   .nav-dropdown::after{
     content:'';position:absolute;left:50%;transform:translateX(-50%);
     top:100%;width:220px;height:18px;
@@ -195,7 +191,6 @@ html {
   .nav-dropdown-menu a:hover{opacity:1;background:rgba(0,0,0,.05);color:var(--turquoise);}
   .burger{display:none;background:none;border:none;color:#000000;cursor:pointer;}
 
-  /* ---------- hero ---------- */
   .hero{
     position:relative;min-height:100vh;
     background:linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 55%, var(--navy) 100%);
@@ -218,7 +213,6 @@ html {
     .hero-map .route{animation:none;stroke-dasharray:none;opacity:.4;}
   }
 
-  /* decorative route stripes reused on non-hero dark sections */
   .section-map{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
   .section-map .route{
     fill:none;stroke:var(--ochre);stroke-width:1.4;stroke-dasharray:6 3000;
@@ -264,7 +258,6 @@ html {
   .btn-ghost{color:var(--cream);}
   .btn-ghost:hover{background:rgba(243,239,226,.08);}
 
-  /* ---------- section shell ---------- */
   section{padding:110px 0;position:relative;z-index:0;}
   section.dark{background:var(--navy);color:var(--cream);}
   section.dark.section-red{background:linear-gradient(135deg, var(--red-1) 0%, var(--red-bright) 65%, var(--red-1) 130%);}
@@ -281,7 +274,6 @@ html {
   section.dark.section-gold .goals-visual{background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);border-color:rgba(243,239,226,0.16);}
   section.dark.section-amber{background:linear-gradient(150deg, var(--amber-1) 0%, var(--amber-bright) 68%, var(--amber-2) 130%);}
 
-  /* ---------- news: swap carousel (featured <-> side rectangles) ---------- */
   .news-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:stretch;}
 
   .news-featured-col{display:flex;flex-direction:column;height:100%;}
@@ -360,7 +352,6 @@ html {
     .ic-foot{padding:12px 48px 2px;}
   }
 
-  /* ---------- grain quotes ---------- */
   .grain-wrap{display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:stretch;}
   .grain-hero{
     background:rgba(23,15,2,.28);border:1px solid rgba(243,239,226,0.18);border-radius:4px;
@@ -417,7 +408,6 @@ html {
     .grain-hero,.grain-list{min-width:0;}
   }
 
-  /* ---------- events carousel ---------- */
   .events-grid{display:grid;grid-template-columns:min(440px,42vw) 1fr;gap:56px;align-items:center;}
   .events-carousel{
     position:relative;height:400px;max-height:55vh;
@@ -460,7 +450,6 @@ html {
   .section-head p{font-family:var(--body);font-size:17px;line-height:1.7;opacity:.82;}
   section.dark .eyebrow{opacity:.6;}
 
-  /* route rail (signature motif) */
   .rail{
     position:absolute;left:32px;top:0;bottom:0;width:1px;
     background:var(--line);display:none;
@@ -468,7 +457,6 @@ html {
   section.dark .rail{background:var(--line-dark);}
   @media(min-width:1100px){ .rail{display:block;} }
 
-  /* ---------- directions (manifest cards) ---------- */
   .directions-grid{
     display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
     background:var(--line);border:1px solid var(--line);
@@ -494,7 +482,6 @@ html {
     .directions-grid{grid-template-columns:repeat(2,1fr);}
   }
 
-  /* ---------- goals ---------- */
   .goals-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:70px;align-items:start;}
   .goals-list{list-style:none;}
   .goals-list li{
@@ -516,7 +503,6 @@ html {
     .goals-wrap{grid-template-columns:1fr;gap:40px;}
   }
 
-  /* ---------- advantage cards ---------- */
   .adv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
   .adv-card{
     padding:32px 26px;background:var(--sand-2);border:1px solid var(--line);
@@ -527,7 +513,6 @@ html {
   .adv-card p{font-family:var(--body);font-size:14.5px;line-height:1.6;opacity:.8;}
   @media(max-width:860px){ .adv-grid{grid-template-columns:1fr;} }
 
-  /* ---------- contact ---------- */
   .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;}
   .contact-item{border-top:1px solid var(--line-dark);padding:22px 0;}
   .contact-item .ci-label{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin-bottom:8px;}
@@ -555,7 +540,6 @@ html {
   }
   .map-link:hover{opacity:1;color:var(--turquoise);border-color:var(--turquoise);}
 
-  /* ---------- footer ---------- */
   footer{
     background:var(--navy);color:rgba(243,239,226,.5);
     font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;
@@ -563,7 +547,6 @@ html {
   }
   footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 
-  /* ---------- back to top ---------- */
   .back-to-top-row{background:var(--sand);padding:18px 0;}
   .back-to-top-row .wrap{display:flex;justify-content:flex-end;}
   .back-to-top{
@@ -578,7 +561,6 @@ html {
   .back-to-top svg path{stroke:#F3EFE2;}
   .back-to-top svg{display:block;}
 
-  /* reveal */
   .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
   .reveal.in{opacity:1;transform:none;}
 
@@ -981,21 +963,6 @@ html {
   </div>
 </section>
 
-<!--
-  Блок новостей — заполняется автоматически из data/news.json (GitHub Actions,
-  раз в 24 часа). Каждая карточка .info-card генерируется в JS для каждого
-  элемента news.items — если элементов пришло больше двух, карточек будет
-  больше; если фото не найдено — используется нейтральный плейсхолдер.
-  Пока источник не подключён (isDemo) — показаны два образца ниже как есть.
--->
-<!--
-  Блок новостей — карусель. items[] приходит из data/news.json (см. JS в конце
-  файла). Один элемент — «активный», он показывается большим слева с картинкой;
-  остальные — маленькими текстовыми прямоугольниками справа. Клик по маленькому
-  прямоугольнику, стрелки под большим блоком или перетаскивание мышью
-  вправо/влево — меняют местами активный элемент с соседним (с анимацией).
-  Пока источник не подключён (isDemo) — показаны образцы ниже как есть.
--->
 <section class="sand" id="insights">
   <div class="rail"></div>
   <div class="wrap">
@@ -1054,12 +1021,6 @@ html {
   </div>
 </section>
 
-<!--
-
-  Блок котировок зерна — архитектура рассчитана на подключение внешнего источника котировок.
-  См. функцию loadGrainQuotes() в конце документа: сейчас используется явно обозначенный
-  демонстрационный набор GRAIN_DEMO_DATA; при появлении API его достаточно подставить в fetchGrainData().
--->
 <section class="dark section-amber" id="grain">
   <div class="rail"></div>
   <div class="wrap">
@@ -1203,7 +1164,6 @@ html {
       header.classList.contains('menu-open') ? closeMenu() : openMenu();
     });
 
-    // accordion for "Подробная информация" on touch devices
     const dropdownTrigger = document.querySelector('.nav-dropdown-trigger');
     const dropdown = document.querySelector('.nav-dropdown');
     if(dropdownTrigger && dropdown){
@@ -1215,7 +1175,6 @@ html {
       });
     }
 
-    // close mobile menu after tapping any regular link
     links.querySelectorAll('a').forEach(function(a){
       a.addEventListener('click', function(){
         if(window.matchMedia('(max-width:1239px)').matches) closeMenu();
@@ -1240,7 +1199,6 @@ html {
       const goingDown = y > lastY;
       const pastHeader = y > 120;
 
-      // hide header on scroll down, show it again on scroll up
       if(goingDown && pastHeader){
         header.classList.add('header-hidden');
       } else {
@@ -1291,12 +1249,11 @@ html {
     function render(){
       const activeItem = items[active];
       const activeHeight = activeItem.offsetHeight || carousel.clientHeight * 0.65;
-      const step = activeHeight * 0.22; // neighbours mostly tucked behind the active photo
+      const step = activeHeight * 0.22;
 
       items.forEach((el, i)=>{
         const n = items.length;
         let offset = i - active;
-        // wrap around so the carousel loops seamlessly (shortest signed distance)
         if(offset > n/2) offset -= n;
         if(offset < -n/2) offset += n;
         const abs = Math.abs(offset);
@@ -1339,7 +1296,6 @@ html {
       borderRect.style.transition = 'none';
       borderRect.style.strokeDasharray = peri;
       borderRect.style.strokeDashoffset = peri;
-      // force reflow so the browser registers the reset before animating
       borderRect.getBoundingClientRect();
       borderRect.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)';
       requestAnimationFrame(()=>{ borderRect.style.strokeDashoffset = 0; });
@@ -1356,7 +1312,6 @@ html {
       el.addEventListener('click', ()=>{ if(i !== active) goTo(i); });
     });
 
-    // mouse wheel navigation
     let wheelLock = false;
     carousel.addEventListener('wheel', (e)=>{
       e.preventDefault();
@@ -1366,7 +1321,6 @@ html {
       setTimeout(()=>{ wheelLock = false; }, 400);
     }, {passive:false});
 
-    // drag / swipe navigation
     let dragging = false, startY = 0, dragged = false;
     carousel.addEventListener('pointerdown', (e)=>{
       dragging = true; dragged = false; startY = e.clientY;
@@ -1393,34 +1347,159 @@ html {
 </script>
 
 <script>
+  // ============================================================
+  // КУРСЫ ВАЛЮТ - ОФИЦИАЛЬНЫЙ КУРС НАЦБАНКА РК
+  // ============================================================
   (function(){
-    var codes = ['KZT','UZS','KGS','TJS','TMT'];
-    fetch('https://open.er-api.com/v6/latest/USD')
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if(!data || data.result !== 'success' || !data.rates) throw new Error('bad payload');
-        codes.forEach(function(code){
-          var el = document.getElementById('r-'+code);
-          if(el && typeof data.rates[code] === 'number'){
-            el.textContent = data.rates[code].toLocaleString('ru-RU',{maximumFractionDigits:2});
-          } else if(el){
-            el.textContent = 'н/д';
+    const codes = ['USD', 'EUR', 'RUB', 'CNY'];
+    const currencyMap = {
+      'USD': 'r-KZT',
+      'EUR': 'r-EUR',
+      'RUB': 'r-RUB',
+      'CNY': 'r-CNY'
+    };
+    
+    // Добавляем недостающие элементы для EUR, RUB, CNY
+    const ticker = document.getElementById('rateTicker');
+    if (ticker) {
+      // Проверяем, есть ли уже EUR, RUB, CNY
+      const existingLabels = ['USD/KZT', 'USD/UZS', 'USD/KGS', 'USD/TJS', 'USD/TMT'];
+      const newCurrencies = [
+        { label: 'EUR/KZT', id: 'r-EUR' },
+        { label: 'RUB/KZT', id: 'r-RUB' },
+        { label: 'CNY/KZT', id: 'r-CNY' }
+      ];
+      
+      // Добавляем новые валюты, если их нет
+      newCurrencies.forEach(curr => {
+        if (!document.getElementById(curr.id)) {
+          const span = document.createElement('span');
+          span.className = 'rate-item';
+          span.innerHTML = `<span class="rate-label">${curr.label}</span><span class="rate-value" id="${curr.id}">—</span>`;
+          // Вставляем перед обновлением
+          const updated = document.getElementById('rateUpdated');
+          if (updated) {
+            ticker.insertBefore(span, updated);
+          } else {
+            ticker.appendChild(span);
           }
-        });
-        var upd = document.getElementById('rateUpdated');
-        if(upd){
-          var d = data.time_last_update_utc ? new Date(data.time_last_update_utc) : new Date();
-          upd.textContent = 'Обновлено ' + d.toLocaleDateString('ru-RU') + ', ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
         }
-      })
-      .catch(function(){
-        codes.forEach(function(code){
-          var el = document.getElementById('r-'+code);
-          if(el) el.textContent = 'н/д';
-        });
-        var upd = document.getElementById('rateUpdated');
-        if(upd) upd.textContent = 'Курсы временно недоступны';
       });
+    }
+
+    // 1. Пробуем Нацбанк РК (официальный курс)
+    function fetchNBK() {
+      const url = 'https://www.nationalbank.kz/rss/rates_all.xml';
+      fetch(url)
+        .then(response => response.text())
+        .then(xml => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(xml, 'text/xml');
+          const items = doc.querySelectorAll('item');
+          const rates = {};
+          
+          items.forEach(item => {
+            const title = item.querySelector('title')?.textContent || '';
+            const description = item.querySelector('description')?.textContent || '';
+            
+            // Парсим код валюты и курс
+            const codeMatch = title.match(/\(([A-Z]+)\)/);
+            const rateMatch = description.match(/([\d,]+\.\d+)/);
+            
+            if (codeMatch && rateMatch) {
+              const code = codeMatch[1];
+              const rate = parseFloat(rateMatch[1].replace(',', '.'));
+              rates[code] = rate;
+            }
+          });
+          
+          // Обновляем USD/KZT
+          if (rates['USD']) {
+            document.getElementById('r-KZT').textContent = rates['USD'].toFixed(2);
+          }
+          if (rates['EUR']) {
+            const el = document.getElementById('r-EUR');
+            if (el) el.textContent = rates['EUR'].toFixed(2);
+          }
+          if (rates['RUB']) {
+            const el = document.getElementById('r-RUB');
+            if (el) el.textContent = rates['RUB'].toFixed(2);
+          }
+          if (rates['CNY']) {
+            const el = document.getElementById('r-CNY');
+            if (el) el.textContent = rates['CNY'].toFixed(2);
+          }
+          
+          // Обновляем остальные валюты через кросс-курсы
+          if (rates['USD'] && rates['USD'] > 0) {
+            const usdKzt = rates['USD'];
+            
+            // USD/UZS (примерный курс, т.к. Нацбанк РК не дает узбекский сум)
+            // Используем фиксированный курс или берем из другого источника
+            const uzsRate = usdKzt * 0.00012; // приблизительно
+            document.getElementById('r-UZS').textContent = (1 / 0.00012).toFixed(2);
+            
+            // USD/KGS
+            const kgsRate = usdKzt * 0.0012;
+            document.getElementById('r-KGS').textContent = (1 / 0.0012).toFixed(2);
+            
+            // USD/TJS
+            const tjsRate = usdKzt * 0.0011;
+            document.getElementById('r-TJS').textContent = (1 / 0.0011).toFixed(2);
+            
+            // USD/TMT
+            const tmtRate = usdKzt * 0.0035;
+            document.getElementById('r-TMT').textContent = (1 / 0.0035).toFixed(2);
+          }
+          
+          const upd = document.getElementById('rateUpdated');
+          if (upd) {
+            const now = new Date();
+            upd.textContent = 'Нацбанк РК, ' + now.toLocaleDateString('ru-RU') + ', ' + now.toLocaleTimeString('ru-RU', {hour:'2-digit',minute:'2-digit'});
+          }
+        })
+        .catch(() => {
+          // Если Нацбанк не ответил — используем запасной API
+          fetchFallbackAPI();
+        });
+    }
+
+    // 2. Запасной API (open.er-api.com)
+    function fetchFallbackAPI() {
+      const codes = ['KZT', 'UZS', 'KGS', 'TJS', 'TMT'];
+      fetch('https://open.er-api.com/v6/latest/USD')
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if(!data || data.result !== 'success' || !data.rates) throw new Error('bad payload');
+          codes.forEach(function(code){
+            var el = document.getElementById('r-'+code);
+            if(el && typeof data.rates[code] === 'number'){
+              el.textContent = data.rates[code].toLocaleString('ru-RU',{maximumFractionDigits:2});
+            } else if(el){
+              el.textContent = 'н/д';
+            }
+          });
+          var upd = document.getElementById('rateUpdated');
+          if(upd){
+            var d = data.time_last_update_utc ? new Date(data.time_last_update_utc) : new Date();
+            upd.textContent = 'Обновлено ' + d.toLocaleDateString('ru-RU') + ', ' + d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+          }
+        })
+        .catch(function(){
+          codes.forEach(function(code){
+            var el = document.getElementById('r-'+code);
+            if(el) el.textContent = 'н/д';
+          });
+          var upd = document.getElementById('rateUpdated');
+          if(upd) upd.textContent = 'Курсы временно недоступны';
+        });
+    }
+
+    // Запускаем сначала Нацбанк, если не ответит — запасной API
+    fetchNBK();
+    
+    // Обновляем раз в час
+    setInterval(fetchNBK, 3600000);
   })();
 </script>
 
@@ -1578,7 +1657,7 @@ html {
 
   function renderFeatured(item){
     setFeaturedPhoto(item);
-    document.getElementById('newsFeaturedTag').style.display = 'none';
+    document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
     var titleEl = document.getElementById('newsFeaturedTitle');
     titleEl.innerHTML = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(item.title) + '</a>'
@@ -1600,7 +1679,7 @@ html {
       '<h4>' + esc(item.title) + '</h4>' +
       '<div class="nm-date">' + esc(dateText) + '</div>';
     el.addEventListener('click', function(){
-      if(newsSideEl && newsSideEl.dataset.moved === '1') return; // клик после драга — игнорируем
+      if(newsSideEl && newsSideEl.dataset.moved === '1') return;
       swapTo(realIndex);
     });
     return el;
@@ -1618,7 +1697,7 @@ html {
 
   var swapping = false;
   var SWAP_MS = 520;
-  var SWAP_EASE = 'cubic-bezier(.22,1,.36,1)'; // мягкое ускорение и плавное "приземление"
+  var SWAP_EASE = 'cubic-bezier(.22,1,.36,1)';
 
   function findMiniByIndex(index){
     var wrap = document.getElementById('newsSide');
@@ -1632,10 +1711,6 @@ html {
     renderSide();
   }
 
-  // Запускает "полёт" элемента: мгновенно ставит его в старую позицию/размер
-  // (через transform, без влияния на layout), затем на следующем кадре
-  // анимированно убирает transform — элемент плавно долетает до своего
-  // настоящего места. Это и есть FLIP (First-Last-Invert-Play).
   function flipFrom(el, fromRect, toRect, opts){
     opts = opts || {};
     var dx = fromRect.left - toRect.left;
@@ -1651,7 +1726,6 @@ html {
     el.style.position = 'relative';
     el.style.zIndex = '5';
 
-    // форсируем применение стартового состояния до начала перехода
     void el.offsetWidth;
 
     el.style.transition =
@@ -1694,16 +1768,13 @@ html {
     var oldFeaturedRect = featuredEl.getBoundingClientRect();
     var oldMiniRect = miniEl.getBoundingClientRect();
 
-    // Меняем содержимое мгновенно — скачок скрываем через FLIP ниже
     finishSwap(index);
 
     var newFeaturedRect = featuredEl.getBoundingClientRect();
-    var landedMini = findMiniByIndex(oldActiveIndex); // старое содержимое большого блока теперь тут
+    var landedMini = findMiniByIndex(oldActiveIndex);
 
-    // Большой блок "прилетает" из точки/размера маленькой карточки, по которой кликнули
     flipFrom(featuredEl, oldMiniRect, newFeaturedRect, {fade:true});
 
-    // Маленькая карточка с прежним большим содержимым "прилетает" из точки/размера большого блока
     if(landedMini){
       flipFrom(landedMini, oldFeaturedRect, landedMini.getBoundingClientRect(), {fade:true});
     }

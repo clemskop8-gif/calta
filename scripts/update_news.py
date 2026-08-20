@@ -3,13 +3,14 @@
 Ровно 6 новостей (по 2 с каждого сайта).
 Фильтр: логистика + страны ЦА.
 БЕЗ ДЕМО-ЗАГЛУШЕК.
-Каждая новость имеет УНИКАЛЬНУЮ ВЫЖИМКУ (автоматический рерайт без копирования).
+Каждая новость проходит через АВТОМАТИЧЕСКИЙ ПЕРЕВОД (рерайт без плагиата).
 """
 import html
 import json
 import os
 import re
 import random
+import time
 from datetime import datetime, timezone
 import requests
 import feedparser
@@ -54,87 +55,67 @@ def is_relevant(title, summary):
     return True
 
 # ============================================================
-# 2. АВТОМАТИЧЕСКАЯ ГЕНЕРАЦИЯ УНИКАЛЬНОЙ ВЫЖИМКИ (РЕРАЙТ)
+# 2. АВТОМАТИЧЕСКИЙ ПЕРЕВОД (РЕРАЙТ ЧЕРЕЗ ПЕРЕВОД)
 # ============================================================
 
-# Словарь синонимов для рерайта
-SYNONYMS = {
-    "логистика": ["транспорт", "грузоперевозки", "перевозки", "транспортная сфера"],
-    "транспорт": ["логистика", "перевозки", "транспортная система"],
-    "груз": ["товар", "продукция", "контейнеры"],
-    "перевозки": ["транспортировка", "доставка", "грузоперевозки"],
-    "порт": ["гавань", "морской терминал", "причал"],
-    "контейнер": ["грузовой модуль", "контейнерный модуль", "тара"],
-    "терминал": ["хаб", "распределительный центр", "логистический центр"],
-    "склад": ["хранилище", "складской комплекс"],
-    "железная дорога": ["ЖД", "ж/д", "рельсовый путь"],
-    "коридор": ["маршрут", "направление", "трасса"],
-    "инвестиция": ["вложение", "финансирование", "капитал"],
-    "проект": ["программа", "инициатива", "объект"],
-    "развитие": ["рост", "прогресс", "совершенствование"],
-    "строительство": ["возведение", "создание", "постройка"],
-    "открытие": ["запуск", "введение в эксплуатацию", "старт"],
-    "крупный": ["масштабный", "значительный", "внушительный"],
-    "новый": ["современный", "перспективный", "инновационный"],
-    "важный": ["ключевой", "значимый", "существенный"],
-    "успешный": ["результативный", "эффективный", "плодотворный"],
-}
-
-def rewrite_text(text):
-    """Заменяет слова на синонимы"""
-    if not text:
-        return text
-    words = text.split()
-    new_words = []
-    for word in words:
-        clean_word = re.sub(r'[^\w\s]', '', word).lower()
-        replaced = False
-        for key, synonyms in SYNONYMS.items():
-            if clean_word == key.lower() or clean_word in key.lower():
-                new_word = random.choice(synonyms)
-                if word[0].isupper():
-                    new_word = new_word.capitalize()
-                new_words.append(new_word)
-                replaced = True
-                break
-        if not replaced:
-            new_words.append(word)
-    return ' '.join(new_words)
-
-def shuffle_sentence_parts(text):
-    """Перемешивает части предложения для уникальности"""
-    if not text or len(text) < 30:
+def translate_text(text, target_lang='ru'):
+    """
+    Переводит текст через Google Translate.
+    Если текст уже на русском — сначала переводит на английский, потом обратно.
+    """
+    if not text or len(text.strip()) < 10:
         return text
     
-    # Разбиваем по запятым и союзам
-    separators = [' и ', ',', ';', ' — ']
-    parts = [text]
-    for sep in separators:
-        new_parts = []
-        for p in parts:
-            if sep in p and len(p.split(sep)) >= 2:
-                new_parts.extend(p.split(sep))
-            else:
-                new_parts.append(p)
-        parts = new_parts
+    try:
+        # Проверяем, есть ли кириллица (русский текст)
+        cyrillic = sum(1 for c in text if 'а' <= c <= 'я' or 'ё' == c)
+        is_russian = cyrillic > len(text) * 0.3
+        
+        # Если текст на русском — переводим туда-обратно (русский → английский → русский)
+        if is_russian:
+            # Сначала на английский
+            en = _translate(text, 'en')
+            time.sleep(0.3)  # пауза между запросами
+            # Потом обратно на русский
+            ru = _translate(en, 'ru')
+            return ru
+        else:
+            # Если текст не на русском — просто переводим на русский
+            return _translate(text, 'ru')
+            
+    except Exception as e:
+        print(f"  ⚠️ Ошибка перевода: {e}")
+        return text
+
+def _translate(text, target_lang):
+    """Базовый перевод через Google Translate API"""
+    if not text or len(text.strip()) < 3:
+        return text
     
-    # Если есть части — перемешиваем
-    if len(parts) >= 2:
-        first = parts[0]
-        rest = parts[1:]
-        random.shuffle(rest)
-        result = first
-        for i, part in enumerate(rest):
-            if part.strip():
-                sep = random.choice(separators)
-                result += sep + part.strip()
-        return result
+    try:
+        url = "https://translate.googleapis.com/translate_a/single"
+        params = {
+            "client": "gtx",
+            "sl": "auto",
+            "tl": target_lang,
+            "dt": "t",
+            "q": text[:500]  # ограничиваем длину
+        }
+        r = requests.get(url, params=params, timeout=15)
+        r.raise_for_status()
+        
+        data = r.json()
+        if data and len(data) > 0 and data[0]:
+            translated = ''.join([part[0] for part in data[0] if part[0]])
+            return translated.strip()
+    except Exception as e:
+        print(f"  ⚠️ Ошибка перевода: {e}")
     
     return text
 
 def generate_unique_summary(title, original_summary):
     """
-    Генерирует УНИКАЛЬНУЮ выжимку (2-4 предложения) без копирования оригинала.
+    Создает уникальную выжимку через перевод (русский → английский → русский)
     """
     if not original_summary:
         original_summary = title
@@ -147,50 +128,24 @@ def generate_unique_summary(title, original_summary):
     text = re.sub(r'передает\s+корреспондент\s+[А-Яа-я]+\s*', '', text)
     text = re.sub(r'по\s+информации\s+[^,.]+,?\s*', '', text)
     
-    # 2. Замена слов на синонимы
-    text = rewrite_text(text)
-    
-    # 3. Разбиваем на предложения
+    # 2. Берем первые 2-3 предложения
     sentences = re.split(r'[.!?]', text)
-    sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
-    
-    # 4. Если мало предложений — создаем из заголовка
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 20]
     if len(sentences) < 2:
+        # Если мало предложений — используем заголовок
         clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
-        clean_title = rewrite_text(clean_title)
-        if sentences:
-            return f"{clean_title}. {sentences[0]}"
-        else:
-            return f"{clean_title}. Подробнее в источнике."
+        text = clean_title + ". " + (sentences[0] if sentences else "")
+    else:
+        text = '. '.join(sentences[:3]) + '.'
     
-    # 5. Перемешиваем части предложений
-    processed_sentences = []
-    for s in sentences[:3]:
-        s = shuffle_sentence_parts(s)
-        processed_sentences.append(s)
+    # 3. ПРОПУСКАЕМ ЧЕРЕЗ ПЕРЕВОД (рерайт)
+    translated = translate_text(text)
     
-    # 6. Убираем повторы
-    seen = set()
-    unique_sentences = []
-    for s in processed_sentences:
-        key = s[:30].lower()
-        if key not in seen:
-            seen.add(key)
-            unique_sentences.append(s)
-    
-    # 7. Собираем результат (2-3 предложения)
-    result = '. '.join(unique_sentences[:3])
-    
-    # 8. Добавляем точку в конце
-    if result and not result.endswith('.'):
-        result += '.'
-    
-    # 9. Если получилось слишком коротко — используем заголовок
-    if len(result) < 30:
-        clean_title = rewrite_text(title)
-        return f"{clean_title}. Подробнее в источнике."
-    
-    return result
+    # 4. Если перевод не удался — возвращаем очищенный оригинал
+    if translated and len(translated) > 10:
+        return translated
+    else:
+        return text
 
 # ============================================================
 # 3. КАРТИНКИ
@@ -401,7 +356,7 @@ def collect_inform():
 # 5. СБОР
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (с уникальной выжимкой)...")
+    print("\n🔍 Сбор новостей (с рерайтом через перевод)...")
     items = []
 
     items.extend(collect_golos())
@@ -423,7 +378,7 @@ def collect():
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (автоматический рерайт)...")
+    print("🚀 Сбор новостей (автоматический перевод)...")
     items = collect()
 
     data = {

@@ -1,8 +1,7 @@
 """
 Обновляет data/news.json — новости с golos.tj, logistan.info, inform.kz.
-Берет по одной новости с каждого сайта по очереди (по кругу).
-Только логистика. У каждой новости своя картинка.
-Максимум 6 новостей.
+Берет по ДВЕ новости с каждого сайта (всего 6).
+Картинки подбираются по смыслу заголовка.
 """
 import html
 import json
@@ -36,19 +35,60 @@ def is_logistics(text):
     return any(kw in text_lower for kw in LOGISTICS_KEYWORDS)
 
 def pick_photo_from_unsplash(title):
-    """Уникальная картинка для каждой новости"""
+    """
+    Подбирает картинку ПО СМЫСЛУ заголовка.
+    Использует ключевые слова из заголовка для поиска.
+    """
     if not UNSPLASH_KEY:
         return None
     
-    # Очищаем заголовок для поиска
+    # Очищаем заголовок от лишних символов
     clean_title = re.sub(r'[^\w\s]', ' ', title)
-    words = clean_title.split()[:4]
-    query = ' '.join(words) if len(words) >= 2 else "logistics transport"
+    
+    # Берем первые 4-5 значащих слов для поиска
+    words = [w for w in clean_title.split() if len(w) > 3][:4]
+    
+    # Словарь ключевых слов → темы для поиска
+    topic_map = {
+        'поезд': 'train',
+        'вагон': 'train',
+        'железнодорож': 'railway',
+        'жд': 'railway',
+        'порт': 'port',
+        'судно': 'ship',
+        'контейнер': 'container',
+        'терминал': 'terminal',
+        'склад': 'warehouse',
+        'хаб': 'logistics hub',
+        'груз': 'cargo',
+        'фрахт': 'freight',
+        'транзит': 'transit',
+        'коридор': 'corridor',
+        'инфраструктур': 'infrastructure',
+        'строительств': 'construction',
+        'дорог': 'road',
+        'аэропорт': 'airport',
+    }
+    
+    # Определяем тему поиска
+    search_query = "logistics transport"
+    for word in words:
+        word_lower = word.lower()
+        for key, topic in topic_map.items():
+            if key in word_lower:
+                search_query = topic
+                break
+        if search_query != "logistics transport":
+            break
+    
+    # Если не нашли тему — используем первые слова
+    if search_query == "logistics transport" and len(words) >= 2:
+        search_query = ' '.join(words[:2])
     
     try:
         r = requests.get(
             "https://api.unsplash.com/search/photos",
-            params={"query": query, "per_page": 1, "orientation": "landscape"},
+            params={"query": search_query, "per_page": 1, "orientation": "landscape"},
             headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
             timeout=10,
         )
@@ -59,16 +99,19 @@ def pick_photo_from_unsplash(title):
     except Exception:
         pass
     
-    # Запасные картинки (разные, на случай ошибки)
-    fallback = [
-        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-        "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
-        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
-        "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
-        "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
-        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
-    ]
-    return {"url": random.choice(fallback)}
+    # Запасные картинки по темам (на случай ошибки)
+    fallback_by_topic = {
+        'train': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+        'railway': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+        'port': "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
+        'container': "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+        'warehouse': "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+        'cargo': "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+        'airport': "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800",
+    }
+    
+    fallback_url = fallback_by_topic.get(search_query, "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800")
+    return {"url": fallback_url}
 
 def strip_html(text):
     if not text:
@@ -85,7 +128,7 @@ def detect_topic(title, summary):
         "Инфраструктура": ["строительств", "дорог", "терминал", "склад", "хаб", "инфраструктур"],
         "Железная дорога": ["жд", "железнодорож", "поезд", "вагон", "локомотив"],
         "Порты": ["порт", "причал", "судно", "морской"],
-        "Экономика": ["экономик", "инвестиц", "торговл", "рынок"],
+        "Экономика": ["экономик", "инвестиц", "торговл", "рынок", "финанс"],
     }
     for topic, keywords in topics.items():
         if any(kw in text for kw in keywords):
@@ -93,7 +136,7 @@ def detect_topic(title, summary):
     return "Логистика"
 
 # ============================================================
-# 1. ПАРСИНГ КАЖДОГО САЙТА
+# 1. ПАРСИНГ КАЖДОГО САЙТА (по 2 новости)
 # ============================================================
 
 def collect_golos():
@@ -104,7 +147,10 @@ def collect_golos():
         print(f"  ❌ golos.tj ошибка: {e}")
         return out
 
-    for entry in parsed.entries[:10]:
+    count = 0
+    for entry in parsed.entries[:15]:
+        if count >= 2:
+            break
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -120,7 +166,8 @@ def collect_golos():
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
-        break
+        count += 1
+        print(f"    ✅ golos.tj #{count}: {title[:40]}...")
     return out
 
 def collect_logistan():
@@ -131,7 +178,10 @@ def collect_logistan():
         print(f"  ❌ logistan.info ошибка: {e}")
         return out
 
-    for entry in parsed.entries[:10]:
+    count = 0
+    for entry in parsed.entries[:15]:
+        if count >= 2:
+            break
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -147,7 +197,8 @@ def collect_logistan():
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
-        break
+        count += 1
+        print(f"    ✅ logistan.info #{count}: {title[:40]}...")
     return out
 
 def collect_inform():
@@ -168,7 +219,10 @@ def collect_inform():
         else:
             links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
 
-    for article_url in list(links)[:5]:
+    count = 0
+    for article_url in list(links)[:10]:
+        if count >= 2:
+            break
         try:
             ar = requests.get(article_url, timeout=20, headers=HEADERS)
             ar.raise_for_status()
@@ -204,42 +258,34 @@ def collect_inform():
             "publishedAt": published,
             "photo": photo,
         })
-        break
+        count += 1
+        print(f"    ✅ inform.kz #{count}: {title[:40]}...")
     return out
 
 # ============================================================
-# 2. СБОР ПО КРУГУ
+# 2. СБОР
 # ============================================================
 def collect():
-    all_items = []
-
     print("\n🔍 Сбор новостей...")
-    golos_news = collect_golos()
-    logistan_news = collect_logistan()
-    inform_news = collect_inform()
+    items = []
 
-    print(f"  golos.tj: {len(golos_news)}")
-    print(f"  logistan.info: {len(logistan_news)}")
-    print(f"  inform.kz: {len(inform_news)}")
+    items.extend(collect_golos())
+    items.extend(collect_logistan())
+    items.extend(collect_inform())
 
-    sources = [golos_news, logistan_news, inform_news]
-
-    result = []
-    for i in range(MAX_ITEMS):
-        source_index = i % 3
-        source = sources[source_index]
-        if source:
-            result.append(source[0])
-            sources[source_index] = source[1:]
-
+    # Убираем дубликаты по заголовку
     seen = set()
     unique = []
-    for item in result:
+    for item in items:
         key = item["title"][:50].lower()
         if key not in seen:
             seen.add(key)
             unique.append(item)
 
+    # Сортируем по дате (свежие сверху)
+    unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
+
+    # Если новостей нет — демо
     if len(unique) == 0:
         print("⚠️ Новостей не найдено! Добавляем демо-новости.")
         demo_items = [
@@ -300,7 +346,7 @@ def collect():
 # 3. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (макс 6, по кругу)...")
+    print("🚀 Сбор новостей (по 2 с каждого сайта = 6)...")
     items = collect()
 
     data = {
@@ -316,7 +362,8 @@ def main():
     print(f"\n✅ Записано: {OUT_PATH} -> {len(items)} новостей")
     for i, item in enumerate(items[:6]):
         has_photo = "✅" if item.get("photo") else "❌"
-        print(f"  {i+1}. {has_photo} [{item.get('source', '?')}] {item['title'][:55]}...")
+        source = item.get("source", "?")
+        print(f"  {i+1}. {has_photo} [{source}] {item['title'][:50]}...")
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,8 @@
 """
-Обновляет data/news.json — новости с golos.tj, logistan.info, inform.kz.
-Ровно 6 новостей (по 2 с каждого сайта).
-Фильтр: ТОЛЬКО логистика (жесткий фильтр).
-БЕЗ ДЕМО-ЗАГЛУШЕК.
-Каждая новость имеет КОРОТКУЮ выжимку (2-4 предложения) своими словами.
-У каждой новости УНИКАЛЬНАЯ картинка (без повторов).
+Обновляет data/news.json — новости ТОЛЬКО с golos.tj, logistan.info, inform.kz.
+Собирает ПО ОЧЕРЕДИ с каждого сайта (по кругу).
+Если на сайте нет новостей — пропускает и берет со следующего.
+Добивает до 6 демо-новостями, если не хватает.
 """
 import html
 import json
@@ -129,18 +127,15 @@ def generate_unique_summary(title, original_summary):
 # 3. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)
 # ============================================================
 
-# Кеш использованных картинок
 _used_photos = set()
 
 def pick_photo_from_unsplash(title):
-    """Подбирает УНИКАЛЬНУЮ картинку для каждой новости"""
     if not UNSPLASH_KEY:
         return None
     
     clean_title = re.sub(r'[^\w\s]', ' ', title)
     words = [w for w in clean_title.split() if len(w) > 3][:4]
     
-    # Определяем тему для поиска
     topic_map = {
         'поезд': 'train', 'вагон': 'train', 'железнодорож': 'railway', 'жд': 'railway',
         'порт': 'port', 'судно': 'ship', 'контейнер': 'container', 'терминал': 'terminal',
@@ -162,9 +157,8 @@ def pick_photo_from_unsplash(title):
     if search_query == "logistics transport" and len(words) >= 2:
         search_query = ' '.join(words[:2])
     
-    # Пытаемся найти уникальную картинку
     photo_url = None
-    for attempt in range(3):  # 3 попытки
+    for attempt in range(3):
         try:
             r = requests.get(
                 "https://api.unsplash.com/search/photos",
@@ -175,7 +169,6 @@ def pick_photo_from_unsplash(title):
             r.raise_for_status()
             results = r.json().get("results") or []
             
-            # Ищем первую НЕИСПОЛЬЗОВАННУЮ картинку
             for photo in results:
                 url = photo["urls"]["regular"]
                 if url not in _used_photos:
@@ -189,10 +182,8 @@ def pick_photo_from_unsplash(title):
         except Exception:
             pass
         
-        # Если не нашли уникальную — меняем запрос
         search_query = search_query + " " + random.choice(["transport", "logistics", "cargo"])
     
-    # Если все попытки не удались — берем запасную (уникальную)
     if not photo_url:
         fallback_urls = [
             "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
@@ -235,10 +226,11 @@ def detect_topic(title, summary):
     return "Логистика"
 
 # ============================================================
-# 4. ПАРСИНГ САЙТОВ
+# 4. ПАРСИНГ ТРЁХ САЙТОВ (ВОЗВРАЩАЮТ СПИСКИ НОВОСТЕЙ)
 # ============================================================
 
-def collect_golos():
+def collect_golos(limit=6):
+    """Собирает логистические новости с golos.tj (не больше limit)"""
     out = []
     try:
         parsed = feedparser.parse("https://golos.tj/feed/", request_headers=HEADERS)
@@ -246,7 +238,9 @@ def collect_golos():
         print(f"  ❌ golos.tj ошибка: {e}")
         return out
 
-    for entry in parsed.entries[:30]:
+    for entry in parsed.entries[:20]:
+        if len(out) >= limit:
+            break
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -265,11 +259,11 @@ def collect_golos():
             "photo": photo,
         })
         print(f"    ✅ golos.tj: {title[:40]}...")
-        if len(out) >= 2:
-            break
+    
     return out
 
-def collect_logistan():
+def collect_logistan(limit=6):
+    """Собирает логистические новости с logistan.info (не больше limit)"""
     out = []
     try:
         parsed = feedparser.parse("https://logistan.info/feed/", request_headers=HEADERS)
@@ -277,7 +271,9 @@ def collect_logistan():
         print(f"  ❌ logistan.info ошибка: {e}")
         return out
 
-    for entry in parsed.entries[:30]:
+    for entry in parsed.entries[:20]:
+        if len(out) >= limit:
+            break
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -296,11 +292,11 @@ def collect_logistan():
             "photo": photo,
         })
         print(f"    ✅ logistan.info: {title[:40]}...")
-        if len(out) >= 2:
-            break
+    
     return out
 
-def collect_inform():
+def collect_inform(limit=6):
+    """Собирает логистические новости с inform.kz (не больше limit)"""
     out = []
     url = "https://www.inform.kz/tag/logistika_t11100"
     try:
@@ -319,6 +315,8 @@ def collect_inform():
             links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
 
     for article_url in list(links)[:20]:
+        if len(out) >= limit:
+            break
         try:
             ar = requests.get(article_url, timeout=20, headers=HEADERS)
             ar.raise_for_status()
@@ -355,37 +353,135 @@ def collect_inform():
             "photo": photo,
         })
         print(f"    ✅ inform.kz: {title[:40]}...")
-        if len(out) >= 2:
-            break
+    
     return out
 
 # ============================================================
-# 5. СБОР
+# 5. СБОР ПО ОЧЕРЕДИ (ПО КРУГУ)
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (только логистика, уникальные картинки)...")
-    items = []
-
-    items.extend(collect_golos())
-    items.extend(collect_logistan())
-    items.extend(collect_inform())
-
-    seen = set()
-    unique = []
-    for item in items:
-        key = item["title"][:50].lower()
-        if key not in seen:
-            seen.add(key)
-            unique.append(item)
-
-    unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
-    return unique[:MAX_ITEMS]
+    print("\n🔍 Сбор новостей (по очереди с каждого сайта)...")
+    
+    # Собираем новости с каждого сайта (до 6 штук)
+    golos_news = collect_golos(6)
+    logistan_news = collect_logistan(6)
+    inform_news = collect_inform(6)
+    
+    print(f"\n  golos.tj: {len(golos_news)}")
+    print(f"  logistan.info: {len(logistan_news)}")
+    print(f"  inform.kz: {len(inform_news)}")
+    
+    # Убираем дубликаты по заголовку (внутри каждого списка)
+    def unique_list(items):
+        seen = set()
+        result = []
+        for item in items:
+            key = item["title"][:50].lower()
+            if key not in seen:
+                seen.add(key)
+                result.append(item)
+        return result
+    
+    golos_news = unique_list(golos_news)
+    logistan_news = unique_list(logistan_news)
+    inform_news = unique_list(inform_news)
+    
+    # Перемешиваем каждый список, чтобы не брать одни и те же новости
+    random.shuffle(golos_news)
+    random.shuffle(logistan_news)
+    random.shuffle(inform_news)
+    
+    # Собираем по очереди (по кругу)
+    result = []
+    sources = [
+        ("golos.tj", golos_news),
+        ("logistan.info", logistan_news),
+        ("inform.kz", inform_news),
+    ]
+    
+    # Идем по кругу, пока не наберем 6 или не закончатся новости
+    max_rounds = 6  # максимум кругов
+    for round_num in range(max_rounds):
+        for source_name, source_news in sources:
+            if len(result) >= MAX_ITEMS:
+                break
+            if source_news:
+                # Берем первую новость из источника
+                item = source_news.pop(0)
+                result.append(item)
+                print(f"  📌 [{source_name}] {item['title'][:50]}...")
+        
+        if len(result) >= MAX_ITEMS:
+            break
+    
+    # Если всё ещё меньше 6 — добиваем демо
+    if len(result) < MAX_ITEMS:
+        print(f"\n⚠️ Не хватает новостей ({len(result)}/{MAX_ITEMS}). Добавляем демо...")
+        demo_items = [
+            {
+                "source": "demo",
+                "topic": "Логистика",
+                "title": "Развитие транспортных коридоров в Центральной Азии",
+                "summary": "Страны региона обсуждают совместные проекты по модернизации логистики.",
+                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "photo": {"url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800"},
+            },
+            {
+                "source": "demo",
+                "topic": "Инфраструктура",
+                "title": "Новый логистический хаб открылся в регионе",
+                "summary": "Объект будет способствовать развитию грузоперевозок.",
+                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "photo": {"url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"},
+            },
+            {
+                "source": "demo",
+                "topic": "Железная дорога",
+                "title": "Казахстан обновляет парк пассажирских поездов",
+                "summary": "За последние годы приобретено более 400 новых вагонов.",
+                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "photo": {"url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800"},
+            },
+            {
+                "source": "demo",
+                "topic": "Экономика",
+                "title": "Экономический рост в Центральной Азии",
+                "summary": "Регион показывает устойчивое развитие.",
+                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "photo": {"url": "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800"},
+            },
+            {
+                "source": "demo",
+                "topic": "Порты",
+                "title": "Модернизация портовой инфраструктуры",
+                "summary": "В регионе планируется обновление портовых мощностей.",
+                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "photo": {"url": "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800"},
+            },
+            {
+                "source": "demo",
+                "topic": "Логистика",
+                "title": "Новые логистические маршруты в регионе",
+                "summary": "Развитие транспортных коридоров продолжается.",
+                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "photo": {"url": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800"},
+            },
+        ]
+        
+        # Добавляем демо-новости, пока не наберем 6
+        for demo in demo_items:
+            if len(result) >= MAX_ITEMS:
+                break
+            result.append(demo)
+            print(f"  📌 [demo] {demo['title'][:50]}...")
+    
+    return result[:MAX_ITEMS]
 
 # ============================================================
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (уникальные картинки)...")
+    print("🚀 Сбор новостей (по очереди с трёх сайтов)...")
     items = collect()
 
     data = {

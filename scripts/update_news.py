@@ -3,7 +3,7 @@
 Собирает ПО ОЧЕРЕДИ с каждого сайта (по кругу).
 Фильтр: логистика + страны ЦА + стоп-слова.
 НИКАКИХ ДЕМО-ЗАГЛУШЕК.
-У каждой новости СВОЯ картинка по смыслу.
+Картинки ТОЛЬКО по теме логистики (без случайных фото).
 """
 import html
 import json
@@ -47,7 +47,7 @@ STOP_WORDS = [
     "выставк", "спорт", "футбол", "хоккей", "теннис",
     "политик", "выбор", "президент", "парламент",
     "криминал", "убийств", "арест", "суд", "расследован",
-    "погод", "климат", "землетрясени", "наводнен",
+    "погод", "климат", "землетрясени", "наводнен", "вулкан",
     "бюст", "памятник", "возложени", "цветов",
 ]
 
@@ -92,101 +92,104 @@ def is_relevant(title, summary):
     return True
 
 # ============================================================
-# 2. УНИКАЛЬНАЯ КАРТИНКА ПО СМЫСЛУ
+# 2. УНИКАЛЬНАЯ КАРТИНКА ПО ТЕМЕ (БЕЗ СЛУЧАЙНЫХ ФОТО)
 # ============================================================
 
 _used_photos = set()
 
-def get_search_query(title, summary):
-    """Определяет поисковый запрос для Unsplash по смыслу новости"""
+# Гарантированные картинки по темам (проверенные URL-ы)
+THEME_IMAGES = {
+    "train": [
+        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+        "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800",
+        "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800",
+    ],
+    "railway": [
+        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+        "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800",
+    ],
+    "port": [
+        "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
+        "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+    ],
+    "container": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+        "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+    ],
+    "warehouse": [
+        "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+    ],
+    "cargo": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+        "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+    ],
+    "airport": [
+        "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800",
+        "https://images.unsplash.com/photo-1579275542618-a1dfed5f54ba?w=800",
+    ],
+    "conference": [
+        "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800",
+        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+    ],
+    "construction": [
+        "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800",
+        "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800",
+    ],
+    "truck": [
+        "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+    ],
+    "logistics": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+        "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+    ],
+}
+
+def get_theme(title, summary):
+    """Определяет тему новости и возвращает готовую картинку"""
     text = (title + " " + summary).lower()
     
-    # Карта ключевых слов → темы для поиска
-    topic_map = [
-        # Железная дорога
-        (["поезд", "вагон", "локомотив", "жд", "железнодорож", "рельс", "состав", "электровоз", "магистраль"], "train railway"),
-        # Порт и суда
-        (["порт", "судно", "контейнеровоз", "паром", "причал", "гавань", "морской", "флот", "танкер"], "port ship"),
-        # Терминалы и склады
-        (["терминал", "склад", "хаб", "логистический центр", "распределительный центр", "складской"], "warehouse logistics"),
-        # Контейнеры и грузы
-        (["контейнер", "груз", "контейнерный", "teu"], "container cargo"),
-        # Коридоры и транзит
-        (["коридор", "транзит", "маршрут", "транскаспий"], "corridor route"),
-        # Таможня
-        (["таможня", "оформление", "пошлины"], "customs"),
-        # Перевозки
-        (["перевозк", "транспортировк", "доставк"], "delivery transport"),
-        # Авиация
-        (["авиа", "рейс", "самолет", "аэропорт"], "airport plane"),
-        # Форум
-        (["форум", "конференц", "встреч"], "conference business"),
-        # Инфраструктура
-        (["инфраструктур", "строительств", "дорог"], "construction road"),
-    ]
+    # Приоритетные темы
+    if any(w in text for w in ["поезд", "вагон", "локомотив", "жд", "железнодорож", "рельс", "состав", "электровоз", "магистраль"]):
+        return "train"
+    if any(w in text for w in ["порт", "судно", "контейнеровоз", "паром", "причал", "гавань", "морской", "флот", "танкер"]):
+        return "port"
+    if any(w in text for w in ["терминал", "склад", "хаб", "логистический центр", "распределительный центр", "складской"]):
+        return "warehouse"
+    if any(w in text for w in ["контейнер", "груз", "контейнерный", "teu"]):
+        return "container"
+    if any(w in text for w in ["коридор", "транзит", "маршрут", "транскаспий"]):
+        return "cargo"
+    if any(w in text for w in ["авиа", "рейс", "самолет", "аэропорт"]):
+        return "airport"
+    if any(w in text for w in ["форум", "конференц", "встреч"]):
+        return "conference"
+    if any(w in text for w in ["инфраструктур", "строительств", "дорог"]):
+        return "construction"
+    if any(w in text for w in ["грузовик", "автоперевоз", "трасса"]):
+        return "truck"
     
-    for keywords, query in topic_map:
-        for kw in keywords:
-            if kw in text:
-                return query
-    
-    # Если ничего не подошло — используем заголовок
-    words = re.sub(r'[^\w\s]', ' ', title).split()[:3]
-    return ' '.join(words) if len(words) >= 2 else "logistics transport"
+    return "logistics"
 
 def pick_photo_from_unsplash(title, summary):
-    """Ищет картинку ПО СМЫСЛУ новости"""
+    """Возвращает гарантированную картинку по теме"""
     if not UNSPLASH_KEY:
         return None
     
-    # Получаем запрос по смыслу
-    search_query = get_search_query(title, summary)
+    theme = get_theme(title, summary)
+    images = THEME_IMAGES.get(theme, THEME_IMAGES["logistics"])
     
-    photo_url = None
-    for attempt in range(3):
-        try:
-            r = requests.get(
-                "https://api.unsplash.com/search/photos",
-                params={"query": search_query, "per_page": 5, "orientation": "landscape"},
-                headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-                timeout=10,
-            )
-            r.raise_for_status()
-            results = r.json().get("results") or []
-            
-            for photo in results:
-                url = photo["urls"]["regular"]
-                if url not in _used_photos:
-                    _used_photos.add(url)
-                    photo_url = url
-                    break
-            
-            if photo_url:
-                break
-                
-        except Exception:
-            pass
-        
-        # Если не нашли — меняем запрос
-        search_query = search_query + " " + random.choice(["transport", "logistics", "cargo"])
+    # Ищем неиспользованную картинку
+    for url in images:
+        if url not in _used_photos:
+            _used_photos.add(url)
+            return {"url": url}
     
-    # Запасные картинки
-    if not photo_url:
-        fallback_urls = [
-            "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
-            "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-            "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
-            "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
-            "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
-        ]
-        for url in fallback_urls:
-            if url not in _used_photos:
-                _used_photos.add(url)
-                photo_url = url
-                break
-    
-    return {"url": photo_url} if photo_url else None
+    # Если все картинки использованы — берем первую и сбрасываем кеш
+    _used_photos.clear()
+    return {"url": images[0]}
 
 def strip_html(text):
     if not text:
@@ -445,7 +448,7 @@ def collect():
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (уникальные картинки по смыслу)...")
+    print("🚀 Сбор новостей (картинки ТОЛЬКО по теме)...")
     items = collect()
 
     data = {

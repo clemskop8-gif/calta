@@ -1,21 +1,8 @@
 """
 Обновляет data/grain.json котировками зерна.
-
-Живые данные (Alpha Vantage, бесплатный ключ, лимит 25 запросов/день):
-  - Пшеница (WHEAT)
-  - Кукуруза (CORN)
-Это единственные два зерновых, которые Alpha Vantage отдаёт бесплатно.
-
-Ячмень и соя — у Alpha Vantage (и вообще у бесплатных API без подписки)
-живых котировок по ним нет. Чтобы не выдумывать цифры, они помечены
-"isDemo": true и берутся из MANUAL_SECONDARY ниже — при желании можно
-руками поправить значение здесь, и оно попадёт на сайт при следующем
-запуске workflow. Если позже подключите платный источник (например,
-Nasdaq Data Link) — замените fetch_manual_crop() на реальный запрос,
-формат ответа должен совпадать с fetch_commodity().
-
-Ключ НЕ хранится в коде — берётся из переменной окружения
-ALPHAVANTAGE_KEY (GitHub Secrets).
+Использует Twelve Data API (бесплатный, 800 запросов/день).
+Все 4 культуры: Пшеница, Кукуруза, Ячмень, Соя.
+Ключ берётся из переменной окружения TWELVEDATA_KEY (GitHub Secrets).
 """
 import json
 import os
@@ -23,17 +10,18 @@ import sys
 from datetime import datetime, timezone
 import requests
 
-API_KEY = os.environ.get("ALPHAVANTAGE_KEY", "").strip()
+API_KEY = os.environ.get("TWELVEDATA_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "grain.json")
 
-# Ручные значения для культур без бесплатного живого источника.
-# Поправьте цифры здесь при необходимости — они попадут на сайт
-# при следующем запуске workflow (Actions → Run workflow).
-MANUAL_SECONDARY = [
-    {"crop": "Ячмень", "cropEn": "Barley", "price": 205, "changePercent": 0.6, "direction": "down"},
-    {"crop": "Соя", "cropEn": "Soybean", "price": 438, "changePercent": 0.3, "direction": "up"},
-]
+# Карта культур → символы в Twelve Data
+SYMBOLS = {
+    "Пшеница": {"symbol": "WHEAT", "label": "Wheat · Twelve Data"},
+    "Кукуруза": {"symbol": "CORN", "label": "Corn · Twelve Data"},
+    "Ячмень": {"symbol": "BARLEY", "label": "Barley · Twelve Data"},
+    "Соя": {"symbol": "SOYBEAN", "label": "Soybean · Twelve Data"},
+}
 
+# Запасные демо-данные (если API не работает)
 FALLBACK_FEATURED = {
     "isDemo": True,
     "crop": "Пшеница",
@@ -47,94 +35,162 @@ FALLBACK_FEATURED = {
     "spark": [222, 225, 221, 228, 231, 227, 233, 230, 236, 232, 238, 235, 238],
 }
 
-FALLBACK_CORN = {
-    "isDemo": True,
-    "crop": "Кукуруза",
-    "cropEn": "Corn",
-    "price": 191,
-    "currency": "USD",
-    "unit": "т",
-    "changePercent": 0.9,
-    "direction": "up",
-}
+FALLBACK_SECONDARY = [
+    {"crop": "Кукуруза", "cropEn": "Corn", "price": 191, "changePercent": 0.9, "direction": "up"},
+    {"crop": "Ячмень", "cropEn": "Barley", "price": 205, "changePercent": 0.6, "direction": "down"},
+    {"crop": "Соя", "cropEn": "Soybean", "price": 438, "changePercent": 0.3, "direction": "up"},
+]
 
 
-def fetch_commodity(function_name, crop_ru, crop_en_label):
-    """Универсальный запрос к Alpha Vantage для WHEAT / CORN."""
+def fetch_price(symbol):
+    """Получает текущую цену и историю для символа через Twelve Data"""
     if not API_KEY:
-        print("ALPHAVANTAGE_KEY не задан —", crop_ru, "останется demo.")
+        print(f"  ⚠️ TWELVEDATA_KEY не задан")
         return None
-    url = "https://www.alphavantage.co/query"
-    params = {"function": function_name, "interval": "daily", "apikey": API_KEY}
-    r = requests.get(url, params=params, timeout=20)
-    r.raise_for_status()
-    payload = r.json()
-    series = payload.get("data")
-    if not series or len(series) < 2:
-        print(f"Неожиданный ответ Alpha Vantage для {function_name}:", payload)
+    
+    try:
+        # Текущая цена
+        url = "https://api.twelvedata.com/price"
+        params = {"symbol": symbol, "apikey": API_KEY}
+        r = requests.get(url, params=params, timeout=15)
+        r.raise_for_status()
+        data = r.json()
+        
+        if "price" not in data:
+            print(f"  ⚠️ Нет цены для {symbol}: {data}")
+            return None
+        
+        current_price = float(data["price"])
+        
+        # История за 14 дней (для графика spark)
+        url_hist = "https://api.twelvedata.com/time_series"
+        params_hist = {
+            "symbol": symbol,
+            "interval": "1day",
+            "outputsize": 14,
+            "apikey": API_KEY
+        }
+        r_hist = requests.get(url_hist, params=params_hist, timeout=15)
+        r_hist.raise_for_status()
+        hist_data = r_hist.json()
+        
+        values = hist_data.get("values", [])
+        if not values:
+            return {"price": current_price, "spark": [current_price] * 14}
+        
+        # Цены от старых к новым (для spark)
+        spark = [float(v["close"]) for v in values]
+        spark.reverse()
+        
+        # Изменение за последний день
+        if len(spark) >= 2:
+            prev = spark[-2]
+            change_abs = current_price - prev
+        else:
+            change_abs = 0
+        
+        return {
+            "price": round(current_price, 2),
+            "spark": spark,
+            "changeAbs": abs(change_abs),
+            "changePercent": abs(round((change_abs / prev) * 100, 2)) if prev else 0,
+            "direction": "up" if change_abs >= 0 else "down",
+        }
+        
+    except Exception as e:
+        print(f"  ❌ Ошибка для {symbol}: {e}")
         return None
-
-    latest = float(series[0]["value"])
-    prev = float(series[1]["value"])
-    change_abs = round(latest - prev, 2)
-    change_pct = round((change_abs / prev) * 100, 2) if prev else 0
-    spark = [float(p["value"]) for p in series[:14]][::-1]
-
-    return {
-        "isDemo": False,
-        "crop": crop_ru,
-        "cropEn": crop_en_label,
-        "price": round(latest, 2),
-        "currency": "USD",
-        "unit": "т",
-        "changeAbs": abs(change_abs),
-        "changePercent": abs(change_pct),
-        "direction": "up" if change_abs >= 0 else "down",
-        "spark": spark,
-    }
-
-
-def build_secondary(corn):
-    secondary = [corn or FALLBACK_CORN]
-    for manual in MANUAL_SECONDARY:
-        secondary.append({
-            "isDemo": True,  # честно: живого бесплатного источника по этой культуре нет
-            "currency": "USD",
-            "unit": "т",
-            **manual,
-        })
-    return secondary
 
 
 def main():
-    featured = fetch_commodity("WHEAT", "Пшеница", "Wheat · Alpha Vantage") or FALLBACK_FEATURED
-    corn = fetch_commodity("CORN", "Кукуруза", "Corn · Alpha Vantage")
-
+    print("🔄 Обновление котировок зерна (Twelve Data)...")
+    
+    featured_data = None
+    secondary_data = []
+    
+    for crop_name, info in SYMBOLS.items():
+        symbol = info["symbol"]
+        label = info["label"]
+        
+        print(f"  Загрузка {crop_name} ({symbol})...")
+        data = fetch_price(symbol)
+        
+        if data:
+            print(f"    ✅ {crop_name}: {data['price']} USD/т")
+            entry = {
+                "isDemo": False,
+                "crop": crop_name,
+                "cropEn": label,
+                "price": data["price"],
+                "currency": "USD",
+                "unit": "т",
+                "changeAbs": data["changeAbs"],
+                "changePercent": data["changePercent"],
+                "direction": data["direction"],
+            }
+            if crop_name == "Пшеница":
+                entry["spark"] = data["spark"]
+                featured_data = entry
+            else:
+                secondary_data.append(entry)
+        else:
+            print(f"    ⚠️ {crop_name} — используется демо")
+            # Используем демо-данные
+            if crop_name == "Пшеница":
+                featured_data = FALLBACK_FEATURED.copy()
+            else:
+                for fallback in FALLBACK_SECONDARY:
+                    if fallback["crop"] == crop_name:
+                        secondary_data.append({
+                            "isDemo": True,
+                            "currency": "USD",
+                            "unit": "т",
+                            **fallback,
+                        })
+                        break
+    
+    # Если Пшеница не загрузилась — ставим демо
+    if not featured_data:
+        featured_data = FALLBACK_FEATURED.copy()
+        print("  ⚠️ Пшеница — демо-данные")
+    
+    # Формируем результат
     data = {
         "updatedAt": datetime.now(timezone.utc).isoformat(),
-        "featured": featured,
-        "secondary": build_secondary(corn),
+        "featured": featured_data,
+        "secondary": secondary_data[:3],  # Кукуруза, Ячмень, Соя
     }
-
+    
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print(
-        "Записано:", OUT_PATH,
-        "-> пшеница isDemo =", featured["isDemo"],
-        ", кукуруза isDemo =", data["secondary"][0]["isDemo"],
-    )
+    
+    print(f"\n✅ Записано: {OUT_PATH}")
+    print(f"   Пшеница: isDemo={featured_data['isDemo']}, цена={featured_data['price']}")
+    for item in secondary_data[:3]:
+        print(f"   {item['crop']}: isDemo={item['isDemo']}, цена={item['price']}")
 
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print("Ошибка обновления котировок, оставляю demo-данные:", e, file=sys.stderr)
+        print("❌ Ошибка обновления котировок:", e, file=sys.stderr)
+        # Сохраняем демо-данные
+        data = {
+            "updatedAt": datetime.now(timezone.utc).isoformat(),
+            "featured": FALLBACK_FEATURED.copy(),
+            "secondary": [
+                {
+                    "isDemo": True,
+                    "currency": "USD",
+                    "unit": "т",
+                    **item,
+                }
+                for item in FALLBACK_SECONDARY
+            ],
+        }
         os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
         with open(OUT_PATH, "w", encoding="utf-8") as f:
-            json.dump({
-                "updatedAt": datetime.now(timezone.utc).isoformat(),
-                "featured": FALLBACK_FEATURED,
-                "secondary": build_secondary(None),
-            }, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print("   Сохранены демо-данные")

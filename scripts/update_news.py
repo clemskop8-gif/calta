@@ -1,5 +1,5 @@
 """
-Обновляет data/news.json — новости с inform.kz, asiaplustj.info, 24.kg.
+Обновляет data/news.json — новости с asiaplustj.info, 24.kg.
 ГЛУБОКИЙ РЕРАЙТ: меняется структура, порядок частей, убираются шаблонные фразы.
 Картинки из Unsplash без подписей. Плашки и ссылки убраны.
 """
@@ -119,27 +119,17 @@ def generate_unique_summary(original_summary):
     # 1. Замена синонимов
     summary = rewrite_text(original_summary)
     
-    # 2. Убираем шаблонные фразы (они выдают плагиат)
-    summary = re.sub(r'передает агентство Kazinform со ссылкой на', 'Как сообщили в', summary)
-    summary = re.sub(r'передает агентство Kazinform', 'По информации', summary)
+    # 2. Убираем шаблонные фразы
+    summary = re.sub(r'передает корреспондент', 'Как сообщили', summary)
+    summary = re.sub(r'передает агентство', 'По информации', summary)
     summary = re.sub(r'со ссылкой на', 'в', summary)
-    summary = re.sub(r'пресс-службу акимата региона', 'региональный акимат', summary)
-    summary = re.sub(r'агентство Kazinform', 'источник', summary)
-    
-    # НОВЫЙ БЛОК: убираем канцелярские штампы
-    summary = re.sub(r'проводится системная работа по', 'ведется работа над', summary)
-    summary = re.sub(r'реализации поручений Главы государства', 'выполнению стратегических задач', summary)
-    summary = re.sub(r'диверсификации национальной экономики', 'развитию экономики', summary)
-    summary = re.sub(r'раскрытию транспортно-логистического потенциала', 'усилению транзитных возможностей', summary)
-    summary = re.sub(r'инфраструктурного каркаса', 'инфраструктуры', summary)
-    summary = re.sub(r'обрабатывающего сектора', 'обрабатывающей промышленности', summary)
-    summary = re.sub(r'транспортно-логистического потенциала', 'транзитного потенциала', summary)
+    summary = re.sub(r'пресс-службу', 'пресс-служба', summary)
     
     # 3. Перестраиваем структуру
     location_match = re.search(r'(в|на) ([А-Яа-я]+ском|ском) районе ([А-Яа-я]+ской области)', summary)
-    object_match = re.search(r'(логистический|транспортный|терминал|хаб|центр|комплекс|рабочих мест)', summary)
-    company_match = re.search(r'(компании|Kusto|Logistics|АО|ТОО)', summary)
-    action_match = re.search(r'(запустили|открыли|построили|ввели|начали|создали|запущен|открыт|создано)', summary)
+    object_match = re.search(r'(логистический|транспортный|терминал|хаб|центр|комплекс|вагонов|вагон|поездов)', summary)
+    company_match = re.search(r'(компании|Kusto|Logistics|АО|ТОО|КТЖ)', summary)
+    action_match = re.search(r'(запустили|открыли|построили|ввели|начали|создали|запущен|открыт|создано|закупит|обновили|приобретено|планирует)', summary)
     
     parts = []
     if location_match:
@@ -149,21 +139,22 @@ def generate_unique_summary(original_summary):
         obj = object_match.group(0)
         parts.append(f"{action} новый {obj}")
     if company_match:
-        parts.append(f"принадлежащий {company_match.group(0)}")
-    parts.append("как сообщили в региональном акимате")
+        parts.append(f"компанией {company_match.group(0)}")
+    parts.append("как сообщили в ведомстве")
     
     if len(parts) >= 2:
-        new_summary = ', '.join(parts) + '.'
+        new_summary = '. '.join(parts) + '.'
     else:
         new_summary = summary
     
     # 4. Добавляем итоговую фразу
     endings = [
         " Это укрепит транспортные связи региона.",
-        " Комплекс будет способствовать развитию логистики.",
-        " Объект повысит эффективность грузоперевозок.",
+        " Работа по модернизации продолжается.",
         " Это важный шаг в развитии транспортной инфраструктуры.",
         " Новый центр расширит транспортные возможности.",
+        " Комплекс будет способствовать развитию логистики.",
+        " Объект повысит эффективность грузоперевозок.",
     ]
     if len(new_summary) > 30 and not any(new_summary.endswith(e) for e in endings):
         new_summary = new_summary + random.choice(endings)
@@ -224,52 +215,7 @@ def _meta_tag(html_text, prop):
     return ""
 
 # ============================================================
-# 5. ПАРСИНГ inform.kz
-# ============================================================
-def collect_inform_kz():
-    out = []
-    url = "https://www.inform.kz/tag/logistika_t11100"
-    try:
-        r = requests.get(url, timeout=20, headers=HEADERS)
-        r.raise_for_status()
-        html_content = r.text
-    except Exception as e:
-        print(f"inform.kz ошибка: {e}")
-        return out
-    all_links = set()
-    for link in re.findall(r'href=["\']([^"\']*/ru/[a-z0-9\-]+-[a-f0-9]{8})["\']', html_content, re.IGNORECASE):
-        if link.startswith('http'):
-            all_links.add(link)
-        else:
-            all_links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
-    print(f"inform.kz: найдено {len(all_links)} ссылок")
-    for article_url in list(all_links)[:6]:
-        try:
-            ar = requests.get(article_url, timeout=20, headers=HEADERS)
-            ar.raise_for_status()
-            article_html = ar.text
-        except Exception:
-            continue
-        title = _meta_tag(article_html, "og:title")
-        if not title:
-            continue
-        summary = _meta_tag(article_html, "og:description")[:300]
-        published = _meta_tag(article_html, "article:published_time")
-        new_title = generate_unique_title(title)
-        new_summary = generate_unique_summary(summary)
-        photo = pick_photo_from_unsplash(new_title, new_summary)
-        out.append({
-            "title": new_title,
-            "summary": new_summary or "Подробнее в источнике.",
-            "publishedAt": published,
-            "photo": photo,
-            "_original": title[:50] + "..."
-        })
-        print(f"  ✅ inform.kz: {new_title[:50]}...")
-    return out
-
-# ============================================================
-# 6. ПАРСИНГ asiaplustj.info
+# 5. ПАРСИНГ asiaplustj.info
 # ============================================================
 def collect_asiaplus():
     out = []
@@ -286,7 +232,7 @@ def collect_asiaplus():
         if 'economic' in link or 'logistics' in link or 'transport' in link:
             all_links.add(link)
     print(f"asiaplustj: найдено {len(all_links)} ссылок")
-    for article_url in list(all_links)[:6]:
+    for article_url in list(all_links)[:8]:
         try:
             ar = requests.get(article_url, timeout=20, headers=HEADERS)
             ar.raise_for_status()
@@ -298,7 +244,7 @@ def collect_asiaplus():
             continue
         summary = _meta_tag(article_html, "og:description")[:300]
         published = _meta_tag(article_html, "article:published_time")
-        if not any(w in (title + summary).lower() for w in ['логист', 'транспорт', 'перевозк', 'груз', 'контейнер', 'порт']):
+        if not any(w in (title + summary).lower() for w in ['логист', 'транспорт', 'перевозк', 'груз', 'контейнер', 'порт', 'экономик', 'инвестиц']):
             continue
         new_title = generate_unique_title(title)
         new_summary = generate_unique_summary(summary)
@@ -314,7 +260,7 @@ def collect_asiaplus():
     return out
 
 # ============================================================
-# 7. ПАРСИНГ 24.kg (через RSS)
+# 6. ПАРСИНГ 24.kg (через RSS)
 # ============================================================
 def collect_24kg():
     out = []
@@ -325,7 +271,7 @@ def collect_24kg():
         print(f"24.kg ошибка: {e}")
         return out
     print(f"24.kg: найдено {len(parsed.entries)} записей")
-    for entry in parsed.entries[:8]:
+    for entry in parsed.entries[:10]:
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -346,12 +292,10 @@ def collect_24kg():
     return out
 
 # ============================================================
-# 8. СБОР И ОБЪЕДИНЕНИЕ
+# 7. СБОР И ОБЪЕДИНЕНИЕ
 # ============================================================
 def collect():
     items = []
-    print("\n🔍 Парсинг inform.kz...")
-    items.extend(collect_inform_kz())
     print("\n🔍 Парсинг asiaplustj.info...")
     items.extend(collect_asiaplus())
     print("\n🔍 Парсинг 24.kg...")
@@ -369,7 +313,7 @@ def collect():
     return unique_items[:MAX_ITEMS]
 
 # ============================================================
-# 9. MAIN
+# 8. MAIN
 # ============================================================
 def main():
     print("🚀 Начинаем сбор новостей с рерайтом...")

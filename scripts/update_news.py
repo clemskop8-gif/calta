@@ -4,7 +4,7 @@
 Фильтр: ТОЛЬКО логистика (жесткий фильтр).
 БЕЗ ДЕМО-ЗАГЛУШЕК.
 Каждая новость имеет КОРОТКУЮ выжимку (2-4 предложения) своими словами.
-Картинки из Unsplash по смыслу.
+У каждой новости УНИКАЛЬНАЯ картинка (без повторов).
 """
 import html
 import json
@@ -28,41 +28,25 @@ HEADERS = {
 # 1. ЖЕСТКИЙ ФИЛЬТР: ТОЛЬКО ЛОГИСТИКА
 # ============================================================
 
-# Ключевые слова — ТОЛЬКО логистика
 STRICT_LOGISTICS = [
-    # Транспорт
     "поезд", "вагон", "локомотив", "жд", "ж/д", "железнодорож",
     "магистраль", "путь", "рельс", "состав", "электровоз",
-    
-    # Порты и суда
     "порт", "судно", "контейнеровоз", "паром", "причал", "гавань",
     "морской", "речной", "флот", "танкер",
-    
-    # Терминалы и склады
     "терминал", "склад", "хаб", "распределительный центр",
     "логистический центр", "складской", "хранение",
-    
-    # Грузы и контейнеры
     "контейнер", "груз", "контейнерный", "teu", "обработка грузов",
     "грузоперевозк", "грузовой",
-    
-    # Коридоры и транзит
     "коридор", "транзит", "маршрут", "транскаспий",
     "международный транспорт", "транспортный",
-    
-    # Таможня и оформление
     "таможня", "оформление", "пошлины", "транзитный",
-    
-    # Перевозки
     "перевозк", "транспортировк", "доставк", "логистик",
 ]
 
 def is_logistics(text):
-    """Проверяет, что новость ТОЧНО про логистику"""
     if not text:
         return False
     text_lower = text.lower()
-    # Проверяем каждое слово из текста
     for word in text_lower.split():
         for root in STRICT_LOGISTICS:
             if root in word:
@@ -70,7 +54,6 @@ def is_logistics(text):
     return False
 
 def has_country(text):
-    """Проверяет, упоминается ли страна ЦА"""
     if not text:
         return False
     text_lower = text.lower()
@@ -81,34 +64,23 @@ def has_country(text):
     return any(c in text_lower for c in countries)
 
 def is_relevant(title, summary):
-    """Главная проверка: логистика + страна ЦА"""
     if not title:
         return False
     full_text = (title + " " + summary).lower()
-    
-    # Должна быть логистика
     if not is_logistics(full_text):
         return False
-    
-    # Должна быть страна ЦА
     if not has_country(full_text):
         return False
-    
     return True
 
 # ============================================================
-# 2. ГЕНЕРАЦИЯ КОРОТКОЙ ВЫЖИМКИ (2-4 предложения)
+# 2. ГЕНЕРАЦИЯ КОРОТКОЙ ВЫЖИМКИ
 # ============================================================
 
 def generate_unique_summary(title, original_summary):
-    """
-    Создает КОРОТКУЮ фактическую выжимку (2-4 предложения) своими словами.
-    Без копирования, только ключевые факты.
-    """
     if not original_summary:
         original_summary = title
     
-    # 1. Очищаем от шаблонных фраз
     text = strip_html(original_summary)
     text = re.sub(r'передает\s+агентство\s+[А-Яа-я]+\s*', '', text)
     text = re.sub(r'со\s+ссылкой\s+на\s+[^,.]+,?\s*', '', text)
@@ -118,66 +90,57 @@ def generate_unique_summary(title, original_summary):
     text = re.sub(r'пишет\s+[А-Яа-яА-Я\s\|]+\s*', '', text)
     text = re.sub(r'Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\.', '', text)
     
-    # 2. Разбиваем на предложения
     sentences = re.split(r'[.!?]', text)
     sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
     
-    # 3. Берем ТОЛЬКО факты (цифры, даты, ключевые события)
     fact_sentences = []
     for s in sentences[:4]:
-        # Оставляем предложения с цифрами, датами, ключевыми словами
         if re.search(r'\d+', s) or any(word in s.lower() for word in ['логистик', 'транспорт', 'груз', 'контейнер', 'порт', 'склад', 'терминал']):
             fact_sentences.append(s)
     
-    # Если фактов нет — берем первые 2 предложения
     if len(fact_sentences) < 1:
         fact_sentences = sentences[:2]
     
-    # 4. Очищаем каждое предложение от лишних деталей
     cleaned = []
     for s in fact_sentences:
-        # Убираем вводные конструкции
         s = re.sub(r'^(основными драйверами|по данным|как отмечается|в частности|также)\s+', '', s, flags=re.IGNORECASE)
-        # Убираем перечисления (цифры с точками)
         s = re.sub(r'•\s+[^\n]+', '', s)
-        # Убираем множественные пробелы
         s = re.sub(r'\s+', ' ', s).strip()
         if len(s) > 10:
             cleaned.append(s)
     
-    # 5. Собираем результат (2-4 предложения)
     if len(cleaned) >= 2:
         result = '. '.join(cleaned[:3])
     elif len(cleaned) == 1:
-        # Если только одно предложение — добавляем контекст из заголовка
         clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
         result = f"{clean_title}. {cleaned[0]}"
     else:
-        # Если совсем ничего нет — используем заголовок
         clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
         result = clean_title + ". Подробнее в источнике."
     
-    # 6. Добавляем точку в конце
     if result and not result.endswith('.'):
         result += '.'
-    
-    # 7. Ограничиваем длину (максимум 250 символов)
     if len(result) > 250:
         result = result[:247] + '...'
     
     return result
 
 # ============================================================
-# 3. КАРТИНКИ ИЗ UNSPLASH
+# 3. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)
 # ============================================================
 
+# Кеш использованных картинок
+_used_photos = set()
+
 def pick_photo_from_unsplash(title):
+    """Подбирает УНИКАЛЬНУЮ картинку для каждой новости"""
     if not UNSPLASH_KEY:
         return None
     
     clean_title = re.sub(r'[^\w\s]', ' ', title)
     words = [w for w in clean_title.split() if len(w) > 3][:4]
     
+    # Определяем тему для поиска
     topic_map = {
         'поезд': 'train', 'вагон': 'train', 'железнодорож': 'railway', 'жд': 'railway',
         'порт': 'port', 'судно': 'ship', 'контейнер': 'container', 'терминал': 'terminal',
@@ -199,31 +162,53 @@ def pick_photo_from_unsplash(title):
     if search_query == "logistics transport" and len(words) >= 2:
         search_query = ' '.join(words[:2])
     
-    try:
-        r = requests.get(
-            "https://api.unsplash.com/search/photos",
-            params={"query": search_query, "per_page": 1, "orientation": "landscape"},
-            headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
-            timeout=10,
-        )
-        r.raise_for_status()
-        results = r.json().get("results") or []
-        if results:
-            return {"url": results[0]["urls"]["regular"]}
-    except Exception:
-        pass
+    # Пытаемся найти уникальную картинку
+    photo_url = None
+    for attempt in range(3):  # 3 попытки
+        try:
+            r = requests.get(
+                "https://api.unsplash.com/search/photos",
+                params={"query": search_query, "per_page": 5, "orientation": "landscape"},
+                headers={"Authorization": f"Client-ID {UNSPLASH_KEY}"},
+                timeout=10,
+            )
+            r.raise_for_status()
+            results = r.json().get("results") or []
+            
+            # Ищем первую НЕИСПОЛЬЗОВАННУЮ картинку
+            for photo in results:
+                url = photo["urls"]["regular"]
+                if url not in _used_photos:
+                    _used_photos.add(url)
+                    photo_url = url
+                    break
+            
+            if photo_url:
+                break
+                
+        except Exception:
+            pass
+        
+        # Если не нашли уникальную — меняем запрос
+        search_query = search_query + " " + random.choice(["transport", "logistics", "cargo"])
     
-    fallback_by_topic = {
-        'train': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
-        'railway': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
-        'port': "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
-        'container': "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-        'warehouse': "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
-        'cargo': "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
-        'airport': "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800",
-    }
-    fallback_url = fallback_by_topic.get(search_query, "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800")
-    return {"url": fallback_url}
+    # Если все попытки не удались — берем запасную (уникальную)
+    if not photo_url:
+        fallback_urls = [
+            "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
+            "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+            "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
+            "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800",
+            "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800",
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
+        ]
+        for url in fallback_urls:
+            if url not in _used_photos:
+                _used_photos.add(url)
+                photo_url = url
+                break
+    
+    return {"url": photo_url} if photo_url else None
 
 def strip_html(text):
     if not text:
@@ -378,7 +363,7 @@ def collect_inform():
 # 5. СБОР
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (только логистика, короткие выжимки)...")
+    print("\n🔍 Сбор новостей (только логистика, уникальные картинки)...")
     items = []
 
     items.extend(collect_golos())
@@ -400,7 +385,7 @@ def collect():
 # 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (только логистика)...")
+    print("🚀 Сбор новостей (уникальные картинки)...")
     items = collect()
 
     data = {

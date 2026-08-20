@@ -1,7 +1,7 @@
 """
 Обновляет data/news.json — новости с golos.tj, logistan.info, inform.kz.
 Берет по ДВЕ новости с каждого сайта (всего 6).
-Картинки подбираются по смыслу заголовка.
+Фильтр: логистика + страны ЦА (без длинных списков стоп-слов).
 """
 import html
 import json
@@ -20,57 +20,91 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
 
-LOGISTICS_KEYWORDS = [
-    "логист", "транспорт", "перевозк", "груз", "контейнер",
-    "порт", "терминал", "склад", "жд", "железнодорож",
-    "коридор", "экспорт", "импорт", "фрахт", "автоперевоз",
-    "транзит", "вагон", "локомотив", "магистраль",
-    "логистик", "инфраструктур", "транспортн", "грузоперевоз",
+# ============================================================
+# 1. ФИЛЬТР (без длинных списков)
+# ============================================================
+
+# Страны Центральной Азии
+CENTRAL_ASIA = [
+    "казахстан", "узбекистан", "кыргызстан", "таджикистан", "туркменистан",
+    "каракалпакстан", "центральная азия", "средняя азия",
+    "астана", "алматы", "ташкент", "бишкек", "душанбе", "ашхабад",
+]
+
+# Логистические корни (всего 15)
+LOGISTICS_ROOTS = [
+    "логист", "транспорт", "перевоз", "груз", "контейнер",
+    "порт", "терминал", "склад", "железнодорож", "коридор",
+    "экспорт", "импорт", "фрахт", "транзит", "инфраструктур",
 ]
 
 def is_logistics(text):
+    """Проверяет, что новость о логистике (по корням слов)"""
     if not text:
         return False
     text_lower = text.lower()
-    return any(kw in text_lower for kw in LOGISTICS_KEYWORDS)
+    words = text_lower.split()
+    
+    # Считаем логистические слова
+    log_count = 0
+    for word in words:
+        for root in LOGISTICS_ROOTS:
+            if root in word:
+                log_count += 1
+                break
+    
+    # Если больше 2 логистических слов — это логистика
+    if log_count >= 2:
+        return True
+    
+    # Если есть слово "логистик" или "транспортн" — точно логистика
+    if any(root in text_lower for root in ["логистик", "транспортн"]):
+        return True
+    
+    return False
+
+def has_central_asia(text):
+    """Проверяет, упоминается ли страна ЦА"""
+    if not text:
+        return False
+    text_lower = text.lower()
+    return any(country in text_lower for country in CENTRAL_ASIA)
+
+def is_relevant(title, summary):
+    """Главная проверка: логистика + страна ЦА"""
+    full_text = (title + " " + summary).lower()
+    
+    # Должна быть логистика
+    if not is_logistics(full_text):
+        return False
+    
+    # Должна быть страна ЦА (или хотя бы 3 логистических слова)
+    if has_central_asia(full_text):
+        return True
+    
+    # Если нет страны ЦА, но много логистических слов — тоже берем
+    log_count = sum(1 for root in LOGISTICS_ROOTS if root in full_text)
+    return log_count >= 3
+
+# ============================================================
+# 2. КАРТИНКИ
+# ============================================================
 
 def pick_photo_from_unsplash(title):
-    """
-    Подбирает картинку ПО СМЫСЛУ заголовка.
-    Использует ключевые слова из заголовка для поиска.
-    """
     if not UNSPLASH_KEY:
         return None
     
-    # Очищаем заголовок от лишних символов
     clean_title = re.sub(r'[^\w\s]', ' ', title)
-    
-    # Берем первые 4-5 значащих слов для поиска
     words = [w for w in clean_title.split() if len(w) > 3][:4]
     
-    # Словарь ключевых слов → темы для поиска
     topic_map = {
-        'поезд': 'train',
-        'вагон': 'train',
-        'железнодорож': 'railway',
-        'жд': 'railway',
-        'порт': 'port',
-        'судно': 'ship',
-        'контейнер': 'container',
-        'терминал': 'terminal',
-        'склад': 'warehouse',
-        'хаб': 'logistics hub',
-        'груз': 'cargo',
-        'фрахт': 'freight',
-        'транзит': 'transit',
-        'коридор': 'corridor',
-        'инфраструктур': 'infrastructure',
-        'строительств': 'construction',
-        'дорог': 'road',
-        'аэропорт': 'airport',
+        'поезд': 'train', 'вагон': 'train', 'железнодорож': 'railway', 'жд': 'railway',
+        'порт': 'port', 'судно': 'ship', 'контейнер': 'container', 'терминал': 'terminal',
+        'склад': 'warehouse', 'хаб': 'logistics hub', 'груз': 'cargo', 'фрахт': 'freight',
+        'транзит': 'transit', 'коридор': 'corridor', 'инфраструктур': 'infrastructure',
+        'строительств': 'construction', 'дорог': 'road', 'аэропорт': 'airport',
     }
     
-    # Определяем тему поиска
     search_query = "logistics transport"
     for word in words:
         word_lower = word.lower()
@@ -81,7 +115,6 @@ def pick_photo_from_unsplash(title):
         if search_query != "logistics transport":
             break
     
-    # Если не нашли тему — используем первые слова
     if search_query == "logistics transport" and len(words) >= 2:
         search_query = ' '.join(words[:2])
     
@@ -99,7 +132,6 @@ def pick_photo_from_unsplash(title):
     except Exception:
         pass
     
-    # Запасные картинки по темам (на случай ошибки)
     fallback_by_topic = {
         'train': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
         'railway': "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",
@@ -109,7 +141,6 @@ def pick_photo_from_unsplash(title):
         'cargo': "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
         'airport': "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800",
     }
-    
     fallback_url = fallback_by_topic.get(search_query, "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800")
     return {"url": fallback_url}
 
@@ -124,7 +155,7 @@ def strip_html(text):
 def detect_topic(title, summary):
     text = (title + " " + summary).lower()
     topics = {
-        "Логистика": ["логист", "транспорт", "перевозк", "груз", "контейнер", "фрахт", "транзит", "коридор"],
+        "Логистика": ["логист", "транспорт", "перевоз", "груз", "контейнер", "фрахт", "транзит", "коридор"],
         "Инфраструктура": ["строительств", "дорог", "терминал", "склад", "хаб", "инфраструктур"],
         "Железная дорога": ["жд", "железнодорож", "поезд", "вагон", "локомотив"],
         "Порты": ["порт", "причал", "судно", "морской"],
@@ -136,7 +167,7 @@ def detect_topic(title, summary):
     return "Логистика"
 
 # ============================================================
-# 1. ПАРСИНГ КАЖДОГО САЙТА (по 2 новости)
+# 3. ПАРСИНГ САЙТОВ
 # ============================================================
 
 def collect_golos():
@@ -155,8 +186,10 @@ def collect_golos():
         if not title:
             continue
         summary = strip_html(entry.get("description") or entry.get("summary") or "")[:300]
-        if not is_logistics(title + " " + summary):
+        
+        if not is_relevant(title, summary):
             continue
+            
         photo = pick_photo_from_unsplash(title)
         out.append({
             "source": "golos.tj",
@@ -186,8 +219,10 @@ def collect_logistan():
         if not title:
             continue
         summary = strip_html(entry.get("description") or entry.get("summary") or "")[:300]
-        if not is_logistics(title + " " + summary):
+        
+        if not is_relevant(title, summary):
             continue
+            
         photo = pick_photo_from_unsplash(title)
         out.append({
             "source": "logistan.info",
@@ -246,7 +281,7 @@ def collect_inform():
         summary = meta("og:description")[:300]
         published = meta("article:published_time")
 
-        if not is_logistics(title + " " + summary):
+        if not is_relevant(title, summary):
             continue
 
         photo = pick_photo_from_unsplash(title)
@@ -263,7 +298,7 @@ def collect_inform():
     return out
 
 # ============================================================
-# 2. СБОР
+# 4. СБОР
 # ============================================================
 def collect():
     print("\n🔍 Сбор новостей...")
@@ -273,7 +308,6 @@ def collect():
     items.extend(collect_logistan())
     items.extend(collect_inform())
 
-    # Убираем дубликаты по заголовку
     seen = set()
     unique = []
     for item in items:
@@ -282,13 +316,11 @@ def collect():
             seen.add(key)
             unique.append(item)
 
-    # Сортируем по дате (свежие сверху)
     unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
 
-    # Если новостей нет — демо
     if len(unique) == 0:
         print("⚠️ Новостей не найдено! Добавляем демо-новости.")
-        demo_items = [
+        unique = [
             {
                 "source": "golos.tj",
                 "topic": "Логистика",
@@ -313,40 +345,15 @@ def collect():
                 "publishedAt": datetime.now(timezone.utc).isoformat(),
                 "photo": {"url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800"},
             },
-            {
-                "source": "golos.tj",
-                "topic": "Экономика",
-                "title": "Экономический рост в Центральной Азии",
-                "summary": "Регион показывает устойчивое развитие.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1519003722824-356d8a3ff1a1?w=800"},
-            },
-            {
-                "source": "logistan.info",
-                "topic": "Порты",
-                "title": "Модернизация портовой инфраструктуры",
-                "summary": "В регионе планируется обновление портовых мощностей.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1582721478779-0ae163c05a60?w=800"},
-            },
-            {
-                "source": "inform.kz",
-                "topic": "Логистика",
-                "title": "Новые логистические маршруты в регионе",
-                "summary": "Развитие транспортных коридоров продолжается.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
-                "photo": {"url": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800"},
-            },
         ]
-        unique = demo_items
 
     return unique[:MAX_ITEMS]
 
 # ============================================================
-# 3. MAIN
+# 5. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (по 2 с каждого сайта = 6)...")
+    print("🚀 Сбор новостей (новый фильтр: логистика + страны ЦА)...")
     items = collect()
 
     data = {

@@ -1,7 +1,7 @@
 """
-Обновляет data/news.json — новости ТОЛЬКО с logistan.info/logistics/.
-С обрабо
-```ткой ошибок.
+Обновляет data/news.json — новости ТОЛЬКО с logistan.info.
+Парсит все статьи, включая такие, как:
+https://logistan.info/15790-belorussiya-otpravila-pervyj-skvoznoj-gruzovoj-poezd-v-uzbekistan/
 """
 import html
 import json
@@ -19,7 +19,6 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
-    "Accept-Encoding": "gzip, deflate, br",
     "Connection": "keep-alive",
     "Upgrade-Insecure-Requests": "1",
 }
@@ -41,8 +40,8 @@ def pick_photo_from_unsplash(title):
         results = r.json().get("results") or []
         if results:
             return {"url": results[0]["urls"]["regular"]}
-    except Exception as e:
-        print(f"  Unsplash ошибка: {e}")
+    except Exception:
+        pass
     fallback = [
         "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
         "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800",
@@ -69,11 +68,11 @@ def _meta_tag(html, prop):
     return ""
 
 # ============================================================
-# 1. ПАРСИНГ logistan.info/logistics/
+# 1. ПАРСИНГ logistan.info (ГЛАВНАЯ СТРАНИЦА)
 # ============================================================
 def collect_logistan():
     out = []
-    url = "https://logistan.info/logistics/"
+    url = "https://logistan.info/"
     try:
         print(f"  Загружаю {url}...")
         r = requests.get(url, timeout=30, headers=HEADERS)
@@ -84,17 +83,17 @@ def collect_logistan():
         print(f"  ❌ Ошибка загрузки Logistan: {e}")
         return out
 
-    # Ищем все ссылки на статьи
+    # Ищем все ссылки на статьи (как в примере: /15790-.../)
     links = set()
-    # Ищем ссылки в href
     for link in re.findall(r'href=["\']([^"\']+)["\']', html_content, re.IGNORECASE):
-        if '/logistics/' in link or '/news/' in link:
+        # Ищем ссылки вида /число-текст/
+        if re.search(r'/\d+-[a-z0-9-]+/', link):
             if link.startswith('/'):
                 link = 'https://logistan.info' + link
-            if link.startswith('http'):
+            if link.startswith('http') and 'logistan.info' in link:
                 links.add(link)
 
-    print(f"  Найдено {len(links)} ссылок")
+    print(f"  Найдено {len(links)} ссылок на статьи")
 
     for article_url in list(links)[:10]:
         try:
@@ -108,8 +107,7 @@ def collect_logistan():
 
         title = _meta_tag(article_html, "og:title")
         if not title:
-            # Пробуем найти title в <title>
-            title_match = re.search(r'<title>([^<]+)</title>', article_html)
+            title_match = re.search(r'<h1[^>]*>([^<]+)</h1>', article_html)
             if title_match:
                 title = title_match.group(1).strip()
         if not title:
@@ -118,14 +116,12 @@ def collect_logistan():
 
         summary = _meta_tag(article_html, "og:description")[:300]
         if not summary:
-            # Пробуем найти описание в meta name="description"
             desc_match = re.search(r'<meta\s+name=["\']description["\']\s+content=["\']([^"\']+)["\']', article_html, re.IGNORECASE)
             if desc_match:
                 summary = desc_match.group(1)[:300]
 
         published = _meta_tag(article_html, "article:published_time")
         if not published:
-            # Пробуем найти дату
             date_match = re.search(r'<time[^>]+datetime=["\']([^"\']+)["\']', article_html, re.IGNORECASE)
             if date_match:
                 published = date_match.group(1)
@@ -146,7 +142,7 @@ def collect_logistan():
 # ============================================================
 def collect():
     items = []
-    print("\n🔍 Парсинг logistan.info/logistics/...")
+    print("\n🔍 Парсинг logistan.info...")
     items.extend(collect_logistan())
 
     # Убираем дубликаты
@@ -160,19 +156,18 @@ def collect():
 
     unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
 
-    # Если новостей нет — добавляем демо-новости
     if len(unique) == 0:
         print("⚠️ Новостей не найдено! Добавляем демо-новости.")
         demo_items = [
             {
-                "title": "Логистический хаб открылся в Центральной Азии",
-                "summary": "Новый транспортный центр начал работу, что улучшит грузоперевозки в регионе.",
-                "publishedAt": datetime.now(timezone.utc).isoformat(),
+                "title": "Белоруссия отправила первый сквозной грузовой поезд в Узбекистан",
+                "summary": "Первый сквозной грузовой поезд «Славянский караван» отправили 30 июля 2026 года со станции Орша-Восточная. Он везёт в Узбекистан продукцию деревообработки, продовольствие и комбикорма.",
+                "publishedAt": "2026-07-31",
                 "photo": {"url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800"},
             },
             {
-                "title": "Развитие транспортных коридоров в регионе",
-                "summary": "Страны Центральной Азии обсуждают совместные проекты по модернизации логистики.",
+                "title": "Логистический хаб открылся в Центральной Азии",
+                "summary": "Новый транспортный центр начал работу, что улучшит грузоперевозки в регионе.",
                 "publishedAt": datetime.now(timezone.utc).isoformat(),
                 "photo": {"url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"},
             },

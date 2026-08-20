@@ -126,26 +126,30 @@ def generate_unique_summary(original_summary):
     summary = re.sub(r'пресс-службу акимата региона', 'региональный акимат', summary)
     summary = re.sub(r'агентство Kazinform', 'источник', summary)
     
-    # 3. Разбиваем на логические части
+    # НОВЫЙ БЛОК: убираем канцелярские штампы
+    summary = re.sub(r'проводится системная работа по', 'ведется работа над', summary)
+    summary = re.sub(r'реализации поручений Главы государства', 'выполнению стратегических задач', summary)
+    summary = re.sub(r'диверсификации национальной экономики', 'развитию экономики', summary)
+    summary = re.sub(r'раскрытию транспортно-логистического потенциала', 'усилению транзитных возможностей', summary)
+    summary = re.sub(r'инфраструктурного каркаса', 'инфраструктуры', summary)
+    summary = re.sub(r'обрабатывающего сектора', 'обрабатывающей промышленности', summary)
+    summary = re.sub(r'транспортно-логистического потенциала', 'транзитного потенциала', summary)
+    
+    # 3. Перестраиваем структуру
     location_match = re.search(r'(в|на) ([А-Яа-я]+ском|ском) районе ([А-Яа-я]+ской области)', summary)
-    object_match = re.search(r'(логистический|транспортный|терминал|хаб|центр|комплекс)', summary)
+    object_match = re.search(r'(логистический|транспортный|терминал|хаб|центр|комплекс|рабочих мест)', summary)
     company_match = re.search(r'(компании|Kusto|Logistics|АО|ТОО)', summary)
-    action_match = re.search(r'(запустили|открыли|построили|ввели|начали|создали|запущен|открыт)', summary)
+    action_match = re.search(r'(запустили|открыли|построили|ввели|начали|создали|запущен|открыт|создано)', summary)
     
-    # 4. Собираем текст в новом порядке
     parts = []
-    
     if location_match:
         parts.append(f"В {location_match.group(0)}")
-    
     if action_match and object_match:
         action = action_match.group(0)
         obj = object_match.group(0)
         parts.append(f"{action} новый {obj}")
-    
     if company_match:
         parts.append(f"принадлежащий {company_match.group(0)}")
-    
     parts.append("как сообщили в региональном акимате")
     
     if len(parts) >= 2:
@@ -153,7 +157,7 @@ def generate_unique_summary(original_summary):
     else:
         new_summary = summary
     
-    # 5. Добавляем итоговую фразу
+    # 4. Добавляем итоговую фразу
     endings = [
         " Это укрепит транспортные связи региона.",
         " Комплекс будет способствовать развитию логистики.",

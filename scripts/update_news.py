@@ -3,6 +3,7 @@
 Ровно 6 новостей (по 2 с каждого сайта).
 Фильтр: логистика + страны ЦА.
 БЕЗ ДЕМО-ЗАГЛУШЕК.
+Каждая новость имеет краткую фактическую выжимку (2-4 предложения).
 """
 import html
 import json
@@ -38,17 +39,14 @@ LOGISTICS_ROOTS = [
 ]
 
 def is_relevant(title, summary):
-    """Проверяет: логистика + страна ЦА"""
     if not title:
         return False
     full_text = (title + " " + summary).lower()
     
-    # Должна быть логистика
     has_log = any(root in full_text for root in LOGISTICS_ROOTS)
     if not has_log:
         return False
     
-    # Должна быть страна ЦА
     has_country = any(country in full_text for country in CENTRAL_ASIA)
     if not has_country:
         return False
@@ -56,7 +54,55 @@ def is_relevant(title, summary):
     return True
 
 # ============================================================
-# 2. КАРТИНКИ
+# 2. ГЕНЕРАЦИЯ КРАТКОЙ ВЫЖИМКИ (2-4 предложения)
+# ============================================================
+
+def generate_summary(title, original_summary):
+    """
+    Генерирует краткую фактическую выжимку своими словами (2-4 предложения)
+    """
+    if not original_summary:
+        original_summary = title
+    
+    # Очищаем текст
+    text = strip_html(original_summary)
+    text = re.sub(r'передает\s+агентство\s+[А-Яа-я]+\s*', '', text)
+    text = re.sub(r'со\s+ссылкой\s+на\s+[^,.]+,?\s*', '', text)
+    text = re.sub(r'как\s+сообщил[аи]?\s+[^,.]+,?\s*', '', text)
+    
+    # Разбиваем на предложения
+    sentences = re.split(r'[.!?]', text)
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
+    
+    # Если мало предложений — используем заголовок + первое предложение
+    if len(sentences) < 2:
+        # Очищаем заголовок от шаблонов
+        clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
+        return f"{clean_title}. {sentences[0] if sentences else 'Подробнее в источнике.'}"
+    
+    # Собираем 2-3 ключевых предложения
+    fact_sentences = sentences[:3]
+    
+    # Убираем повторы
+    seen = set()
+    unique_sentences = []
+    for s in fact_sentences:
+        key = s[:30].lower()
+        if key not in seen:
+            seen.add(key)
+            unique_sentences.append(s)
+    
+    # Собираем результат
+    result = '. '.join(unique_sentences)
+    
+    # Добавляем точку в конце, если нет
+    if result and not result.endswith('.'):
+        result += '.'
+    
+    return result
+
+# ============================================================
+# 3. КАРТИНКИ
 # ============================================================
 
 def pick_photo_from_unsplash(title):
@@ -136,7 +182,7 @@ def detect_topic(title, summary):
     return "Логистика"
 
 # ============================================================
-# 3. ПАРСИНГ САЙТОВ (без демо-заглушек)
+# 4. ПАРСИНГ САЙТОВ
 # ============================================================
 
 def collect_golos():
@@ -151,7 +197,7 @@ def collect_golos():
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
-        summary = strip_html(entry.get("description") or entry.get("summary") or "")[:300]
+        summary = strip_html(entry.get("description") or entry.get("summary") or "")[:500]
         
         if not is_relevant(title, summary):
             continue
@@ -161,7 +207,7 @@ def collect_golos():
             "source": "golos.tj",
             "topic": detect_topic(title, summary),
             "title": title,
-            "summary": summary or "Подробнее в источнике.",
+            "summary": generate_summary(title, summary),
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
@@ -182,7 +228,7 @@ def collect_logistan():
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
-        summary = strip_html(entry.get("description") or entry.get("summary") or "")[:300]
+        summary = strip_html(entry.get("description") or entry.get("summary") or "")[:500]
         
         if not is_relevant(title, summary):
             continue
@@ -192,7 +238,7 @@ def collect_logistan():
             "source": "logistan.info",
             "topic": detect_topic(title, summary),
             "title": title,
-            "summary": summary or "Подробнее в источнике.",
+            "summary": generate_summary(title, summary),
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
@@ -240,7 +286,7 @@ def collect_inform():
         title = meta("og:title")
         if not title:
             continue
-        summary = meta("og:description")[:300]
+        summary = meta("og:description")[:500]
         published = meta("article:published_time")
 
         if not is_relevant(title, summary):
@@ -251,7 +297,7 @@ def collect_inform():
             "source": "inform.kz",
             "topic": detect_topic(title, summary),
             "title": title,
-            "summary": summary or "Подробнее в источнике.",
+            "summary": generate_summary(title, summary),
             "publishedAt": published,
             "photo": photo,
         })
@@ -261,7 +307,7 @@ def collect_inform():
     return out
 
 # ============================================================
-# 4. СБОР (без демо-заглушек)
+# 5. СБОР
 # ============================================================
 def collect():
     print("\n🔍 Сбор новостей (только логистика + страны ЦА)...")
@@ -271,7 +317,6 @@ def collect():
     items.extend(collect_logistan())
     items.extend(collect_inform())
 
-    # Убираем дубликаты
     seen = set()
     unique = []
     for item in items:
@@ -280,17 +325,14 @@ def collect():
             seen.add(key)
             unique.append(item)
 
-    # Сортируем по дате (свежие сверху)
     unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
-
-    # Берем ровно 6 (если меньше — будет меньше, без заглушек)
     return unique[:MAX_ITEMS]
 
 # ============================================================
-# 5. MAIN
+# 6. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (ровно 6, без заглушек)...")
+    print("🚀 Сбор новостей (с краткой выжимкой)...")
     items = collect()
 
     data = {
@@ -308,6 +350,8 @@ def main():
         has_photo = "✅" if item.get("photo") else "❌"
         source = item.get("source", "?")
         print(f"  {i+1}. {has_photo} [{source}] {item['title'][:50]}...")
+        if item.get('summary'):
+            print(f"      📝 {item['summary'][:80]}...")
 
 if __name__ == "__main__":
     main()

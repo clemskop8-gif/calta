@@ -1,7 +1,8 @@
 """
 Обновляет data/news.json — новости с golos.tj, logistan.info, inform.kz.
 Ровно 6 новостей (по 2 с каждого сайта).
-У каждой новости своя картинка по смыслу.
+Фильтр: логистика + страны ЦА.
+БЕЗ ДЕМО-ЗАГЛУШЕК.
 """
 import html
 import json
@@ -21,7 +22,7 @@ HEADERS = {
 }
 
 # ============================================================
-# 1. ФИЛЬТР
+# 1. ФИЛЬТР: логистика + страны ЦА
 # ============================================================
 
 CENTRAL_ASIA = [
@@ -36,46 +37,29 @@ LOGISTICS_ROOTS = [
     "экспорт", "импорт", "фрахт", "транзит", "инфраструктур",
 ]
 
-def is_logistics(text):
-    if not text:
-        return False
-    text_lower = text.lower()
-    words = text_lower.split()
-    
-    log_count = 0
-    for word in words:
-        for root in LOGISTICS_ROOTS:
-            if root in word:
-                log_count += 1
-                break
-    
-    if log_count >= 2:
-        return True
-    if any(root in text_lower for root in ["логистик", "транспортн"]):
-        return True
-    return False
-
-def has_central_asia(text):
-    if not text:
-        return False
-    text_lower = text.lower()
-    return any(country in text_lower for country in CENTRAL_ASIA)
-
 def is_relevant(title, summary):
-    full_text = (title + " " + summary).lower()
-    if not is_logistics(full_text):
+    """Проверяет: логистика + страна ЦА"""
+    if not title:
         return False
-    if has_central_asia(full_text):
-        return True
-    log_count = sum(1 for root in LOGISTICS_ROOTS if root in full_text)
-    return log_count >= 3
+    full_text = (title + " " + summary).lower()
+    
+    # Должна быть логистика
+    has_log = any(root in full_text for root in LOGISTICS_ROOTS)
+    if not has_log:
+        return False
+    
+    # Должна быть страна ЦА
+    has_country = any(country in full_text for country in CENTRAL_ASIA)
+    if not has_country:
+        return False
+    
+    return True
 
 # ============================================================
 # 2. КАРТИНКИ
 # ============================================================
 
 def pick_photo_from_unsplash(title):
-    """Уникальная картинка для каждой новости"""
     if not UNSPLASH_KEY:
         return None
     
@@ -152,7 +136,7 @@ def detect_topic(title, summary):
     return "Логистика"
 
 # ============================================================
-# 3. ПАРСИНГ САЙТОВ (по 2 новости с каждого)
+# 3. ПАРСИНГ САЙТОВ (без демо-заглушек)
 # ============================================================
 
 def collect_golos():
@@ -163,10 +147,7 @@ def collect_golos():
         print(f"  ❌ golos.tj ошибка: {e}")
         return out
 
-    count = 0
-    for entry in parsed.entries[:20]:
-        if count >= 2:
-            break
+    for entry in parsed.entries[:30]:
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -184,19 +165,9 @@ def collect_golos():
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
-        count += 1
-        print(f"    ✅ golos.tj #{count}: {title[:40]}...")
-    
-    # Если не хватило — заполняем демо
-    while len(out) < 2:
-        out.append({
-            "source": "golos.tj",
-            "topic": "Логистика",
-            "title": f"Логистические проекты в Центральной Азии (демо #{len(out)+1})",
-            "summary": "Страны региона продолжают развивать транспортную инфраструктуру.",
-            "publishedAt": datetime.now(timezone.utc).isoformat(),
-            "photo": {"url": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800"},
-        })
+        print(f"    ✅ golos.tj: {title[:40]}...")
+        if len(out) >= 2:
+            break
     return out
 
 def collect_logistan():
@@ -207,10 +178,7 @@ def collect_logistan():
         print(f"  ❌ logistan.info ошибка: {e}")
         return out
 
-    count = 0
-    for entry in parsed.entries[:20]:
-        if count >= 2:
-            break
+    for entry in parsed.entries[:30]:
         title = strip_html(entry.get("title") or "")
         if not title:
             continue
@@ -228,18 +196,9 @@ def collect_logistan():
             "publishedAt": entry.get("published", ""),
             "photo": photo,
         })
-        count += 1
-        print(f"    ✅ logistan.info #{count}: {title[:40]}...")
-    
-    while len(out) < 2:
-        out.append({
-            "source": "logistan.info",
-            "topic": "Логистика",
-            "title": f"Логистические проекты в Центральной Азии (демо #{len(out)+1})",
-            "summary": "Страны региона продолжают развивать транспортную инфраструктуру.",
-            "publishedAt": datetime.now(timezone.utc).isoformat(),
-            "photo": {"url": "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800"},
-        })
+        print(f"    ✅ logistan.info: {title[:40]}...")
+        if len(out) >= 2:
+            break
     return out
 
 def collect_inform():
@@ -260,10 +219,7 @@ def collect_inform():
         else:
             links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
 
-    count = 0
-    for article_url in list(links)[:15]:
-        if count >= 2:
-            break
+    for article_url in list(links)[:20]:
         try:
             ar = requests.get(article_url, timeout=20, headers=HEADERS)
             ar.raise_for_status()
@@ -299,32 +255,23 @@ def collect_inform():
             "publishedAt": published,
             "photo": photo,
         })
-        count += 1
-        print(f"    ✅ inform.kz #{count}: {title[:40]}...")
-    
-    while len(out) < 2:
-        out.append({
-            "source": "inform.kz",
-            "topic": "Логистика",
-            "title": f"Логистические проекты в Центральной Азии (демо #{len(out)+1})",
-            "summary": "Страны региона продолжают развивать транспортную инфраструктуру.",
-            "publishedAt": datetime.now(timezone.utc).isoformat(),
-            "photo": {"url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800"},
-        })
+        print(f"    ✅ inform.kz: {title[:40]}...")
+        if len(out) >= 2:
+            break
     return out
 
 # ============================================================
-# 4. СБОР
+# 4. СБОР (без демо-заглушек)
 # ============================================================
 def collect():
-    print("\n🔍 Сбор новостей (ровно 6)...")
+    print("\n🔍 Сбор новостей (только логистика + страны ЦА)...")
     items = []
 
     items.extend(collect_golos())
     items.extend(collect_logistan())
     items.extend(collect_inform())
 
-    # Убираем дубликаты по заголовку
+    # Убираем дубликаты
     seen = set()
     unique = []
     for item in items:
@@ -333,34 +280,21 @@ def collect():
             seen.add(key)
             unique.append(item)
 
-    # Сортируем по дате
+    # Сортируем по дате (свежие сверху)
     unique.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
 
-    # Обрезаем до 6
-    result = unique[:6]
-    
-    # Если меньше 6 — добиваем демо
-    while len(result) < 6:
-        result.append({
-            "source": "demo",
-            "topic": "Логистика",
-            "title": f"Логистические проекты в Центральной Азии (демо #{len(result)+1})",
-            "summary": "Страны региона продолжают развивать транспортную инфраструктуру.",
-            "publishedAt": datetime.now(timezone.utc).isoformat(),
-            "photo": {"url": f"https://images.unsplash.com/photo-{1494412574643 + len(result)}?w=800"},
-        })
-
-    return result[:6]
+    # Берем ровно 6 (если меньше — будет меньше, без заглушек)
+    return unique[:MAX_ITEMS]
 
 # ============================================================
 # 5. MAIN
 # ============================================================
 def main():
-    print("🚀 Сбор новостей (ровно 6, по 2 с каждого сайта)...")
+    print("🚀 Сбор новостей (ровно 6, без заглушек)...")
     items = collect()
 
     data = {
-        "isDemo": False,
+        "isDemo": len(items) == 0,
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "items": items,
     }

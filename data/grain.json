@@ -1,10 +1,9 @@
 {
-  "updatedAt": "2026-08-21T05:30:18.207345+00:00",
+  "updatedAt": "2026-08-21T05:42:36.353094+00:00",
   "featured": {
-    "isDemo": true,
     "crop": "Пшеница",
     "cropEn": "Wheat · CBOT",
-    "price": 238,
+    "price": 228.74,
     "currency": "USD",
     "unit": "т",
     "changeAbs": 3.3,
@@ -28,7 +27,6 @@
   },
   "secondary": [
     {
-      "isDemo": true,
       "currency": "USD",
       "unit": "т",
       "crop": "Кукуруза",
@@ -38,7 +36,6 @@
       "direction": "up"
     },
     {
-      "isDemo": true,
       "currency": "USD",
       "unit": "т",
       "crop": "Ячмень",
@@ -48,7 +45,6 @@
       "direction": "down"
     },
     {
-      "isDemo": true,
       "currency": "USD",
       "unit": "т",
       "crop": "Соя",

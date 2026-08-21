@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-21T05:14:02.986310+00:00",
+  "updatedAt": "2026-08-21T05:19:28.354266+00:00",
   "featured": {
     "isDemo": true,
     "crop": "Пшеница",
@@ -28,14 +28,13 @@
   },
   "secondary": [
     {
-      "isDemo": false,
-      "crop": "Кукуруза",
-      "cropEn": "Corn · Twelve Data",
-      "price": 18.88,
+      "isDemo": true,
       "currency": "USD",
       "unit": "т",
-      "changeAbs": 0.11,
-      "changePercent": 0.61,
+      "crop": "Кукуруза",
+      "cropEn": "Corn",
+      "price": 191,
+      "changePercent": 0.9,
       "direction": "up"
     },
     {
@@ -49,15 +48,14 @@
       "direction": "down"
     },
     {
-      "isDemo": false,
-      "crop": "Соя",
-      "cropEn": "Soybean · Twelve Data",
-      "price": 174.96,
+      "isDemo": true,
       "currency": "USD",
       "unit": "т",
-      "changeAbs": 9.64,
-      "changePercent": 5.22,
-      "direction": "down"
+      "crop": "Соя",
+      "cropEn": "Soybean",
+      "price": 438,
+      "changePercent": 0.3,
+      "direction": "up"
     }
   ]
 }

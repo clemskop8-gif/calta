@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-21T05:06:30.049224+00:00",
+  "updatedAt": "2026-08-21T05:14:02.986310+00:00",
   "featured": {
     "isDemo": true,
     "crop": "Пшеница",
@@ -39,25 +39,25 @@
       "direction": "up"
     },
     {
-      "isDemo": false,
-      "crop": "Ячмень",
-      "cropEn": "Barley · Twelve Data",
-      "price": 35.99,
-      "currency": "USD",
-      "unit": "т",
-      "changeAbs": 0.24,
-      "changePercent": 0.66,
-      "direction": "down"
-    },
-    {
       "isDemo": true,
       "currency": "USD",
       "unit": "т",
+      "crop": "Ячмень",
+      "cropEn": "Barley",
+      "price": 205,
+      "changePercent": 0.6,
+      "direction": "down"
+    },
+    {
+      "isDemo": false,
       "crop": "Соя",
-      "cropEn": "Soybean",
-      "price": 438,
-      "changePercent": 0.3,
-      "direction": "up"
+      "cropEn": "Soybean · Twelve Data",
+      "price": 174.96,
+      "currency": "USD",
+      "unit": "т",
+      "changeAbs": 9.64,
+      "changePercent": 5.22,
+      "direction": "down"
     }
   ]
 }

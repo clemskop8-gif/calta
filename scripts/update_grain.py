@@ -1,8 +1,6 @@
 """
 Обновляет data/grain.json котировками зерна.
-Использует Twelve Data API (бесплатный, 800 запросов/день).
-Все 4 культуры: Пшеница, Кукуруза, Ячмень, Соя.
-Ключ берётся из переменной окружения TWELVEDATA_KEY (GitHub Secrets).
+Использует Twelve Data API.
 """
 import json
 import os
@@ -13,7 +11,7 @@ import requests
 API_KEY = os.environ.get("TWELVEDATA_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "grain.json")
 
-# Карта культур → символы в Twelve Data
+# Карта культур → символы в Twelve Data (проверенные рабочие символы)
 SYMBOLS = {
     "Пшеница": {"symbol": "WHEAT", "label": "Wheat · Twelve Data"},
     "Кукуруза": {"symbol": "CORN", "label": "Corn · Twelve Data"},
@@ -21,7 +19,14 @@ SYMBOLS = {
     "Соя": {"symbol": "SOYBEAN", "label": "Soybean · Twelve Data"},
 }
 
-# Запасные демо-данные (если API не работает)
+# Альтернативные символы (если основные не работают)
+ALTERNATIVE_SYMBOLS = {
+    "Пшеница": ["ZW", "WHEAT"],
+    "Кукуруза": ["ZC", "CORN"],
+    "Ячмень": ["BARLEY", "AB"],
+    "Соя": ["ZS", "SOYBEAN"],
+}
+
 FALLBACK_FEATURED = {
     "isDemo": True,
     "crop": "Пшеница",
@@ -43,13 +48,12 @@ FALLBACK_SECONDARY = [
 
 
 def fetch_price(symbol):
-    """Получает текущую цену и историю для символа через Twelve Data"""
+    """Получает текущую цену для символа через Twelve Data"""
     if not API_KEY:
         print(f"  ⚠️ TWELVEDATA_KEY не задан")
         return None
     
     try:
-        # Текущая цена
         url = "https://api.twelvedata.com/price"
         params = {"symbol": symbol, "apikey": API_KEY}
         r = requests.get(url, params=params, timeout=15)
@@ -57,49 +61,67 @@ def fetch_price(symbol):
         data = r.json()
         
         if "price" not in data:
-            print(f"  ⚠️ Нет цены для {symbol}: {data}")
+            print(f"  ⚠️ Нет цены для {symbol}: {data.get('message', data)}")
             return None
         
-        current_price = float(data["price"])
+        return float(data["price"])
         
-        # История за 14 дней (для графика spark)
-        url_hist = "https://api.twelvedata.com/time_series"
-        params_hist = {
+    except Exception as e:
+        print(f"  ❌ Ошибка для {symbol}: {e}")
+        return None
+
+
+def fetch_spark(symbol):
+    """Получает историю за 14 дней для графика"""
+    if not API_KEY:
+        return None
+    
+    try:
+        url = "https://api.twelvedata.com/time_series"
+        params = {
             "symbol": symbol,
             "interval": "1day",
             "outputsize": 14,
             "apikey": API_KEY
         }
-        r_hist = requests.get(url_hist, params=params_hist, timeout=15)
-        r_hist.raise_for_status()
-        hist_data = r_hist.json()
+        r = requests.get(url, params=params, timeout=15)
+        r.raise_for_status()
+        data = r.json()
         
-        values = hist_data.get("values", [])
+        values = data.get("values", [])
         if not values:
-            return {"price": current_price, "spark": [current_price] * 14}
+            return None
         
-        # Цены от старых к новым (для spark)
         spark = [float(v["close"]) for v in values]
         spark.reverse()
-        
-        # Изменение за последний день
-        if len(spark) >= 2:
-            prev = spark[-2]
-            change_abs = current_price - prev
-        else:
-            change_abs = 0
-        
-        return {
-            "price": round(current_price, 2),
-            "spark": spark,
-            "changeAbs": abs(change_abs),
-            "changePercent": abs(round((change_abs / prev) * 100, 2)) if prev else 0,
-            "direction": "up" if change_abs >= 0 else "down",
-        }
+        return spark
         
     except Exception as e:
-        print(f"  ❌ Ошибка для {symbol}: {e}")
+        print(f"  ❌ Ошибка истории для {symbol}: {e}")
         return None
+
+
+def fetch_with_fallback(crop_name, symbol, label):
+    """Пытается получить данные по основному символу, потом по альтернативным"""
+    
+    # Основной символ
+    price = fetch_price(symbol)
+    if price is not None:
+        spark = fetch_spark(symbol)
+        return {"price": price, "spark": spark}
+    
+    # Альтернативные символы
+    alt_symbols = ALTERNATIVE_SYMBOLS.get(crop_name, [])
+    for alt in alt_symbols:
+        if alt == symbol:
+            continue
+        print(f"    🔄 Пробуем {crop_name} через {alt}...")
+        price = fetch_price(alt)
+        if price is not None:
+            spark = fetch_spark(alt)
+            return {"price": price, "spark": spark}
+    
+    return None
 
 
 def main():
@@ -113,29 +135,45 @@ def main():
         label = info["label"]
         
         print(f"  Загрузка {crop_name} ({symbol})...")
-        data = fetch_price(symbol)
+        result = fetch_with_fallback(crop_name, symbol, label)
         
-        if data:
-            print(f"    ✅ {crop_name}: {data['price']} USD/т")
+        if result:
+            price = result["price"]
+            spark = result["spark"]
+            
+            # Вычисляем изменения
+            if spark and len(spark) >= 2:
+                prev = spark[-2]
+                change_abs = price - prev
+                change_pct = (change_abs / prev) * 100 if prev else 0
+            else:
+                change_abs = 0
+                change_pct = 0
+            
+            print(f"    ✅ {crop_name}: {price} USD/т")
+            
             entry = {
                 "isDemo": False,
                 "crop": crop_name,
                 "cropEn": label,
-                "price": data["price"],
+                "price": round(price, 2),
                 "currency": "USD",
                 "unit": "т",
-                "changeAbs": data["changeAbs"],
-                "changePercent": data["changePercent"],
-                "direction": data["direction"],
+                "changeAbs": abs(round(change_abs, 2)),
+                "changePercent": abs(round(change_pct, 2)),
+                "direction": "up" if change_abs >= 0 else "down",
             }
+            
             if crop_name == "Пшеница":
-                entry["spark"] = data["spark"]
+                if spark:
+                    entry["spark"] = spark
+                else:
+                    entry["spark"] = [price] * 14
                 featured_data = entry
             else:
                 secondary_data.append(entry)
         else:
             print(f"    ⚠️ {crop_name} — используется демо")
-            # Используем демо-данные
             if crop_name == "Пшеница":
                 featured_data = FALLBACK_FEATURED.copy()
             else:
@@ -154,11 +192,10 @@ def main():
         featured_data = FALLBACK_FEATURED.copy()
         print("  ⚠️ Пшеница — демо-данные")
     
-    # Формируем результат
     data = {
         "updatedAt": datetime.now(timezone.utc).isoformat(),
         "featured": featured_data,
-        "secondary": secondary_data[:3],  # Кукуруза, Ячмень, Соя
+        "secondary": secondary_data[:3],
     }
     
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
@@ -175,18 +212,12 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print("❌ Ошибка обновления котировок:", e, file=sys.stderr)
-        # Сохраняем демо-данные
+        print("❌ Ошибка:", e, file=sys.stderr)
         data = {
             "updatedAt": datetime.now(timezone.utc).isoformat(),
             "featured": FALLBACK_FEATURED.copy(),
             "secondary": [
-                {
-                    "isDemo": True,
-                    "currency": "USD",
-                    "unit": "т",
-                    **item,
-                }
+                {"isDemo": True, "currency": "USD", "unit": "т", **item}
                 for item in FALLBACK_SECONDARY
             ],
         }

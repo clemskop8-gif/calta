@@ -1,6 +1,5 @@
 """
-Обновляет data/grain.json котировками зерна.
-Использует Twelve Data API.
+Обновляет data/grain.json котировками зерна через Twelve Data.
 """
 import json
 import os
@@ -11,22 +10,15 @@ import requests
 API_KEY = os.environ.get("TWELVEDATA_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "grain.json")
 
-# Карта культур → символы в Twelve Data (проверенные рабочие символы)
+# Исправленные символы для Twelve Data
 SYMBOLS = {
-    "Пшеница": {"symbol": "WHEAT", "label": "Wheat · Twelve Data"},
+    "Пшеница": {"symbol": "ZW", "label": "Wheat · Twelve Data"},
     "Кукуруза": {"symbol": "CORN", "label": "Corn · Twelve Data"},
     "Ячмень": {"symbol": "BARLEY", "label": "Barley · Twelve Data"},
-    "Соя": {"symbol": "SOYBEAN", "label": "Soybean · Twelve Data"},
+    "Соя": {"symbol": "ZS", "label": "Soybean · Twelve Data"},
 }
 
-# Альтернативные символы (если основные не работают)
-ALTERNATIVE_SYMBOLS = {
-    "Пшеница": ["ZW", "WHEAT"],
-    "Кукуруза": ["ZC", "CORN"],
-    "Ячмень": ["BARLEY", "AB"],
-    "Соя": ["ZS", "SOYBEAN"],
-}
-
+# Демо-данные (если API не работает)
 FALLBACK_FEATURED = {
     "isDemo": True,
     "crop": "Пшеница",
@@ -48,34 +40,26 @@ FALLBACK_SECONDARY = [
 
 
 def fetch_price(symbol):
-    """Получает текущую цену для символа через Twelve Data"""
     if not API_KEY:
-        print(f"  ⚠️ TWELVEDATA_KEY не задан")
         return None
-    
     try:
         url = "https://api.twelvedata.com/price"
         params = {"symbol": symbol, "apikey": API_KEY}
         r = requests.get(url, params=params, timeout=15)
         r.raise_for_status()
         data = r.json()
-        
         if "price" not in data:
             print(f"  ⚠️ Нет цены для {symbol}: {data.get('message', data)}")
             return None
-        
         return float(data["price"])
-        
     except Exception as e:
         print(f"  ❌ Ошибка для {symbol}: {e}")
         return None
 
 
 def fetch_spark(symbol):
-    """Получает историю за 14 дней для графика"""
     if not API_KEY:
         return None
-    
     try:
         url = "https://api.twelvedata.com/time_series"
         params = {
@@ -87,41 +71,15 @@ def fetch_spark(symbol):
         r = requests.get(url, params=params, timeout=15)
         r.raise_for_status()
         data = r.json()
-        
         values = data.get("values", [])
         if not values:
             return None
-        
         spark = [float(v["close"]) for v in values]
         spark.reverse()
         return spark
-        
     except Exception as e:
         print(f"  ❌ Ошибка истории для {symbol}: {e}")
         return None
-
-
-def fetch_with_fallback(crop_name, symbol, label):
-    """Пытается получить данные по основному символу, потом по альтернативным"""
-    
-    # Основной символ
-    price = fetch_price(symbol)
-    if price is not None:
-        spark = fetch_spark(symbol)
-        return {"price": price, "spark": spark}
-    
-    # Альтернативные символы
-    alt_symbols = ALTERNATIVE_SYMBOLS.get(crop_name, [])
-    for alt in alt_symbols:
-        if alt == symbol:
-            continue
-        print(f"    🔄 Пробуем {crop_name} через {alt}...")
-        price = fetch_price(alt)
-        if price is not None:
-            spark = fetch_spark(alt)
-            return {"price": price, "spark": spark}
-    
-    return None
 
 
 def main():
@@ -135,13 +93,11 @@ def main():
         label = info["label"]
         
         print(f"  Загрузка {crop_name} ({symbol})...")
-        result = fetch_with_fallback(crop_name, symbol, label)
         
-        if result:
-            price = result["price"]
-            spark = result["spark"]
-            
-            # Вычисляем изменения
+        price = fetch_price(symbol)
+        spark = fetch_spark(symbol) if price else None
+        
+        if price:
             if spark and len(spark) >= 2:
                 prev = spark[-2]
                 change_abs = price - prev
@@ -151,7 +107,6 @@ def main():
                 change_pct = 0
             
             print(f"    ✅ {crop_name}: {price} USD/т")
-            
             entry = {
                 "isDemo": False,
                 "crop": crop_name,
@@ -165,15 +120,12 @@ def main():
             }
             
             if crop_name == "Пшеница":
-                if spark:
-                    entry["spark"] = spark
-                else:
-                    entry["spark"] = [price] * 14
+                entry["spark"] = spark if spark else [price] * 14
                 featured_data = entry
             else:
                 secondary_data.append(entry)
         else:
-            print(f"    ⚠️ {crop_name} — используется демо")
+            print(f"    ⚠️ {crop_name} — демо-данные")
             if crop_name == "Пшеница":
                 featured_data = FALLBACK_FEATURED.copy()
             else:
@@ -187,7 +139,6 @@ def main():
                         })
                         break
     
-    # Если Пшеница не загрузилась — ставим демо
     if not featured_data:
         featured_data = FALLBACK_FEATURED.copy()
         print("  ⚠️ Пшеница — демо-данные")

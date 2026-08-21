@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-20T12:56:09.107016+00:00",
+  "updatedAt": "2026-08-21T05:06:30.049224+00:00",
   "featured": {
     "isDemo": true,
     "crop": "Пшеница",
@@ -31,21 +31,22 @@
       "isDemo": false,
       "crop": "Кукуруза",
       "cropEn": "Corn · Twelve Data",
-      "price": 18.73,
+      "price": 18.88,
       "currency": "USD",
       "unit": "т",
-      "changeAbs": 0.3099999999999987,
-      "changePercent": 1.68,
+      "changeAbs": 0.11,
+      "changePercent": 0.61,
       "direction": "up"
     },
     {
-      "isDemo": true,
+      "isDemo": false,
+      "crop": "Ячмень",
+      "cropEn": "Barley · Twelve Data",
+      "price": 35.99,
       "currency": "USD",
       "unit": "т",
-      "crop": "Ячмень",
-      "cropEn": "Barley",
-      "price": 205,
-      "changePercent": 0.6,
+      "changeAbs": 0.24,
+      "changePercent": 0.66,
       "direction": "down"
     },
     {

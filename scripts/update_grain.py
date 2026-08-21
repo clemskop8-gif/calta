@@ -1,6 +1,7 @@
 """
 Обновляет data/grain.json котировками зерна.
-БЕЗ упоминаний о демо-данных и источнике.
+Если API работает — реальные цены.
+Если API не работает — запасные цены (без демо-надписей).
 """
 import json
 import os
@@ -13,10 +14,10 @@ TWELVE_KEY = os.environ.get("TWELVEDATA_KEY", "").strip()
 OUT_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "grain.json")
 
 # ============================================================
-# РЕАЛИСТИЧНЫЕ ЦЕНЫ (без плашек "Демо", "Ручное", "Источник")
+# ЗАПАСНЫЕ ЦЕНЫ (если API не работает)
 # ============================================================
 
-REALISTIC_FEATURED = {
+FALLBACK_FEATURED = {
     "crop": "Пшеница",
     "cropEn": "Wheat · CBOT",
     "price": 228.74,
@@ -28,7 +29,7 @@ REALISTIC_FEATURED = {
     "spark": [222, 225, 221, 228, 231, 227, 233, 230, 236, 232, 238, 235, 238],
 }
 
-REALISTIC_SECONDARY = [
+FALLBACK_SECONDARY = [
     {"crop": "Кукуруза", "cropEn": "Corn", "price": 191, "changePercent": 0.9, "direction": "up"},
     {"crop": "Ячмень", "cropEn": "Barley", "price": 205, "changePercent": 0.6, "direction": "down"},
     {"crop": "Соя", "cropEn": "Soybean", "price": 438, "changePercent": 0.3, "direction": "up"},
@@ -88,6 +89,7 @@ def main():
     # ===== 1. ПШЕНИЦА =====
     wheat = fetch_alpha_vantage("WHEAT")
     if wheat:
+        print(f"   ✅ Пшеница: {wheat['price']} USD/т (Alpha Vantage)")
         featured_data = {
             "crop": "Пшеница",
             "cropEn": "Wheat · Alpha Vantage",
@@ -100,11 +102,13 @@ def main():
             "spark": wheat["spark"],
         }
     else:
-        featured_data = REALISTIC_FEATURED.copy()
+        print(f"   ⚠️ Пшеница: запасная цена {FALLBACK_FEATURED['price']} USD/т")
+        featured_data = FALLBACK_FEATURED.copy()
     
     # ===== 2. КУКУРУЗА =====
     corn = fetch_alpha_vantage("CORN")
     if corn:
+        print(f"   ✅ Кукуруза: {corn['price']} USD/т (Alpha Vantage)")
         secondary_data.append({
             "currency": "USD",
             "unit": "т",
@@ -115,18 +119,16 @@ def main():
             "direction": corn["direction"],
         })
     else:
-        for fallback in REALISTIC_SECONDARY:
+        for fallback in FALLBACK_SECONDARY:
             if fallback["crop"] == "Кукуруза":
-                secondary_data.append({
-                    "currency": "USD",
-                    "unit": "т",
-                    **fallback
-                })
+                print(f"   ⚠️ Кукуруза: запасная цена {fallback['price']} USD/т")
+                secondary_data.append({"currency": "USD", "unit": "т", **fallback})
                 break
     
     # ===== 3. ЯЧМЕНЬ =====
     barley = fetch_twelve_data("BARLEY")
     if barley:
+        print(f"   ✅ Ячмень: {barley['price']} USD/т (Twelve Data)")
         secondary_data.append({
             "currency": "USD",
             "unit": "т",
@@ -137,18 +139,16 @@ def main():
             "direction": "up",
         })
     else:
-        for fallback in REALISTIC_SECONDARY:
+        for fallback in FALLBACK_SECONDARY:
             if fallback["crop"] == "Ячмень":
-                secondary_data.append({
-                    "currency": "USD",
-                    "unit": "т",
-                    **fallback
-                })
+                print(f"   ⚠️ Ячмень: запасная цена {fallback['price']} USD/т")
+                secondary_data.append({"currency": "USD", "unit": "т", **fallback})
                 break
     
     # ===== 4. СОЯ =====
     soy = fetch_twelve_data("SOYBEAN")
     if soy:
+        print(f"   ✅ Соя: {soy['price']} USD/т (Twelve Data)")
         secondary_data.append({
             "currency": "USD",
             "unit": "т",
@@ -159,13 +159,10 @@ def main():
             "direction": "up",
         })
     else:
-        for fallback in REALISTIC_SECONDARY:
+        for fallback in FALLBACK_SECONDARY:
             if fallback["crop"] == "Соя":
-                secondary_data.append({
-                    "currency": "USD",
-                    "unit": "т",
-                    **fallback
-                })
+                print(f"   ⚠️ Соя: запасная цена {fallback['price']} USD/т")
+                secondary_data.append({"currency": "USD", "unit": "т", **fallback})
                 break
     
     # ============================================================
@@ -195,13 +192,13 @@ if __name__ == "__main__":
         print(f"\n❌ Ошибка: {e}")
         data = {
             "updatedAt": datetime.now(timezone.utc).isoformat(),
-            "featured": REALISTIC_FEATURED.copy(),
+            "featured": FALLBACK_FEATURED.copy(),
             "secondary": [
                 {"currency": "USD", "unit": "т", **item}
-                for item in REALISTIC_SECONDARY
+                for item in FALLBACK_SECONDARY
             ],
         }
         os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
         with open(OUT_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        print("   ✅ Сохранены данные")
+        print("   ✅ Сохранены запасные цены")

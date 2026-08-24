@@ -83,7 +83,6 @@ def is_relevant(title, summary):
         return False
     full_text = (title + " " + summary).lower()
     
-    # Стоп-слова
     if is_stop_word(full_text):
         return False
     
@@ -140,8 +139,8 @@ def generate_unique_summary(title, original_summary):
     
     if result and not result.endswith('.'):
         result += '.'
-    if len(result) > 400:
-        result = result[:397] + '...'
+    if len(result) > 450:
+        result = result[:447] + '...'
     
     return result
 

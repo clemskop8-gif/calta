@@ -1661,7 +1661,7 @@ html {
     var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : 'Образец';
     el.innerHTML =
       '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
-      '<h4>' + esc(summarize(item.title, 100)) + '</h4>' +
+      '<h4>' + esc(summarize(item.title, 300)) + '</h4>' +
       '<div class="nm-date">' + esc(dateText) + '</div>';
     el.addEventListener('click', function(){
       if(newsSideEl && newsSideEl.dataset.moved === '1') return;

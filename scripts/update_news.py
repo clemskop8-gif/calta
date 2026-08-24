@@ -43,6 +43,15 @@ STRICT_LOGISTICS = [
     "перевозк", "транспортировк", "доставк", "логистик",
 ]
 
+STOP_WORDS = [
+    "цирк", "фестиваль", "искусство", "кино", "музык", "концерт",
+    "выставк", "спорт", "футбол", "хоккей", "теннис",
+    "политик", "выбор", "президент", "парламент",
+    "криминал", "убийств", "арест", "суд", "расследован",
+    "погод", "климат", "землетрясени", "наводнен", "вулкан",
+    "бюст", "памятник", "возложени", "цветов",
+]
+
 def is_logistics(text):
     if not text:
         return False
@@ -63,10 +72,21 @@ def has_country(text):
     ]
     return any(c in text_lower for c in countries)
 
+def is_stop_word(text):
+    if not text:
+        return False
+    text_lower = text.lower()
+    return any(kw in text_lower for kw in STOP_WORDS)
+
 def is_relevant(title, summary):
     if not title:
         return False
     full_text = (title + " " + summary).lower()
+    
+    # Стоп-слова
+    if is_stop_word(full_text):
+        return False
+    
     if not is_logistics(full_text):
         return False
     if not has_country(full_text):
@@ -120,8 +140,8 @@ def generate_unique_summary(title, original_summary):
     
     if result and not result.endswith('.'):
         result += '.'
-    if len(result) > 250:
-        result = result[:247] + '...'
+    if len(result) > 400:
+        result = result[:397] + '...'
     
     return result
 
@@ -129,18 +149,15 @@ def generate_unique_summary(title, original_summary):
 # 3. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)
 # ============================================================
 
-# Кеш использованных картинок
 _used_photos = set()
 
 def pick_photo_from_unsplash(title):
-    """Подбирает УНИКАЛЬНУЮ картинку для каждой новости"""
     if not UNSPLASH_KEY:
         return None
     
     clean_title = re.sub(r'[^\w\s]', ' ', title)
     words = [w for w in clean_title.split() if len(w) > 3][:4]
     
-    # Определяем тему для поиска
     topic_map = {
         'поезд': 'train', 'вагон': 'train', 'железнодорож': 'railway', 'жд': 'railway',
         'порт': 'port', 'судно': 'ship', 'контейнер': 'container', 'терминал': 'terminal',
@@ -162,9 +179,8 @@ def pick_photo_from_unsplash(title):
     if search_query == "logistics transport" and len(words) >= 2:
         search_query = ' '.join(words[:2])
     
-    # Пытаемся найти уникальную картинку
     photo_url = None
-    for attempt in range(3):  # 3 попытки
+    for attempt in range(3):
         try:
             r = requests.get(
                 "https://api.unsplash.com/search/photos",
@@ -175,7 +191,6 @@ def pick_photo_from_unsplash(title):
             r.raise_for_status()
             results = r.json().get("results") or []
             
-            # Ищем первую НЕИСПОЛЬЗОВАННУЮ картинку
             for photo in results:
                 url = photo["urls"]["regular"]
                 if url not in _used_photos:
@@ -189,10 +204,8 @@ def pick_photo_from_unsplash(title):
         except Exception:
             pass
         
-        # Если не нашли уникальную — меняем запрос
         search_query = search_query + " " + random.choice(["transport", "logistics", "cargo"])
     
-    # Если все попытки не удались — берем запасную (уникальную)
     if not photo_url:
         fallback_urls = [
             "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800",

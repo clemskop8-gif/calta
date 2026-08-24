@@ -1513,11 +1513,11 @@ html {
     setFeaturedPhoto(item);
     document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
     var titleEl = document.getElementById('newsFeaturedTitle');
-    var shortTitle = summarize(item.title, 90);
+    var shortTitle = summarize(item.title, 120);
     titleEl.innerHTML = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(shortTitle) + '</a>'
       : esc(shortTitle);
-    document.getElementById('newsFeaturedDesc').textContent = summarize(item.summary, 180) || 'Подробности — по ссылке на источник.';
+    document.getElementById('newsFeaturedDesc').textContent = summarize(item.summary, 350) || 'Подробности — по ссылке на источник.';
     var sourceHost = '';
     if(item.sourceUrl){ try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){} }
     document.getElementById('newsFeaturedSource').textContent = sourceHost || 'Образец';
@@ -1531,7 +1531,7 @@ html {
     var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : 'Образец';
     el.innerHTML =
       '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
-      '<h4>' + esc(summarize(item.title, 70)) + '</h4>' +
+      '<h4>' + esc(summarize(item.title, 120)) + '</h4>' +
       '<div class="nm-date">' + esc(dateText) + '</div>';
     el.addEventListener('click', function(){
       if(newsSideEl && newsSideEl.dataset.moved === '1') return;

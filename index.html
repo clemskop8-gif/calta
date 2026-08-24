@@ -1454,81 +1454,127 @@ html {
   }
 
   function summarize(text, maxLen) {
-    if (!text) return '';
-    text = String(text).trim();
-    if (text.length <= maxLen) return text;
-    
-    var cut = text.slice(0, maxLen);
-    var lastSentenceEnd = Math.max(
-      cut.lastIndexOf('. '),
-      cut.lastIndexOf('! '),
-      cut.lastIndexOf('? '),
-      cut.lastIndexOf('.'),
-      cut.lastIndexOf('!'),
-      cut.lastIndexOf('?')
-    );
-    
-    if (lastSentenceEnd > maxLen * 0.4) {
-      cut = text.slice(0, lastSentenceEnd + 1);
-      cut = cut.replace(/[\s.,;:—–-]+$/, '');
-      return cut + '…';
-    }
-    
-    var lastSpace = cut.lastIndexOf(' ');
-    if (lastSpace > maxLen * 0.4) {
-      cut = cut.slice(0, lastSpace);
-    } else {
-      cut = text.slice(0, maxLen);
-    }
-    
+  if (!text) return '';
+  text = String(text).trim();
+  if (text.length <= maxLen) return text;
+  
+  var cut = text.slice(0, maxLen);
+  var lastSentenceEnd = Math.max(
+    cut.lastIndexOf('. '),
+    cut.lastIndexOf('! '),
+    cut.lastIndexOf('? '),
+    cut.lastIndexOf('.'),
+    cut.lastIndexOf('!'),
+    cut.lastIndexOf('?')
+  );
+  
+  if (lastSentenceEnd > maxLen * 0.4) {
+    cut = text.slice(0, lastSentenceEnd + 1);
     cut = cut.replace(/[\s.,;:—–-]+$/, '');
-    return cut + '…';
+    return cut;
   }
+  
+  var lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > maxLen * 0.4) {
+    cut = cut.slice(0, lastSpace);
+  } else {
+    cut = text.slice(0, maxLen);
+  }
+  
+  cut = cut.replace(/[\s.,;:—–-]+$/, '');
+  return cut;
+}
 
   function generateShortSummary(title, originalSummary) {
-    if (!originalSummary) return summarize(title, 180);
-    
-    var text = originalSummary
-      .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
-      .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
-      .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
-      .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
-      .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
-      .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '');
-    
-    var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-    if (sentences.length < 2) return summarize(title, 180);
-    
-    var factSentences = sentences.filter(s => {
-      var lower = s.toLowerCase();
-      return /\d+/.test(s) || 
-             ['логистик','транспорт','груз','контейнер','порт','склад','терминал'].some(w => lower.includes(w));
-    });
-    
-    if (factSentences.length < 1) factSentences = sentences.slice(0, 2);
-    
-    var shortSummary = factSentences.slice(0, 2).join('. ') + '.';
-    if (shortSummary.length > 180) shortSummary = shortSummary.slice(0, 177) + '…';
-    
-    return shortSummary;
-  }
+  if (!originalSummary) return summarize(title, 180);
+  
+  var text = originalSummary
+    .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
+    .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
+    .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
+    .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
+    .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
+    .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '')
+    .replace(/сообщает\s+[А-Яа-яА-Я\s]+,?\s*/g, '')
+    .replace(/передает\s+[А-Яа-яА-Я\s]+,?\s*/g, '')
+    .replace(/Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\./g, '')
+    .replace(/[А-Яа-я]+\s+пишет\s*/g, '')
+    .replace(/[А-Яа-я]+\s+сообщает\s*/g, '')
+    .replace(/[А-Яа-я]+\s+передает\s*/g, '')
+    .replace(/Trend\s*/g, '')
+    .replace(/Kazinform\s*/g, '')
+    .replace(/Inform\.kz\s*/g, '')
+    .replace(/РИА Новости\s*/g, '')
+    .replace(/ТАСС\s*/g, '')
+    .replace(/Интерфакс\s*/g, '');
+  
+  text = text.replace(/,\s*,/g, ',');
+  text = text.replace(/\s{2,}/g, ' ');
+  text = text.trim();
+  
+  var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
+  if (sentences.length < 2) return summarize(title, 180);
+  
+  var factSentences = sentences.filter(s => {
+    var lower = s.toLowerCase();
+    return /\d+/.test(s) || 
+           ['логистик','транспорт','груз','контейнер','порт','склад','терминал'].some(w => lower.includes(w));
+  });
+  
+  if (factSentences.length < 1) factSentences = sentences.slice(0, 2);
+  
+  var shortSummary = factSentences.slice(0, 2).join('. ') + '.';
+  if (shortSummary.length > 180) shortSummary = shortSummary.slice(0, 177) + '…';
+  
+  return shortSummary;
+}
 
   function generateFullText(originalSummary) {
-    if (!originalSummary) return '';
-    
-    var text = originalSummary
-      .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
-      .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
-      .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
-      .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
-      .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
-      .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '')
-      .replace(/Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\./g, '');
-    
-    // Возвращаем ВЕСЬ текст (без обрезания)
-    return text.trim();
-  }
-
+  if (!originalSummary) return '';
+  
+  var text = originalSummary
+    .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
+    .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
+    .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
+    .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
+    .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
+    .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '')
+    .replace(/сообщает\s+[А-Яа-яА-Я\s]+,?\s*/g, '')
+    .replace(/передает\s+[А-Яа-яА-Я\s]+,?\s*/g, '')
+    .replace(/Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\./g, '')
+    .replace(/[А-Яа-я]+\s+пишет\s*/g, '')
+    .replace(/[А-Яа-я]+\s+сообщает\s*/g, '')
+    .replace(/[А-Яа-я]+\s+передает\s*/g, '')
+    .replace(/Trend\s*/g, '')
+    .replace(/Kazinform\s*/g, '')
+    .replace(/Inform\.kz\s*/g, '')
+    .replace(/РИА Новости\s*/g, '')
+    .replace(/ТАСС\s*/g, '')
+    .replace(/Интерфакс\s*/g, '');
+  
+  // Убираем лишние запятые и пробелы
+  text = text.replace(/,\s*,/g, ',');
+  text = text.replace(/\s{2,}/g, ' ');
+  text = text.trim();
+  
+  // Добавляем уникальную вводную фразу
+  var intro = '';
+  var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
+  
+  if (sentences.length < 2) return text;
+  
+  var factSentences = sentences.filter(s => {
+    var lower = s.toLowerCase();
+    return /\d+/.test(s) || 
+           ['логистик','транспорт','груз','контейнер','порт','склад','терминал','инвестиц','строительств','финанс','форум','экономик','развити'].some(w => lower.includes(w));
+  });
+  
+  if (factSentences.length < 2) factSentences = sentences.slice(0, 3);
+  
+  var fullText = factSentences.slice(0, 4).join('. ') + '.';
+  
+  return fullText;
+}
   var NEWS_DEMO_ITEMS = [
     {topic:'Логистика', title:'Контейнерный индекс региона за неделю', summary:'Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.', sourceUrl:null, publishedAt:null, photo:null},
     {topic:'Инфраструктура', title:'Ход строительства транспортных коридоров', summary:'Статусы проектов по развитию дорожной и железнодорожной инфраструктуры региона.', sourceUrl:null, publishedAt:null, photo:null},
@@ -1568,7 +1614,7 @@ html {
     setFeaturedPhoto(item);
     document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
     var titleEl = document.getElementById('newsFeaturedTitle');
-    var shortTitle = summarize(item.title, 120);
+    var shortTitle = summarize(item.title, 300);
     titleEl.innerHTML = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(shortTitle) + '</a>'
       : esc(shortTitle);

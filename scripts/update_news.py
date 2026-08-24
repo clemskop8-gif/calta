@@ -97,52 +97,67 @@ def is_relevant(title, summary):
 # ============================================================
 
 def generate_unique_summary(title, original_summary):
-    if not original_summary:
-        original_summary = title
-    
+    # 1. Полностью удаляем все упоминания СМИ
     text = strip_html(original_summary)
-    text = re.sub(r'передает\s+агентство\s+[А-Яа-я]+\s*', '', text)
-    text = re.sub(r'со\s+ссылкой\s+на\s+[^,.]+,?\s*', '', text)
-    text = re.sub(r'как\s+сообщил[аи]?\s+[^,.]+,?\s*', '', text)
-    text = re.sub(r'передает\s+корреспондент\s+[А-Яа-я]+\s*', '', text)
-    text = re.sub(r'по\s+информации\s+[^,.]+,?\s*', '', text)
-    text = re.sub(r'пишет\s+[А-Яа-яА-Я\s\|]+\s*', '', text)
-    text = re.sub(r'Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\.', '', text)
     
+    # Список стоп-фраз (СМИ и клише)
+    media_phrases = [
+        r'сообщает\s+[А-Яа-яА-Я\s]+',
+        r'передает\s+[А-Яа-яА-Я\s]+',
+        r'пишет\s+[А-Яа-яА-Я\s]+',
+        r'по\s+информации\s+[А-Яа-яА-Я\s]+',
+        r'как\s+сообщил[аи]?\s+[А-Яа-яА-Я\s]+',
+        r'со\s+ссылкой\s+на\s+[А-Яа-яА-Я\s]+',
+        r'\[[^\]]+\]',  # квадратные скобки
+        r'\([^)]*\)',   # круглые скобки с источниками
+    ]
+    
+    for pattern in media_phrases:
+        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+    
+    # 2. Берём только факты (цифры, даты, ключевые слова)
     sentences = re.split(r'[.!?]', text)
-    sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
-    
     fact_sentences = []
-    for s in sentences[:4]:
-        if re.search(r'\d+', s) or any(word in s.lower() for word in ['логистик', 'транспорт', 'груз', 'контейнер', 'порт', 'склад', 'терминал']):
+    
+    for s in sentences:
+        s = s.strip()
+        if len(s) < 20:
+            continue
+        
+        # Проверяем наличие фактов (цифры, ключевые слова)
+        has_fact = (
+            re.search(r'\d+', s) or  # есть цифры
+            any(word in s.lower() for word in [
+                'логистик', 'транспорт', 'груз', 'контейнер', 
+                'порт', 'склад', 'терминал', 'форум', 'инвестиц',
+                'строительств', 'развити', 'закупк', 'обновлени'
+            ])
+        )
+        
+        if has_fact:
             fact_sentences.append(s)
     
-    if len(fact_sentences) < 1:
-        fact_sentences = sentences[:2]
+    # 3. Если фактов мало — берём первые 2-3 предложения
+    if len(fact_sentences) < 2:
+        fact_sentences = sentences[:3]
     
-    cleaned = []
-    for s in fact_sentences:
-        s = re.sub(r'^(основными драйверами|по данным|как отмечается|в частности|также)\s+', '', s, flags=re.IGNORECASE)
-        s = re.sub(r'•\s+[^\n]+', '', s)
-        s = re.sub(r'\s+', ' ', s).strip()
-        if len(s) > 10:
-            cleaned.append(s)
+    # 4. Собираем текст (не обрываем на полуслове)
+    summary = '. '.join(fact_sentences[:3])
     
-    if len(cleaned) >= 2:
-        result = '. '.join(cleaned[:3])
-    elif len(cleaned) == 1:
-        clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
-        result = f"{clean_title}. {cleaned[0]}"
-    else:
-        clean_title = re.sub(r'^(Казахстан|Узбекистан|Кыргызстан|Таджикистан|Туркменистан)\s+', '', title)
-        result = clean_title + ". Подробнее в источнике."
+    # 5. Убираем лишние пробелы и точки
+    summary = re.sub(r'\s+', ' ', summary).strip()
+    summary = re.sub(r'\.{2,}', '.', summary)
     
-    if result and not result.endswith('.'):
-        result += '.'
-    if len(result) > 450:
-        result = result[:447] + '...'
+    # 6. Если текст слишком длинный — обрезаем ПОСЛЕДНЕЕ ПРЕДЛОЖЕНИЕ целиком
+    if len(summary) > 350:
+        # Находим последнюю точку до 350 символов
+        cut_point = summary[:350].rfind('.')
+        if cut_point > 200:  # только если есть нормальное место для обреза
+            summary = summary[:cut_point + 1]
+        else:
+            summary = summary[:347] + '...'
     
-    return result
+    return summary
 
 # ============================================================
 # 3. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)

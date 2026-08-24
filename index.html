@@ -285,15 +285,16 @@ html {
   }
   .nf-body{padding:26px 26px 20px;display:flex;flex-direction:column;gap:12px;flex:1;}
   .nf-body h3{
-    font-size:23px;line-height:1.32;font-weight:600;
-    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
-    overflow:hidden;
-  }
+  font-size:23px;
+  line-height:1.32;
+  font-weight:600;
+}
   .nf-body p{
-    font-family:var(--body);font-size:15px;line-height:1.6;opacity:.75;
-    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
-    overflow:hidden;
-  }
+  font-family:var(--body);
+  font-size:15px;
+  line-height:1.6;
+  opacity:.75;
+}
 
   .news-arrow{
     position:absolute;bottom:14px;z-index:4;
@@ -1467,7 +1468,6 @@ html {
   text = String(text).trim();
   if (text.length <= maxLen) return text;
   
-  // Ищем ближайшее окончание предложения (. ! ?)
   var cut = text.slice(0, maxLen);
   var lastSentenceEnd = Math.max(
     cut.lastIndexOf('. '),
@@ -1539,7 +1539,7 @@ html {
     titleEl.innerHTML = item.sourceUrl
       ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(shortTitle) + '</a>'
       : esc(shortTitle);
-    document.getElementById('newsFeaturedDesc').textContent = summarize(item.summary, 350) || 'Подробности — по ссылке на источник.';
+    document.getElementById('newsFeaturedDesc').textContent = summarize(item.summary, 500) || 'Подробности — по ссылке на источник.';
     var sourceHost = '';
     if(item.sourceUrl){ try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){} }
     document.getElementById('newsFeaturedSource').textContent = sourceHost || 'Образец';

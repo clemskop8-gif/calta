@@ -1,7 +1,7 @@
 """
 Обновляет data/news.json — новости с golos.tj, logistan.info, inform.kz.
-НОВАЯ ВЕРСИЯ С ПЕРЕФРАЗИРОВАНИЕМ.
-- Уникальный текст (пересказ с синонимами)
+РОБАСТНАЯ ВЕРСИЯ С ПЕРЕФРАЗИРОВАНИЕМ:
+- Уникальный текст (пересказ на основе фактов + синонимы)
 - Полное удаление упоминаний СМИ
 - Корректная обрезка текста (не на полуслове)
 - ровно 6 новостей (по 2 с каждого сайта)
@@ -36,17 +36,24 @@ HEADERS = {
 # ============================================================
 
 LOGISTICS_KEYWORDS = [
+    # Железная дорога
     "поезд", "вагон", "локомотив", "жд", "ж/д", "железнодорож",
     "магистраль", "путь", "рельс", "состав", "электровоз",
+    # Водный транспорт
     "порт", "судно", "контейнеровоз", "паром", "причал", "гавань",
     "морской", "речной", "флот", "танкер",
+    # Склады и терминалы
     "терминал", "склад", "хаб", "распределительный центр",
     "логистический центр", "складской", "хранение",
+    # Грузы
     "контейнер", "груз", "контейнерный", "teu", "обработка грузов",
     "грузоперевозк", "грузовой", "фрахт",
+    # Маршруты
     "коридор", "транзит", "маршрут", "транскаспий",
     "международный транспорт", "транспортный",
+    # Таможня
     "таможня", "оформление", "пошлины", "транзитный",
+    # Общее
     "перевозк", "транспортировк", "доставк", "логистик",
     "инфраструктур", "строительств", "ремонт", "модернизаци",
     "инвестици", "развити", "экспорт", "импорт",
@@ -69,20 +76,38 @@ STOP_WORDS = [
 ]
 
 def is_relevant(title, summary):
+    """Проверяет, относится ли новость к логистике в Центральной Азии."""
     if not title:
         return False
+
     full_text = (title + " " + (summary or "")).lower()
+
+    # Проверяем стоп-слова
     for word in STOP_WORDS:
         if word in full_text:
             return False
-    has_logistics = any(kw in full_text for kw in LOGISTICS_KEYWORDS)
+
+    # Проверяем логистику
+    has_logistics = False
+    for keyword in LOGISTICS_KEYWORDS:
+        if keyword in full_text:
+            has_logistics = True
+            break
+
     if not has_logistics:
         return False
-    has_country = any(c in full_text for c in COUNTRIES)
+
+    # Проверяем страны ЦА
+    has_country = False
+    for country in COUNTRIES:
+        if country in full_text:
+            has_country = True
+            break
+
     return has_country
 
 # ============================================================
-# 2. ГЕНЕРАЦИЯ УНИКАЛЬНОГО ТЕКСТА (С СИНОНИМАМИ)
+# 2. СЛОВАРЬ СИНОНИМОВ И ФУНКЦИИ ПЕРЕФРАЗИРОВАНИЯ
 # ============================================================
 
 SYNONYMS = {
@@ -99,32 +124,59 @@ SYNONYMS = {
     'развитие': ['совершенствование', 'прогресс'],
     'строительство': ['возведение', 'сооружение'],
     'модернизация': ['обновление', 'реконструкция'],
+    'форум': ['конференция', 'встреча', 'съезд'],
+    'инвестиции': ['вложения', 'финансирование'],
+    'логистика': ['транспортировка', 'перевозки'],
+    'транспорт': ['перевозки', 'транспортировка'],
+    'груз': ['товар', 'продукция'],
+    'контейнер': ['тарра', 'упаковка'],
+    'порт': ['гавань', 'терминал'],
+    'склад': ['хранилище', 'терминал'],
+    'терминал': ['пункт', 'узел'],
+    'коридор': ['маршрут', 'направление'],
+    'транзит': ['перевозка', 'транспортировка'],
+    'таможня': ['пограничный контроль', 'оформление'],
+    'перевозки': ['транспортировка', 'доставка'],
+    'доставка': ['перевозка', 'транспортировка'],
+    'инфраструктура': ['оснащение', 'сеть'],
+    'экспорт': ['вывоз', 'поставка за рубеж'],
+    'импорт': ['ввоз', 'закупка за рубежом'],
 }
 
 def paraphrase_text(text):
     """Заменяет слова на синонимы для уникальности."""
+    if not text:
+        return text
     words = text.split()
     new_words = []
     for word in words:
-        lower = word.lower().strip('.,!?;')
-        if lower in SYNONYMS:
-            synonyms = SYNONYMS[lower]
-            new_word = random.choice(synonyms)
+        # Убираем знаки препинания для поиска
+        clean = word.strip('.,!?;:')
+        punct = ''
+        if word and word[-1] in '.,!?;:':
+            punct = word[-1]
+            word_clean = word[:-1]
+        else:
+            word_clean = word
+        if word_clean.lower() in SYNONYMS:
+            synonym = random.choice(SYNONYMS[word_clean.lower()])
             # Сохраняем регистр
-            if word[0].isupper():
-                new_word = new_word.capitalize()
-            # Восстанавливаем пунктуацию
-            punct = ''
-            if word and word[-1] in '.,!?;':
-                punct = word[-1]
-            new_words.append(new_word + punct)
+            if word_clean[0].isupper():
+                synonym = synonym.capitalize()
+            new_words.append(synonym + punct)
         else:
             new_words.append(word)
     return ' '.join(new_words)
 
+# ============================================================
+# 3. ГЕНЕРАЦИЯ УНИКАЛЬНОГО ТЕКСТА (НОВАЯ ВЕРСИЯ)
+# ============================================================
+
 def clean_media_phrases(text):
+    """Удаляет все упоминания СМИ, источников, клише."""
     if not text:
         return ""
+
     patterns = [
         r'(?i)сообщает\s+[А-Яа-яА-Я\s\-]+',
         r'(?i)передает\s+[А-Яа-яА-Я\s\-]+',
@@ -153,76 +205,117 @@ def clean_media_phrases(text):
         r'Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s\-]+\.',
         r'Читайте\s+[^.]+\s+на\s+[А-Яа-я\s\-]+\.',
     ]
+
     for pattern in patterns:
         text = re.sub(pattern, '', text)
+
     text = re.sub(r'[,.]{2,}', '.', text)
     text = re.sub(r'\s{2,}', ' ', text)
     return text.strip()
 
+def extract_facts(text):
+    """Извлекает из текста факты: даты, числа, названия организаций, города."""
+    facts = {
+        'dates': re.findall(r'\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+\d{4}\b', text),
+        'years': re.findall(r'\b\d{4}\b', text),
+        'numbers': re.findall(r'\b\d+[\.,]?\d*\s*(?:млн|млрд|тыс|процентов?|%|тонн|вагонов|километров|км|млрд|млн)\b', text),
+        'orgs': re.findall(r'[А-Я][а-я]+(?:\s+[А-Я][а-я]+)*\s+(?:центр|компания|министерство|ассоциация|финансовый|логистический|терминал|порт|завод|университет|институт|предприятие|корпорация|холдинг)', text),
+        'cities': re.findall(r'(?:Астана|Алматы|Ташкент|Бишкек|Душанбе|Ашхабад|Москва|Пекин|Лондон)', text),
+    }
+    return facts
+
 def generate_unique_summary(title, original_summary):
     """
-    Генерирует уникальный пересказ с использованием синонимов.
+    Генерирует абсолютно новый текст на основе фактов и синонимов.
+    Без копипасты, без упоминаний СМИ, без обрыва на полуслове.
     """
     if not original_summary:
         original_summary = title
 
+    # 1. Удаляем HTML и СМИ-фразы
     text = strip_html(original_summary)
     text = clean_media_phrases(text)
 
-    sentences = re.split(r'[.!?]', text)
-    sentences = [s.strip() for s in sentences if len(s.strip()) > 15]
+    # 2. Извлекаем факты
+    facts = extract_facts(text)
 
-    if not sentences:
-        return summarize_text(title, 200)
+    # 3. Строим новые предложения на основе фактов
+    new_sentences = []
 
-    # Отбираем фактические предложения
-    fact_sentences = []
-    for s in sentences:
-        has_fact = (
-            re.search(r'\d+', s) or
-            any(kw in s.lower() for kw in [
-                'логистик', 'транспорт', 'груз', 'контейнер',
-                'порт', 'склад', 'терминал', 'форум', 'инвестиц',
-                'строительств', 'развити', 'закупк', 'обновлени',
-                'увеличени', 'снижени', 'рост', 'падени',
-                'миллион', 'миллиард', 'тысяч', 'процент',
-                'километр', 'тонн', 'вагон', 'состав'
-            ])
-        )
-        if has_fact:
-            fact_sentences.append(s)
-
-    if len(fact_sentences) < 2:
-        fact_sentences = sentences[:3]
-
-    # Перефразируем каждое предложение
-    paraphrased = [paraphrase_text(s) for s in fact_sentences[:3]]
-
-    summary = '. '.join(paraphrased)
-    if not summary.endswith('.'):
-        summary += '.'
-
-    # Обрезаем по точке
-    if len(summary) > 400:
-        cut_point = summary[:350].rfind('.')
-        if cut_point > 200:
-            summary = summary[:cut_point + 1]
+    # --- Первое предложение: дата + событие ---
+    if facts['dates']:
+        date = facts['dates'][0]
+        # Определяем тип события по заголовку
+        if 'форум' in title.lower() or 'конференц' in title.lower():
+            action = random.choice(['состоится', 'пройдёт', 'запланирован'])
+            new_sentences.append(f"{date} в Центральной Азии {action} логистический форум.")
+        elif 'закуп' in title.lower() or 'приобрет' in title.lower():
+            action = random.choice(['планируется закупка', 'будет приобретено', 'закупят'])
+            new_sentences.append(f"{date} {action} новое оборудование для транспорта.")
+        elif 'строительств' in title.lower() or 'модернизац' in title.lower():
+            action = random.choice(['запланированы работы', 'начинается строительство', 'проводится модернизация'])
+            new_sentences.append(f"{date} {action} на транспортных маршрутах.")
         else:
-            cut_point = max(
-                summary[:350].rfind(','),
-                summary[:350].rfind(';'),
-                summary[:350].rfind(' — ')
-            )
-            if cut_point > 200:
-                summary = summary[:cut_point] + '...'
-            else:
-                summary = summary[:347] + '...'
+            action = random.choice(['обсуждается', 'рассматривается', 'планируется'])
+            new_sentences.append(f"{date} {action} развитие транспортной инфраструктуры.")
 
-    summary = re.sub(r'\s+', ' ', summary).strip()
-    summary = re.sub(r'\.{2,}', '.', summary)
-    return summary
+    # --- Второе предложение: числа и организации ---
+    if facts['numbers']:
+        num = facts['numbers'][0]
+        org = facts['orgs'][0] if facts['orgs'] else 'участники рынка'
+        if 'вагонов' in num or 'тыс' in num or 'млн' in num or 'млрд' in num:
+            new_sentences.append(f"Речь идёт о {num}, которые планируется {random.choice(['приобрести', 'модернизировать', 'обновить', 'задействовать'])}.")
+        elif 'км' in num or 'километров' in num:
+            new_sentences.append(f"Протяжённость маршрута составляет {num}.")
+        else:
+            new_sentences.append(f"По данным {org}, ключевые параметры составляют {num}.")
+
+    # --- Третье предложение: города ---
+    if facts['cities']:
+        cities = ', '.join(facts['cities'][:2])
+        if len(facts['cities']) > 1:
+            new_sentences.append(f"В обсуждении участвуют представители {cities}.")
+        else:
+            new_sentences.append(f"Мероприятие затронет вопросы развития логистики в {cities}.")
+
+    # --- Если предложений мало — добавляем перефразированный заголовок ---
+    if len(new_sentences) < 2:
+        # Перефразируем заголовок
+        paraphrased_title = paraphrase_text(title)
+        new_sentences.append(paraphrased_title + '.')
+        if facts['orgs']:
+            new_sentences.append(f"Организатором выступает {facts['orgs'][0]}.")
+
+    # 4. Собираем текст
+    result = ' '.join(new_sentences)
+    result = re.sub(r'\s+', ' ', result).strip()
+    result = re.sub(r'\.{2,}', '.', result)
+    if not result.endswith('.'):
+        result += '.'
+
+    # 5. Обрезаем текст только по естественной границе (точка, вопросительный/восклицательный знак)
+    if len(result) > 400:
+        cut_point = result[:350].rfind('.')
+        if cut_point > 200:
+            result = result[:cut_point + 1]
+        else:
+            # Ищем другие знаки препинания
+            for sep in ('?', '!', ';', ','):
+                pos = result[:350].rfind(sep)
+                if pos > 200:
+                    result = result[:pos] + ('...' if sep in '.?!' else '...')
+                    break
+            else:
+                result = result[:347] + '...'
+
+    # 6. Финальная очистка
+    result = re.sub(r'\s+', ' ', result).strip()
+    result = re.sub(r'\.\.+', '...', result)
+
+    return result
 
 def summarize_text(text, max_len=200):
+    """Упрощённая версия для случаев, когда нет нормальных предложений."""
     text = clean_media_phrases(strip_html(text))
     text = re.sub(r'\s+', ' ', text).strip()
     if len(text) <= max_len:
@@ -235,16 +328,19 @@ def summarize_text(text, max_len=200):
         return cut[:max_len - 3] + '...'
 
 # ============================================================
-# 3. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)
+# 4. КАРТИНКИ (УНИКАЛЬНЫЕ, БЕЗ ПОВТОРОВ)
 # ============================================================
 
 _used_photos = set()
 
 def pick_photo_from_unsplash(title):
+    """Получает уникальное фото для новости."""
     if not UNSPLASH_KEY:
         return None
+
     clean_title = re.sub(r'[^\w\s]', ' ', title)
     words = [w for w in clean_title.split() if len(w) > 3][:4]
+
     topic_map = {
         'поезд': 'train', 'вагон': 'train carriage', 'железнодорож': 'railway',
         'жд': 'railway', 'магистраль': 'railway track',
@@ -258,6 +354,7 @@ def pick_photo_from_unsplash(title):
         'перевозк': 'transportation', 'доставк': 'delivery',
         'логистик': 'logistics', 'форум': 'conference',
     }
+
     search_query = "logistics transport"
     for word in words:
         word_lower = word.lower()
@@ -267,8 +364,10 @@ def pick_photo_from_unsplash(title):
                 break
         if search_query != "logistics transport":
             break
+
     if random.random() > 0.5:
         search_query += " central asia"
+
     photo_url = None
     for attempt in range(3):
         try:
@@ -299,6 +398,7 @@ def pick_photo_from_unsplash(title):
             print(f"    ⚠️ Unsplash ошибка (попытка {attempt+1}): {e}")
             time.sleep(1)
         search_query = f"{search_query} {random.choice(['transport', 'logistics', 'cargo', 'warehouse'])}"
+
     if not photo_url:
         fallback_urls = [
             "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1080&q=80",
@@ -316,13 +416,15 @@ def pick_photo_from_unsplash(title):
                 _used_photos.add(url)
                 photo_url = url
                 break
+
     return {"url": photo_url} if photo_url else None
 
 # ============================================================
-# 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# 5. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 # ============================================================
 
 def strip_html(text):
+    """Удаляет HTML-теги и декодирует сущности."""
     if not text:
         return ""
     text = re.sub(r"<[^>]+>", " ", text)
@@ -331,6 +433,7 @@ def strip_html(text):
     return text
 
 def detect_topic(title, summary):
+    """Определяет тему новости."""
     text = (title + " " + (summary or "")).lower()
     topics = {
         "Транспорт": ["поезд", "вагон", "локомотив", "жд", "железнодорож", "магистраль", "рельс", "состав", "электровоз", "вокзал"],
@@ -349,8 +452,19 @@ def detect_topic(title, summary):
             return topic
     return "Логистика"
 
+def extract_source_domain(url):
+    if not url:
+        return ""
+    try:
+        parsed = urlparse(url)
+        domain = parsed.netloc or parsed.path
+        domain = domain.replace('www.', '')
+        return domain.split('/')[0]
+    except:
+        return ""
+
 # ============================================================
-# 5. ПАРСИНГ САЙТОВ
+# 6. ПАРСИНГ САЙТОВ
 # ============================================================
 
 def collect_golos():
@@ -360,6 +474,7 @@ def collect_golos():
     except Exception as e:
         print(f"  ❌ golos.tj ошибка: {e}")
         return out
+
     for entry in parsed.entries[:30]:
         title = strip_html(entry.get("title") or "")
         if not title:
@@ -389,6 +504,7 @@ def collect_logistan():
     except Exception as e:
         print(f"  ❌ logistan.info ошибка: {e}")
         return out
+
     for entry in parsed.entries[:30]:
         title = strip_html(entry.get("title") or "")
         if not title:
@@ -421,12 +537,14 @@ def collect_inform():
     except Exception as e:
         print(f"  ❌ inform.kz ошибка: {e}")
         return out
+
     links = set()
     for link in re.findall(r'href=["\']([^"\']*/ru/[a-z0-9\-]+-[a-f0-9]{8})["\']', html_content, re.IGNORECASE):
         if link.startswith('http'):
             links.add(link)
         else:
             links.add("https://www.inform.kz" + link if link.startswith('/') else "https://www.inform.kz/" + link)
+
     for article_url in list(links)[:25]:
         try:
             ar = requests.get(article_url, timeout=20, headers=HEADERS)
@@ -434,6 +552,7 @@ def collect_inform():
             article_html = ar.text
         except Exception:
             continue
+
         def meta(prop):
             for pattern in (
                 r'<meta[^>]+(?:property|name)=["\']' + re.escape(prop) + r'["\'][^>]+content=["\']([^"\']*)["\']',
@@ -443,6 +562,7 @@ def collect_inform():
                 if m:
                     return html.unescape(m.group(1)).strip()
             return ""
+
         title = meta("og:title")
         if not title:
             continue
@@ -466,7 +586,7 @@ def collect_inform():
     return out
 
 # ============================================================
-# 6. СБОР И ОБРАБОТКА
+# 7. СБОР И ОБРАБОТКА
 # ============================================================
 
 def collect_all():
@@ -475,6 +595,7 @@ def collect_all():
     items.extend(collect_golos())
     items.extend(collect_logistan())
     items.extend(collect_inform())
+
     seen = set()
     unique_items = []
     for item in items:
@@ -482,17 +603,20 @@ def collect_all():
         if key not in seen:
             seen.add(key)
             unique_items.append(item)
+
     unique_items.sort(key=lambda x: x.get("publishedAt", ""), reverse=True)
     return unique_items[:MAX_ITEMS]
 
 # ============================================================
-# 7. MAIN
+# 8. MAIN
 # ============================================================
 
 def main():
     print("🚀 Запуск обновления новостей (НОВАЯ ВЕРСИЯ С СИНОНИМАМИ)...")
     print(f"   Unsplash API: {'✅ есть' if UNSPLASH_KEY else '❌ нет'}")
+
     items = collect_all()
+
     if not items:
         print("⚠️ Новостей не найдено. Сохраняем демо-режим.")
         data = {
@@ -506,11 +630,14 @@ def main():
             "updatedAt": datetime.now(timezone.utc).isoformat(),
             "items": items,
         }
+
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
     print(f"\n✅ Сохранено: {OUT_PATH}")
     print(f"   Всего новостей: {len(items)}")
+
     if items:
         print("\n📰 Список новостей:")
         for i, item in enumerate(items, 1):
@@ -522,6 +649,7 @@ def main():
             if item.get("summary"):
                 preview = item["summary"][:80] + "..." if len(item.get("summary", "")) > 80 else item["summary"]
                 print(f"      📝 {preview}")
+
     print("\n✨ Готово!")
 
 if __name__ == "__main__":

@@ -879,32 +879,33 @@ html {
     <div class="news-layout reveal">
       <div class="news-featured-col">
         <article class="news-featured" id="newsFeatured">
-          <div class="nf-photo" id="newsFeaturedPhoto">
-            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Без изображения</span>
-          </div>
-          <div class="nf-body">
-            <span class="ic-tag" id="newsFeaturedTag">Логистика</span>
-            <h3 id="newsFeaturedTitle">Контейнерный индекс региона за неделю</h3>
-            <p id="newsFeaturedDesc">Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.</p>
-            <div id="newsFeaturedFull" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">
-              <p id="newsFeaturedFullText" style="font-family:var(--body);font-size:15px;line-height:1.6;opacity:.9;"></p>
-            </div>
-            <button id="newsExpandBtn" style="background:none;border:none;color:var(--turquoise);cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.04em;display:flex;align-items:center;gap:8px;margin-top:8px;padding:0;">
-              <span id="expandLabel">Подробнее</span>
-              <svg id="expandArrow" width="14" height="14" viewBox="0 0 14 14" fill="none" style="transition:transform .3s ease;">
-                <path d="M7 11.5V2.5M7 2.5L3 6.5M7 2.5L11 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <div class="ic-foot"><span id="newsFeaturedSource">Образец</span><span id="newsFeaturedDate">—</span></div>
-          </div>
-          <button type="button" class="news-arrow news-arrow-prev" id="newsPrev" aria-label="Предыдущая новость">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button type="button" class="news-arrow news-arrow-next" id="newsNext" aria-label="Следующая новость">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </article>
+  <div class="nf-photo" id="newsFeaturedPhoto">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Без изображения</span>
+  </div>
+  <div class="nf-body">
+    <span class="ic-tag" id="newsFeaturedTag">Логистика</span>
+    <h3 id="newsFeaturedTitle">Контейнерный индекс региона за неделю</h3>
+    <!-- КРАТКАЯ ВЫЖИМКА (всегда видна, с троеточием) -->
+    <p id="newsFeaturedDesc">Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии…</p>
+    <!-- ПОЛНЫЙ ТЕКСТ (скрыт, продолжение краткой выжимки) -->
+    <p id="newsFeaturedFull" style="display:none;margin-top:8px;font-family:var(--body);font-size:15px;line-height:1.6;opacity:.9;"></p>
+    <!-- КНОПКА РАЗВЕРНУТЬ -->
+    <button id="newsExpandBtn" style="background:none;border:none;color:var(--turquoise);cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.04em;display:flex;align-items:center;gap:8px;margin-top:8px;padding:0;">
+      <span id="expandLabel">Подробнее</span>
+      <svg id="expandArrow" width="14" height="14" viewBox="0 0 14 14" fill="none" style="transition:transform .3s ease;">
+        <path d="M7 11.5V2.5M7 2.5L3 6.5M7 2.5L11 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="ic-foot"><span id="newsFeaturedSource">Образец</span><span id="newsFeaturedDate">—</span></div>
+  </div>
+  <button type="button" class="news-arrow news-arrow-prev" id="newsPrev" aria-label="Предыдущая новость">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button type="button" class="news-arrow news-arrow-next" id="newsNext" aria-label="Следующая новость">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</article>
       </div>
 
       <div class="news-side" id="newsSide">
@@ -1446,342 +1447,347 @@ html {
   /* =====================================================================
      Новости — карусель с разворачиванием
   ===================================================================== */
-  function esc(s){
-    var d = document.createElement('div');
-    d.textContent = s == null ? '' : String(s);
-    return d.innerHTML;
-  }
+  /* =====================================================================
+     Новости — карусель с разворачиванием
+  ===================================================================== */
+function esc(s){
+  var d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
 
-  function summarize(text, maxLen) {
-    if (!text) return '';
-    text = String(text).trim();
-    if (text.length <= maxLen) return text;
-    
-    var cut = text.slice(0, maxLen);
-    var lastSentenceEnd = Math.max(
-      cut.lastIndexOf('. '),
-      cut.lastIndexOf('! '),
-      cut.lastIndexOf('? '),
-      cut.lastIndexOf('.'),
-      cut.lastIndexOf('!'),
-      cut.lastIndexOf('?')
-    );
-    
-    if (lastSentenceEnd > maxLen * 0.4) {
-      cut = text.slice(0, lastSentenceEnd + 1);
-      cut = cut.replace(/[\s.,;:—–-]+$/, '');
-      if (cut.length < text.length) cut += '…';
-      return cut;
-    }
-    
-    var lastSpace = cut.lastIndexOf(' ');
-    if (lastSpace > maxLen * 0.4) {
-      cut = cut.slice(0, lastSpace);
-    } else {
-      cut = text.slice(0, maxLen);
-    }
-    
+function summarize(text, maxLen) {
+  if (!text) return '';
+  text = String(text).trim();
+  if (text.length <= maxLen) return text;
+  
+  var cut = text.slice(0, maxLen);
+  var lastSentenceEnd = Math.max(
+    cut.lastIndexOf('. '),
+    cut.lastIndexOf('! '),
+    cut.lastIndexOf('? '),
+    cut.lastIndexOf('.'),
+    cut.lastIndexOf('!'),
+    cut.lastIndexOf('?')
+  );
+  
+  if (lastSentenceEnd > maxLen * 0.4) {
+    cut = text.slice(0, lastSentenceEnd + 1);
     cut = cut.replace(/[\s.,;:—–-]+$/, '');
-    if (cut.length < text.length) cut += '…';
-    return cut;
+    return cut + '…';
   }
-
-  function generateUniqueSummary(title, originalSummary) {
-    if (!originalSummary) return summarize(title, 200);
-    
-    var text = originalSummary
-      .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
-      .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
-      .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
-      .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
-      .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
-      .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '')
-      .replace(/Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\./g, '');
-    
-    var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-    if (sentences.length < 2) return summarize(title, 200);
-    
-    var factSentences = sentences.filter(s => {
-      var lower = s.toLowerCase();
-      return /\d+/.test(s) || 
-             ['логистик','транспорт','груз','контейнер','порт','склад','терминал'].some(w => lower.includes(w));
-    });
-    
-    if (factSentences.length < 1) factSentences = sentences.slice(0, 2);
-    
-    var shortSummary = factSentences.slice(0, 2).join('. ') + '.';
-    if (shortSummary.length > 200) shortSummary = shortSummary.slice(0, 197) + '…';
-    
-    return shortSummary;
+  
+  var lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > maxLen * 0.4) {
+    cut = cut.slice(0, lastSpace);
+  } else {
+    cut = text.slice(0, maxLen);
   }
+  
+  cut = cut.replace(/[\s.,;:—–-]+$/, '');
+  return cut + '…';
+}
 
-  function generateFullSummary(originalSummary) {
-    if (!originalSummary) return '';
-    
-    var text = originalSummary
-      .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
-      .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
-      .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
-      .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
-      .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
-      .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '');
-    
-    var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-    if (sentences.length < 2) return summarize(originalSummary, 400);
-    
-    var factSentences = sentences.filter(s => {
-      var lower = s.toLowerCase();
-      return /\d+/.test(s) || 
-             ['логистик','транспорт','груз','контейнер','порт','склад','терминал','инвестиц','строительств'].some(w => lower.includes(w));
-    });
-    
-    if (factSentences.length < 2) factSentences = sentences.slice(0, 3);
-    
-    var fullSummary = factSentences.slice(0, 4).join('. ') + '.';
-    return fullSummary;
-  }
-
-  var NEWS_DEMO_ITEMS = [
-    {topic:'Логистика', title:'Контейнерный индекс региона за неделю', summary:'Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.', sourceUrl:null, publishedAt:null, photo:null},
-    {topic:'Инфраструктура', title:'Ход строительства транспортных коридоров', summary:'Статусы проектов по развитию дорожной и железнодорожной инфраструктуры региона.', sourceUrl:null, publishedAt:null, photo:null},
-    {topic:'Логистика', title:'Динамика ставок фрахта на ключевых маршрутах', summary:'Обзор изменения стоимости перевозок по основным направлениям.', sourceUrl:null, publishedAt:null, photo:null},
-    {topic:'Таможня', title:'Изменения в порядке оформления транзитных грузов', summary:'Новые процедуры оформления, влияющие на скорость прохождения границ.', sourceUrl:null, publishedAt:null, photo:null},
-    {topic:'Порты', title:'Загрузка контейнерных терминалов региона', summary:'Показатели пропускной способности ключевых портов и хабов.', sourceUrl:null, publishedAt:null, photo:null}
-  ];
-
-  var newsItems = NEWS_DEMO_ITEMS;
-  var newsActive = 0;
-  var newsIsDemo = true;
-  var expanded = false;
-
-  function setFeaturedPhoto(item){
-    var photoEl = document.getElementById('newsFeaturedPhoto');
-    photoEl.innerHTML = '';
-    if(item.photo && item.photo.url){
-      photoEl.style.background = 'none';
-      var img = document.createElement('img');
-      img.src = item.photo.url; img.alt = '';
-      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-      photoEl.appendChild(img);
-      if(item.photo.credit){
-        var credit = document.createElement('a');
-        credit.href = item.photo.creditUrl || '#'; credit.target = '_blank'; credit.rel = 'noopener';
-        credit.textContent = 'Фото: ' + item.photo.credit;
-        credit.style.cssText = 'position:absolute;bottom:10px;left:10px;font-family:var(--mono);font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:12px;text-decoration:none;';
-        photoEl.appendChild(credit);
-      }
-    } else {
-      photoEl.style.background = '';
-      photoEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Без изображения</span>';
-    }
-  }
-
-  function renderFeaturedNews(item){
-    setFeaturedPhoto(item);
-    document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
-    var titleEl = document.getElementById('newsFeaturedTitle');
-    var shortTitle = summarize(item.title, 120);
-    titleEl.innerHTML = item.sourceUrl
-      ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(shortTitle) + '</a>'
-      : esc(shortTitle);
-    
-    var shortSummary = generateUniqueSummary(item.title, item.summary);
-    document.getElementById('newsFeaturedDesc').textContent = shortSummary || 'Подробности — по ссылке на источник.';
-    
-    var fullSummary = generateFullSummary(item.summary);
-    document.getElementById('newsFeaturedFullText').textContent = fullSummary || shortSummary || 'Подробности — по ссылке на источник.';
-    
-    expanded = false;
-    document.getElementById('newsFeaturedFull').style.display = 'none';
-    document.getElementById('expandLabel').textContent = 'Подробнее';
-    document.getElementById('expandArrow').style.transform = 'rotate(0deg)';
-    
-    var sourceHost = '';
-    if(item.sourceUrl){ try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){} }
-    document.getElementById('newsFeaturedSource').textContent = sourceHost || 'Образец';
-    document.getElementById('newsFeaturedDate').textContent = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : '—';
-  }
-
-  document.getElementById('newsExpandBtn').addEventListener('click', function(){
-    var fullEl = document.getElementById('newsFeaturedFull');
-    var label = document.getElementById('expandLabel');
-    var arrow = document.getElementById('expandArrow');
-    
-    if (expanded) {
-      fullEl.style.display = 'none';
-      label.textContent = 'Подробнее';
-      arrow.style.transform = 'rotate(0deg)';
-    } else {
-      fullEl.style.display = 'block';
-      label.textContent = 'Скрыть';
-      arrow.style.transform = 'rotate(180deg)';
-    }
-    expanded = !expanded;
+function generateShortSummary(title, originalSummary) {
+  if (!originalSummary) return summarize(title, 180);
+  
+  var text = originalSummary
+    .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
+    .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
+    .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
+    .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
+    .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
+    .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '');
+  
+  var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
+  if (sentences.length < 2) return summarize(title, 180);
+  
+  var factSentences = sentences.filter(s => {
+    var lower = s.toLowerCase();
+    return /\d+/.test(s) || 
+           ['логистик','транспорт','груз','контейнер','порт','склад','терминал'].some(w => lower.includes(w));
   });
+  
+  if (factSentences.length < 1) factSentences = sentences.slice(0, 2);
+  
+  var shortSummary = factSentences.slice(0, 2).join('. ') + '.';
+  if (shortSummary.length > 180) shortSummary = shortSummary.slice(0, 177) + '…';
+  
+  return shortSummary;
+}
 
-  function buildMini(item, realIndex){
-    var el = document.createElement('div');
-    el.className = 'news-mini';
-    el.setAttribute('data-idx', realIndex);
-    var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : 'Образец';
-    el.innerHTML =
-      '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
-      '<h4>' + esc(summarize(item.title, 100)) + '</h4>' +
-      '<div class="nm-date">' + esc(dateText) + '</div>';
-    el.addEventListener('click', function(){
-      if(newsSideEl && newsSideEl.dataset.moved === '1') return;
-      swapTo(realIndex);
-    });
-    return el;
-  }
+function generateFullText(originalSummary) {
+  if (!originalSummary) return '';
+  
+  var text = originalSummary
+    .replace(/передает\s+агентство\s+[А-Яа-я]+\s*/g, '')
+    .replace(/со\s+ссылкой\s+на\s+[^,.]+,?\s*/g, '')
+    .replace(/как\s+сообщил[аи]?\s+[^,.]+,?\s*/g, '')
+    .replace(/передает\s+корреспондент\s+[А-Яа-я]+\s*/g, '')
+    .replace(/по\s+информации\s+[^,.]+,?\s*/g, '')
+    .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '')
+    .replace(/Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\./g, '');
+  
+  var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
+  if (sentences.length < 2) return text;
+  
+  var factSentences = sentences.filter(s => {
+    var lower = s.toLowerCase();
+    return /\d+/.test(s) || 
+           ['логистик','транспорт','груз','контейнер','порт','склад','терминал','инвестиц','строительств'].some(w => lower.includes(w));
+  });
+  
+  if (factSentences.length < 2) factSentences = sentences.slice(0, 3);
+  
+  return factSentences.slice(0, 6).join('. ') + '.';
+}
 
-  function renderSide(){
-    var wrap = document.getElementById('newsSide');
-    if(!wrap) return;
-    wrap.innerHTML = '';
-    newsItems.forEach(function(item, i){
-      if(i === newsActive) return;
-      wrap.appendChild(buildMini(item, i));
-    });
-  }
+var NEWS_DEMO_ITEMS = [
+  {topic:'Логистика', title:'Контейнерный индекс региона за неделю', summary:'Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.', sourceUrl:null, publishedAt:null, photo:null},
+  {topic:'Инфраструктура', title:'Ход строительства транспортных коридоров', summary:'Статусы проектов по развитию дорожной и железнодорожной инфраструктуры региона.', sourceUrl:null, publishedAt:null, photo:null},
+  {topic:'Логистика', title:'Динамика ставок фрахта на ключевых маршрутах', summary:'Обзор изменения стоимости перевозок по основным направлениям.', sourceUrl:null, publishedAt:null, photo:null},
+  {topic:'Таможня', title:'Изменения в порядке оформления транзитных грузов', summary:'Новые процедуры оформления, влияющие на скорость прохождения границ.', sourceUrl:null, publishedAt:null, photo:null},
+  {topic:'Порты', title:'Загрузка контейнерных терминалов региона', summary:'Показатели пропускной способности ключевых портов и хабов.', sourceUrl:null, publishedAt:null, photo:null}
+];
 
-  var swapping = false;
-  var SWAP_MS = 520;
-  var SWAP_EASE = 'cubic-bezier(.22,1,.36,1)';
+var newsItems = NEWS_DEMO_ITEMS;
+var newsActive = 0;
+var newsIsDemo = true;
+var expanded = false;
 
-  function findMiniByIndex(index){
-    var wrap = document.getElementById('newsSide');
-    if(!wrap) return null;
-    return wrap.querySelector('.news-mini[data-idx="' + index + '"]');
-  }
-
-  function finishSwap(index){
-    newsActive = index;
-    renderFeaturedNews(newsItems[newsActive]);
-    renderSide();
-  }
-
-  function flipFrom(el, fromRect, toRect, opts){
-    opts = opts || {};
-    var dx = fromRect.left - toRect.left;
-    var dy = fromRect.top - toRect.top;
-    var sx = fromRect.width / toRect.width;
-    var sy = fromRect.height / toRect.height;
-
-    el.style.transition = 'none';
-    el.style.transformOrigin = 'top left';
-    el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
-    if(opts.fade) el.style.opacity = '0.35';
-    el.style.boxShadow = '0 26px 54px rgba(0,0,0,.2)';
-    el.style.position = 'relative';
-    el.style.zIndex = '5';
-
-    void el.offsetWidth;
-
-    el.style.transition =
-      'transform ' + SWAP_MS + 'ms ' + SWAP_EASE +
-      ', opacity ' + SWAP_MS + 'ms ' + SWAP_EASE +
-      ', box-shadow ' + SWAP_MS + 'ms ' + SWAP_EASE;
-    el.style.transform = 'none';
-    if(opts.fade) el.style.opacity = '1';
-
-    setTimeout(function(){
-      el.style.transition = '';
-      el.style.transform = '';
-      el.style.opacity = '';
-      el.style.boxShadow = '';
-      el.style.position = '';
-      el.style.zIndex = '';
-    }, SWAP_MS + 30);
-  }
-
-  function swapTo(index){
-    if(swapping || index === newsActive || !newsItems[index]) return;
-    var featuredEl = document.getElementById('newsFeatured');
-    var miniEl = findMiniByIndex(index);
-    if(!featuredEl) return;
-
-    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var prevBtn = document.getElementById('newsPrev');
-    var nextBtn = document.getElementById('newsNext');
-
-    if(!miniEl || reduceMotion){
-      finishSwap(index);
-      return;
+function setFeaturedPhoto(item){
+  var photoEl = document.getElementById('newsFeaturedPhoto');
+  photoEl.innerHTML = '';
+  if(item.photo && item.photo.url){
+    photoEl.style.background = 'none';
+    var img = document.createElement('img');
+    img.src = item.photo.url; img.alt = '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    photoEl.appendChild(img);
+    if(item.photo.credit){
+      var credit = document.createElement('a');
+      credit.href = item.photo.creditUrl || '#'; credit.target = '_blank'; credit.rel = 'noopener';
+      credit.textContent = 'Фото: ' + item.photo.credit;
+      credit.style.cssText = 'position:absolute;bottom:10px;left:10px;font-family:var(--mono);font-size:9px;color:#fff;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:12px;text-decoration:none;';
+      photoEl.appendChild(credit);
     }
-
-    swapping = true;
-    if(prevBtn) prevBtn.disabled = true;
-    if(nextBtn) nextBtn.disabled = true;
-
-    var oldActiveIndex = newsActive;
-    var oldFeaturedRect = featuredEl.getBoundingClientRect();
-    var oldMiniRect = miniEl.getBoundingClientRect();
-
-    finishSwap(index);
-
-    var newFeaturedRect = featuredEl.getBoundingClientRect();
-    var landedMini = findMiniByIndex(oldActiveIndex);
-
-    flipFrom(featuredEl, oldMiniRect, newFeaturedRect, {fade:true});
-
-    if(landedMini){
-      flipFrom(landedMini, oldFeaturedRect, landedMini.getBoundingClientRect(), {fade:true});
-    }
-
-    setTimeout(function(){
-      swapping = false;
-      if(prevBtn) prevBtn.disabled = false;
-      if(nextBtn) nextBtn.disabled = false;
-    }, SWAP_MS + 30);
+  } else {
+    photoEl.style.background = '';
+    photoEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="15" rx="2" stroke="currentColor" stroke-width="1.4"/><circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.4"/><path d="M3 16l5.5-5 4 4 3-3L21 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Без изображения</span>';
   }
+}
 
-  function newsNext(){ swapTo((newsActive + 1) % newsItems.length); }
-  function newsPrev(){ swapTo((newsActive - 1 + newsItems.length) % newsItems.length); }
+function renderFeaturedNews(item){
+  setFeaturedPhoto(item);
+  document.getElementById('newsFeaturedTag').textContent = item.topic || 'Новости';
+  var titleEl = document.getElementById('newsFeaturedTitle');
+  var shortTitle = summarize(item.title, 120);
+  titleEl.innerHTML = item.sourceUrl
+    ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(shortTitle) + '</a>'
+    : esc(shortTitle);
+  
+  // Краткая выжимка (с троеточием)
+  var shortSummary = generateShortSummary(item.title, item.summary);
+  document.getElementById('newsFeaturedDesc').textContent = shortSummary || 'Подробности — по ссылке на источник…';
+  
+  // Полный текст (продолжение, без троеточия)
+  var fullText = generateFullText(item.summary);
+  document.getElementById('newsFeaturedFull').textContent = fullText || shortSummary.replace(/…$/, '') || 'Подробности — по ссылке на источник.';
+  
+  // Сброс состояния
+  expanded = false;
+  document.getElementById('newsFeaturedFull').style.display = 'none';
+  document.getElementById('expandLabel').textContent = 'Подробнее';
+  document.getElementById('expandArrow').style.transform = 'rotate(0deg)';
+  
+  var sourceHost = '';
+  if(item.sourceUrl){ try { sourceHost = new URL(item.sourceUrl).hostname.replace(/^www\./,''); } catch(e){} }
+  document.getElementById('newsFeaturedSource').textContent = sourceHost || 'Образец';
+  document.getElementById('newsFeaturedDate').textContent = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : '—';
+}
 
-  var nextBtn = document.getElementById('newsNext');
-  var prevBtn = document.getElementById('newsPrev');
-  if(nextBtn) nextBtn.addEventListener('click', newsNext);
-  if(prevBtn) prevBtn.addEventListener('click', newsPrev);
-
-  var newsSideEl = document.getElementById('newsSide');
-  if(newsSideEl){
-    var isDown = false, startX = 0;
-    newsSideEl.addEventListener('mousedown', function(e){
-      isDown = true; startX = e.pageX; newsSideEl.dataset.moved = '0';
-      newsSideEl.classList.add('dragging');
-    });
-    window.addEventListener('mouseup', function(e){
-      if(isDown){
-        var dx = e.pageX - startX;
-        if(Math.abs(dx) > 40){
-          newsSideEl.dataset.moved = '1';
-          if(dx < 0) newsNext(); else newsPrev();
-        }
-      }
-      isDown = false;
-      newsSideEl.classList.remove('dragging');
-    });
-    window.addEventListener('mousemove', function(e){
-      if(!isDown) return;
-      if(Math.abs(e.pageX - startX) > 8) newsSideEl.dataset.moved = '1';
-    });
+// Кнопка разворачивания
+document.getElementById('newsExpandBtn').addEventListener('click', function(){
+  var fullEl = document.getElementById('newsFeaturedFull');
+  var label = document.getElementById('expandLabel');
+  var arrow = document.getElementById('expandArrow');
+  
+  if (expanded) {
+    fullEl.style.display = 'none';
+    label.textContent = 'Подробнее';
+    arrow.style.transform = 'rotate(0deg)';
+  } else {
+    fullEl.style.display = 'block';
+    label.textContent = 'Скрыть';
+    arrow.style.transform = 'rotate(180deg)';
   }
+  expanded = !expanded;
+});
 
+function buildMini(item, realIndex){
+  var el = document.createElement('div');
+  el.className = 'news-mini';
+  el.setAttribute('data-idx', realIndex);
+  var dateText = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : 'Образец';
+  el.innerHTML =
+    '<span class="ic-tag small">' + esc(item.topic || 'Новости') + '</span>' +
+    '<h4>' + esc(summarize(item.title, 100)) + '</h4>' +
+    '<div class="nm-date">' + esc(dateText) + '</div>';
+  el.addEventListener('click', function(){
+    if(newsSideEl && newsSideEl.dataset.moved === '1') return;
+    swapTo(realIndex);
+  });
+  return el;
+}
+
+// Остальной код карусели (renderSide, swapTo, flipFrom, newsNext, newsPrev) — без изменений
+function renderSide(){
+  var wrap = document.getElementById('newsSide');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  newsItems.forEach(function(item, i){
+    if(i === newsActive) return;
+    wrap.appendChild(buildMini(item, i));
+  });
+}
+
+var swapping = false;
+var SWAP_MS = 520;
+var SWAP_EASE = 'cubic-bezier(.22,1,.36,1)';
+
+function findMiniByIndex(index){
+  var wrap = document.getElementById('newsSide');
+  if(!wrap) return null;
+  return wrap.querySelector('.news-mini[data-idx="' + index + '"]');
+}
+
+function finishSwap(index){
+  newsActive = index;
   renderFeaturedNews(newsItems[newsActive]);
   renderSide();
+}
 
-  fetch('./data/news.json', {cache:'no-store'})
-    .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('bad status')); })
-    .then(function(data){
-      if(!data || data.isDemo || !Array.isArray(data.items) || data.items.length === 0) return;
-      newsItems = data.items;
-      newsIsDemo = false;
-      newsActive = 0;
-      renderFeaturedNews(newsItems[newsActive]);
-      renderSide();
-    })
-    .catch(function(){ /* нет файла/сети — тихо оставляем образцы */ });
+function flipFrom(el, fromRect, toRect, opts){
+  opts = opts || {};
+  var dx = fromRect.left - toRect.left;
+  var dy = fromRect.top - toRect.top;
+  var sx = fromRect.width / toRect.width;
+  var sy = fromRect.height / toRect.height;
+
+  el.style.transition = 'none';
+  el.style.transformOrigin = 'top left';
+  el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+  if(opts.fade) el.style.opacity = '0.35';
+  el.style.boxShadow = '0 26px 54px rgba(0,0,0,.2)';
+  el.style.position = 'relative';
+  el.style.zIndex = '5';
+
+  void el.offsetWidth;
+
+  el.style.transition =
+    'transform ' + SWAP_MS + 'ms ' + SWAP_EASE +
+    ', opacity ' + SWAP_MS + 'ms ' + SWAP_EASE +
+    ', box-shadow ' + SWAP_MS + 'ms ' + SWAP_EASE;
+  el.style.transform = 'none';
+  if(opts.fade) el.style.opacity = '1';
+
+  setTimeout(function(){
+    el.style.transition = '';
+    el.style.transform = '';
+    el.style.opacity = '';
+    el.style.boxShadow = '';
+    el.style.position = '';
+    el.style.zIndex = '';
+  }, SWAP_MS + 30);
+}
+
+function swapTo(index){
+  if(swapping || index === newsActive || !newsItems[index]) return;
+  var featuredEl = document.getElementById('newsFeatured');
+  var miniEl = findMiniByIndex(index);
+  if(!featuredEl) return;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var prevBtn = document.getElementById('newsPrev');
+  var nextBtn = document.getElementById('newsNext');
+
+  if(!miniEl || reduceMotion){
+    finishSwap(index);
+    return;
+  }
+
+  swapping = true;
+  if(prevBtn) prevBtn.disabled = true;
+  if(nextBtn) nextBtn.disabled = true;
+
+  var oldActiveIndex = newsActive;
+  var oldFeaturedRect = featuredEl.getBoundingClientRect();
+  var oldMiniRect = miniEl.getBoundingClientRect();
+
+  finishSwap(index);
+
+  var newFeaturedRect = featuredEl.getBoundingClientRect();
+  var landedMini = findMiniByIndex(oldActiveIndex);
+
+  flipFrom(featuredEl, oldMiniRect, newFeaturedRect, {fade:true});
+
+  if(landedMini){
+    flipFrom(landedMini, oldFeaturedRect, landedMini.getBoundingClientRect(), {fade:true});
+  }
+
+  setTimeout(function(){
+    swapping = false;
+    if(prevBtn) prevBtn.disabled = false;
+    if(nextBtn) nextBtn.disabled = false;
+  }, SWAP_MS + 30);
+}
+
+function newsNext(){ swapTo((newsActive + 1) % newsItems.length); }
+function newsPrev(){ swapTo((newsActive - 1 + newsItems.length) % newsItems.length); }
+
+var nextBtn = document.getElementById('newsNext');
+var prevBtn = document.getElementById('newsPrev');
+if(nextBtn) nextBtn.addEventListener('click', newsNext);
+if(prevBtn) prevBtn.addEventListener('click', newsPrev);
+
+var newsSideEl = document.getElementById('newsSide');
+if(newsSideEl){
+  var isDown = false, startX = 0;
+  newsSideEl.addEventListener('mousedown', function(e){
+    isDown = true; startX = e.pageX; newsSideEl.dataset.moved = '0';
+    newsSideEl.classList.add('dragging');
+  });
+  window.addEventListener('mouseup', function(e){
+    if(isDown){
+      var dx = e.pageX - startX;
+      if(Math.abs(dx) > 40){
+        newsSideEl.dataset.moved = '1';
+        if(dx < 0) newsNext(); else newsPrev();
+      }
+    }
+    isDown = false;
+    newsSideEl.classList.remove('dragging');
+  });
+  window.addEventListener('mousemove', function(e){
+    if(!isDown) return;
+    if(Math.abs(e.pageX - startX) > 8) newsSideEl.dataset.moved = '1';
+  });
+}
+
+renderFeaturedNews(newsItems[newsActive]);
+renderSide();
+
+fetch('./data/news.json', {cache:'no-store'})
+  .then(function(r){ return r.ok ? r.json() : Promise.reject(new Error('bad status')); })
+  .then(function(data){
+    if(!data || data.isDemo || !Array.isArray(data.items) || data.items.length === 0) return;
+    newsItems = data.items;
+    newsIsDemo = false;
+    newsActive = 0;
+    renderFeaturedNews(newsItems[newsActive]);
+    renderSide();
+  })
+  .catch(function(){ /* нет файла/сети — тихо оставляем образцы */ });
 </script>
 
 </body>

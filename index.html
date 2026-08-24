@@ -886,10 +886,10 @@ html {
   <div class="nf-body">
     <span class="ic-tag" id="newsFeaturedTag">Логистика</span>
     <h3 id="newsFeaturedTitle">Контейнерный индекс региона за неделю</h3>
-    <!-- КРАТКАЯ ВЫЖИМКА (всегда видна, с троеточием) -->
-    <p id="newsFeaturedDesc">Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии…</p>
-    <!-- ПОЛНЫЙ ТЕКСТ (скрыт, продолжение краткой выжимки) -->
-    <p id="newsFeaturedFull" style="display:none;margin-top:8px;font-family:var(--body);font-size:15px;line-height:1.6;opacity:.9;"></p>
+    <!-- ОДИН ТЕКСТ, КОТОРЫЙ РАСШИРЯЕТСЯ -->
+    <p id="newsFeaturedText" style="font-family:var(--body);font-size:15px;line-height:1.6;opacity:.75;margin:0;overflow:hidden;max-height:4.8em;transition:max-height 0.5s ease;">
+      Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.
+    </p>
     <!-- КНОПКА РАЗВЕРНУТЬ -->
     <button id="newsExpandBtn" style="background:none;border:none;color:var(--turquoise);cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.04em;display:flex;align-items:center;gap:8px;margin-top:8px;padding:0;">
       <span id="expandLabel">Подробнее</span>
@@ -1528,14 +1528,9 @@ function generateFullText(originalSummary) {
     .replace(/пишет\s+[А-Яа-яА-Я\s\|]+\s*/g, '')
     .replace(/Сообщение\s+[^.]+\s+появились\s+сначала\s+на\s+[А-Яа-я\s-]+\./g, '');
   
-  var sentences = text.split(/[.!?]/).filter(s => s.trim().length > 20);
-  if (sentences.length < 2) return text;
-  
-  var factSentences = sentences.filter(s => {
-    var lower = s.toLowerCase();
-    return /\d+/.test(s) || 
-           ['логистик','транспорт','груз','контейнер','порт','склад','терминал','инвестиц','строительств'].some(w => lower.includes(w));
-  });
+  // Возвращаем ВЕСЬ текст (без обрезания)
+  return text.trim();
+}
   
   if (factSentences.length < 2) factSentences = sentences.slice(0, 3);
   
@@ -1586,17 +1581,14 @@ function renderFeaturedNews(item){
     ? '<a href="' + esc(item.sourceUrl) + '" target="_blank" rel="noopener" style="color:inherit;">' + esc(shortTitle) + '</a>'
     : esc(shortTitle);
   
-  // Краткая выжимка (с троеточием)
-  var shortSummary = generateShortSummary(item.title, item.summary);
-  document.getElementById('newsFeaturedDesc').textContent = shortSummary || 'Подробности — по ссылке на источник…';
+  // ПОЛНЫЙ ТЕКСТ (вся выжимка) — вставляем целиком
+  var fullText = generateFullText(item.summary) || summarize(item.summary, 400);
+  var textEl = document.getElementById('newsFeaturedText');
+  textEl.textContent = fullText || 'Подробности — по ссылке на источник.';
   
-  // Полный текст (продолжение, без троеточия)
-  var fullText = generateFullText(item.summary);
-  document.getElementById('newsFeaturedFull').textContent = fullText || shortSummary.replace(/…$/, '') || 'Подробности — по ссылке на источник.';
-  
-  // Сброс состояния
+  // Сбрасываем состояние (свёрнуто)
   expanded = false;
-  document.getElementById('newsFeaturedFull').style.display = 'none';
+  textEl.style.maxHeight = '4.8em'; // 3 строки
   document.getElementById('expandLabel').textContent = 'Подробнее';
   document.getElementById('expandArrow').style.transform = 'rotate(0deg)';
   
@@ -1606,18 +1598,18 @@ function renderFeaturedNews(item){
   document.getElementById('newsFeaturedDate').textContent = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('ru-RU') : '—';
 }
 
-// Кнопка разворачивания
+// Кнопка разворачивания (работает с max-height)
 document.getElementById('newsExpandBtn').addEventListener('click', function(){
-  var fullEl = document.getElementById('newsFeaturedFull');
+  var textEl = document.getElementById('newsFeaturedText');
   var label = document.getElementById('expandLabel');
   var arrow = document.getElementById('expandArrow');
   
   if (expanded) {
-    fullEl.style.display = 'none';
+    textEl.style.maxHeight = '4.8em';
     label.textContent = 'Подробнее';
     arrow.style.transform = 'rotate(0deg)';
   } else {
-    fullEl.style.display = 'block';
+    textEl.style.maxHeight = textEl.scrollHeight + 'px';
     label.textContent = 'Скрыть';
     arrow.style.transform = 'rotate(180deg)';
   }

@@ -1462,8 +1462,6 @@ html {
     return d.innerHTML;
   }
 
-  // Обрезает текст до maxLen символов по границе слова (не посреди слова)
-  // и добавляет многоточие, формируя короткую, читаемую выжимку.
   function summarize(text, maxLen) {
   if (!text) return '';
   text = String(text).trim();
@@ -1480,11 +1478,18 @@ html {
     cut.lastIndexOf('?')
   );
   
-  if (lastSentenceEnd > maxLen * 0.5) {
+  if (lastSentenceEnd > maxLen * 0.4) {
     cut = text.slice(0, lastSentenceEnd + 1);
+    cut = cut.replace(/[\s.,;:—–-]+$/, '');
+    if (cut.length < text.length) cut += '…';
+    return cut;
+  }
+  
+  var lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > maxLen * 0.4) {
+    cut = cut.slice(0, lastSpace);
   } else {
-    var lastSpace = cut.lastIndexOf(' ');
-    if (lastSpace > maxLen * 0.6) cut = cut.slice(0, lastSpace);
+    cut = text.slice(0, maxLen);
   }
   
   cut = cut.replace(/[\s.,;:—–-]+$/, '');

@@ -1464,16 +1464,33 @@ html {
 
   // Обрезает текст до maxLen символов по границе слова (не посреди слова)
   // и добавляет многоточие, формируя короткую, читаемую выжимку.
-  function summarize(text, maxLen){
-    if(!text) return '';
-    text = String(text).trim();
-    if(text.length <= maxLen) return text;
-    var cut = text.slice(0, maxLen);
+  function summarize(text, maxLen) {
+  if (!text) return '';
+  text = String(text).trim();
+  if (text.length <= maxLen) return text;
+  
+  // Ищем ближайшее окончание предложения (. ! ?)
+  var cut = text.slice(0, maxLen);
+  var lastSentenceEnd = Math.max(
+    cut.lastIndexOf('. '),
+    cut.lastIndexOf('! '),
+    cut.lastIndexOf('? '),
+    cut.lastIndexOf('.'),
+    cut.lastIndexOf('!'),
+    cut.lastIndexOf('?')
+  );
+  
+  if (lastSentenceEnd > maxLen * 0.5) {
+    cut = text.slice(0, lastSentenceEnd + 1);
+  } else {
     var lastSpace = cut.lastIndexOf(' ');
-    if(lastSpace > maxLen * 0.6) cut = cut.slice(0, lastSpace);
-    cut = cut.replace(/[\s.,;:—–-]+$/, '');
-    return cut + '…';
+    if (lastSpace > maxLen * 0.6) cut = cut.slice(0, lastSpace);
   }
+  
+  cut = cut.replace(/[\s.,;:—–-]+$/, '');
+  if (cut.length < text.length) cut += '…';
+  return cut;
+}
 
   var NEWS_DEMO_ITEMS = [
     {topic:'Логистика', title:'Контейнерный индекс региона за неделю', summary:'Сводка по динамике ставок и загрузке терминалов на ключевых коридорах Центральной Азии.', sourceUrl:null, publishedAt:null, photo:null},

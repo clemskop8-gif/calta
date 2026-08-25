@@ -1,55 +1,35 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-25T05:10:45.500126+00:00",
+  "updatedAt": "2026-08-25T05:34:49.692805+00:00",
   "items": [
-    {
-      "source": "golos.tj",
-      "topic": "Транспорт",
-      "title": "Ключевой финансовый форум Евразии пройдет в Астане 9–10 сентября",
-      "summary": "10 сентября 2026 в Центральной Азии пройдёт логистический форум. Ключевой финансовый конференция Евразии пройдёт в Астане 9–10 сентября.",
-      "publishedAt": "Wed, 19 Aug 2026 01:48:26 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1719144065955-89a4dadaba41?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MTB8fGNvbmZlcmVuY2UlMjBjZW50cmFsJTIwYXNpYXxlbnwxfDB8fHwxNzg3NjM0NjI3fDA&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
-      "source": "golos.tj",
-      "topic": "Транспорт",
-      "title": "Душанбе и Ашхабад закрепили план дипломатического сотрудничества до 2028 года",
-      "summary": "Душанбе и Ашхабад закрепили план дипломатического сотрудничества до 2028 года.",
-      "publishedAt": "Fri, 21 Aug 2026 21:45:46 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1764595867557-f6685783c4f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OHx8bG9naXN0aWNzJTIwaHViJTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4NzYzNDYyN3ww&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
     {
       "source": "logistan.info",
       "topic": "Терминалы",
       "title": "В Минэкономе уточнили статус таможенных складов для интернет-магазинов в Кыргызстане",
-      "summary": "В Минэкономе уточнили статус таможенных складов для интернет-магазинов в Кыргызстане.",
+      "summary": "Информация о появлении в Кыргызстане отдельных таможенных складов для интернет-магазинов пока носит предварительный характер: соответствующие нормы ЕАЭС еще не вступили в силу. Об этом LogiStan сообщилзаместитель министра Искендер Асылкулов. На сегодняшний день вопрос строительства отдельных таможенных складов для товаров электронной торговли ещё не рассмотрен.",
       "publishedAt": "Fri, 21 Aug 2026 15:40:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1678562086957-9bd714d428f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4NzYzNDYzMHww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc2MzYwNzV8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "logistan.info",
       "topic": "Транспорт",
       "title": "На перегоне ж/д магистрали «Алтынколь – Жетыген» запустили двухпутное движение",
-      "summary": "На перегоне ж/д магистрали «Алтынколь – Жетыген» запустили двухпутное движение.",
+      "summary": "Речь идёт об участке «Жетыген – Курозек», который является частью 293-километрового ж/д магистрали «Алтынколь – Жетыген», , — рассказал почетный железнодорожник Калтай Сообщение На перегоне ж/д магистрали «Алтынколь – Жетыген» запустили двухпутное движение появились сначала на Экономика Центральной Азии - Logistan .",
       "publishedAt": "Fri, 21 Aug 2026 15:05:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1759322546857-748a67fc04b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4NzYzNDYzMHww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1565891741441-64926e441838?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NXx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc2MzYwNzV8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Транспорт",
       "title": "КТЖ закупит 131 пассажирский вагон до конца 2027 года",
-      "summary": "КТЖ закупит 131 пассажирский вагон до конца 2027 года.",
+      "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. Работа по модернизации продолжается.",
       "publishedAt": "2026-07-28T21:40:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1785042379212-af7cb35739d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8dHJhaW4lMjBjYXJyaWFnZSUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODc2MzQ2NDV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1678984239594-b3cce332752a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8dHJhaW4lMjBjYXJyaWFnZXxlbnwxfDB8fHwxNzg3NjM2MDg0fDA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

@@ -91,6 +91,12 @@ REQUIRED_LOGISTICS_KEYWORDS = [
     "перевозк", "транспортировк", "доставк", "логистик",
 ]
 
+# Каждому слову из REQUIRED_LOGISTICS_KEYWORDS требуется граница слова СЛЕВА
+# (но не справа — чтобы сохранить ловлю словоформ типа "модернизаци" ->
+# "модернизация/модернизации"). Это устраняет ложные срабатывания вида
+# "хаб" внутри "Ашхабад" или "порт" внутри "паспорт"/"экспорт"/"импорт".
+_REQUIRED_PATTERNS = [re.compile(r'\b' + re.escape(kw)) for kw in REQUIRED_LOGISTICS_KEYWORDS]
+
 def is_relevant(title, summary):
     """Проверяет, относится ли новость к логистике в Центральной Азии."""
     if not title:
@@ -103,8 +109,9 @@ def is_relevant(title, summary):
         if word in full_text:
             return False
 
-    # Проверяем логистику (только по "жёсткому" списку, без общих слов)
-    if not any(keyword in full_text for keyword in REQUIRED_LOGISTICS_KEYWORDS):
+    # Проверяем логистику (только по "жёсткому" списку, без общих слов,
+    # с границей слова слева — без ложных срабатываний внутри других слов)
+    if not any(p.search(full_text) for p in _REQUIRED_PATTERNS):
         return False
 
     # Проверяем страны ЦА
@@ -236,10 +243,28 @@ def extract_facts(text):
     }
     return facts
 
+def split_real_sentences(text):
+    """Разбивает очищенный текст на настоящие предложения (не короче 25 символов)."""
+    parts = re.split(r'(?<=[.!?])\s+', text)
+    return [p.strip() for p in parts if len(p.strip()) >= 25]
+
+def strip_quote_attribution(sentence):
+    """
+    Убирает прямую речь в кавычках-ёлочках и висячую атрибуцию вида
+    "— сказал он/она" — превращает цитату в косвенную речь, а не
+    выбрасывает содержание целиком.
+    """
+    s = sentence
+    s = re.sub(r'[«"]([^»"]+)[»"]\s*,?\s*[—\-–]\s*(сказал|сообщил|отметил|подчеркнул|заявил)[аи]?\s+[^.]*\.?', r'\1.', s)
+    s = re.sub(r'^[«"]|[»"]$', '', s).strip()
+    return s
+
 def generate_unique_summary(title, original_summary):
     """
-    Генерирует абсолютно новый текст на основе фактов и синонимов.
-    Без копипасты, без упоминаний СМИ, без обрыва на полуслове.
+    Генерирует пересказ своими словами на основе РЕАЛЬНОГО текста статьи.
+    Факты (даты/числа/города) используются как опциональное дополнение,
+    а не как единственный источник — при их отсутствии функция больше
+    не выбрасывает содержание статьи и не подставляет вместо него заголовок.
     """
     if not original_summary:
         original_summary = title
@@ -248,55 +273,41 @@ def generate_unique_summary(title, original_summary):
     text = strip_html(original_summary)
     text = clean_media_phrases(text)
 
-    # 2. Извлекаем факты
+    # 2. Извлекаем факты (используются только как опциональное вступление)
     facts = extract_facts(text)
 
-    # 3. Строим новые предложения на основе фактов
     new_sentences = []
 
-    # --- Первое предложение: дата + событие ---
-    if facts['dates']:
+    # --- Опциональное вступление с датой — только для явных анонсов форумов ---
+    if facts['dates'] and ('форум' in title.lower() or 'конференц' in title.lower()):
         date = facts['dates'][0]
-        # Определяем тип события по заголовку
-        if 'форум' in title.lower() or 'конференц' in title.lower():
-            action = random.choice(['состоится', 'пройдёт', 'запланирован'])
-            new_sentences.append(f"{date} в Центральной Азии {action} логистический форум.")
-        elif 'закуп' in title.lower() or 'приобрет' in title.lower():
-            action = random.choice(['планируется закупка', 'будет приобретено', 'закупят'])
-            new_sentences.append(f"{date} {action} новое оборудование для транспорта.")
-        elif 'строительств' in title.lower() or 'модернизац' in title.lower():
-            action = random.choice(['запланированы работы', 'начинается строительство', 'проводится модернизация'])
-            new_sentences.append(f"{date} {action} на транспортных маршрутах.")
-        else:
-            action = random.choice(['обсуждается', 'рассматривается', 'планируется'])
-            new_sentences.append(f"{date} {action} развитие транспортной инфраструктуры.")
+        action = random.choice(['состоится', 'пройдёт', 'запланирован'])
+        new_sentences.append(f"{date} в Центральной Азии {action} логистический форум.")
 
-    # --- Второе предложение: числа и организации ---
+    # --- Основа пересказа: реальные предложения статьи, слегка перефразированные ---
+    real_sentences = split_real_sentences(text)
+    used_body = False
+    for s in real_sentences[:3]:
+        s = strip_quote_attribution(s)
+        s = paraphrase_text(s)
+        s = s.strip()
+        if len(s) < 20:
+            continue
+        if not s.endswith(('.', '!', '?')):
+            s += '.'
+        new_sentences.append(s)
+        used_body = True
+
+    # --- Числа/организации — добавляем отдельным уточняющим предложением, если есть ---
     if facts['numbers']:
         num = facts['numbers'][0]
-        org = facts['orgs'][0] if facts['orgs'] else 'участники рынка'
-        if 'вагонов' in num or 'тыс' in num or 'млн' in num or 'млрд' in num:
-            new_sentences.append(f"Речь идёт о {num}, которые планируется {random.choice(['приобрести', 'модернизировать', 'обновить', 'задействовать'])}.")
-        elif 'км' in num or 'километров' in num:
-            new_sentences.append(f"Протяжённость маршрута составляет {num}.")
-        else:
+        org = facts['orgs'][0] if facts['orgs'] else None
+        if org and org.lower() not in ' '.join(new_sentences).lower():
             new_sentences.append(f"По данным {org}, ключевые параметры составляют {num}.")
 
-    # --- Третье предложение: города ---
-    if facts['cities']:
-        cities = ', '.join(facts['cities'][:2])
-        if len(facts['cities']) > 1:
-            new_sentences.append(f"В обсуждении участвуют представители {cities}.")
-        else:
-            new_sentences.append(f"Мероприятие затронет вопросы развития логистики в {cities}.")
-
-    # --- Если предложений мало — добавляем перефразированный заголовок ---
-    if len(new_sentences) < 2:
-        # Перефразируем заголовок
-        paraphrased_title = paraphrase_text(title)
-        new_sentences.append(paraphrased_title + '.')
-        if facts['orgs']:
-            new_sentences.append(f"Организатором выступает {facts['orgs'][0]}.")
+    # --- Если в статье вообще не нашлось пригодного текста — только тогда заголовок ---
+    if not used_body:
+        new_sentences.append(paraphrase_text(title) + '.')
 
     # 4. Собираем текст
     result = ' '.join(new_sentences)

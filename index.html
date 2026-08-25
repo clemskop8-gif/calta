@@ -689,97 +689,73 @@ html {
   </div>
 </section>
 
-<section id="events" class="dark section-gold">
-
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot tq"></span> Календарь</div>
-      <h2>Мероприятия Ассоциации</h2>
-      <p>Форумы, конференции и рабочие встречи CALTA — прокрутите фотографии, чтобы узнать подробности о каждом мероприятии.</p>
+<section id="events" class="dark section-gold" style="padding:56px 0;overflow:hidden;position:relative;">
+  <div class="wrap" style="max-width:100%;padding:0;">
+    <div class="section-head reveal" style="max-width:100%;padding:0 32px;text-align:center;">
+      <div class="eyebrow" style="justify-content:center;"><span class="dot tq"></span> Календарь</div>
+      <h2 style="font-size:clamp(28px,3.4vw,42px);">Мероприятия Ассоциации</h2>
     </div>
-    <div class="events-grid reveal">
-      <div class="events-carousel" id="eventsCarousel">
-        <div class="carousel-track" id="carouselTrack">
-          <div class="carousel-item"><span>Фото мероприятия<br>1 — добавьте позже</span></div>
-          <div class="carousel-item"><span>Фото мероприятия<br>2 — добавьте позже</span></div>
-          <div class="carousel-item"><span>Фото мероприятия<br>3 — добавьте позже</span></div>
-          <div class="carousel-item"><span>Фото мероприятия<br>4 — добавьте позже</span></div>
-          <div class="carousel-item"><span>Фото мероприятия<br>5 — добавьте позже</span></div>
+
+    <div style="position:relative;padding:20px 20px;max-width:100%;margin:0 auto;">
+
+      <!-- КАРУСЕЛЬ -->
+      <div class="events-carousel" id="eventsCarousel" style="position:relative;height:500px;max-height:65vh;display:flex;align-items:center;justify-content:center;cursor:grab;user-select:none;width:100%;">
+        <div class="carousel-track" id="carouselTrack" style="position:relative;width:100%;height:100%;">
+
+          <!-- Карточки мероприятий с описанием (ШИРЕ) -->
+          <div class="carousel-item" style="position:absolute;left:50%;top:50%;width:min(85vw,900px);aspect-ratio:16/9;border:1px solid var(--line-dark);background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 40px;transition:transform .55s cubic-bezier(.22,.7,.3,1),opacity .55s ease;will-change:transform,opacity;border-radius:8px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;" class="event-date">15 сентября 2026</div>
+            <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">Astana Logistics Forum</h3>
+            <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;" class="event-desc">Ежегодный форум, объединяющий логистические компании, госорганы и международных партнёров для обсуждения развития транспортных коридоров Центральной Азии.</p>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> Астана, Казахстан</div>
+          </div>
+
+          <div class="carousel-item" style="position:absolute;left:50%;top:50%;width:min(85vw,900px);aspect-ratio:16/9;border:1px solid var(--line-dark);background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 40px;transition:transform .55s cubic-bezier(.22,.7,.3,1),opacity .55s ease;will-change:transform,opacity;border-radius:8px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;" class="event-date">3 ноября 2026</div>
+            <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">Цифровизация грузоперевозок</h3>
+            <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;" class="event-desc">Практический семинар по внедрению цифровых платформ мониторинга и электронного документооборота для логистических компаний региона.</p>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> Онлайн-трансляция</div>
+          </div>
+
+          <div class="carousel-item" style="position:absolute;left:50%;top:50%;width:min(85vw,900px);aspect-ratio:16/9;border:1px solid var(--line-dark);background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 40px;transition:transform .55s cubic-bezier(.22,.7,.3,1),opacity .55s ease;will-change:transform,opacity;border-radius:8px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;" class="event-date">20 января 2027</div>
+            <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">Trade Corridor Summit</h3>
+            <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;" class="event-desc">Встреча представителей пяти стран Центральной Азии по вопросам гармонизации таможенных процедур и развития коридора Китай—Европа.</p>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> Ташкент, Узбекистан</div>
+          </div>
+
+          <div class="carousel-item" style="position:absolute;left:50%;top:50%;width:min(85vw,900px);aspect-ratio:16/9;border:1px solid var(--line-dark);background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 40px;transition:transform .55s cubic-bezier(.22,.7,.3,1),opacity .55s ease;will-change:transform,opacity;border-radius:8px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;" class="event-date">12 марта 2027</div>
+            <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">Форум молодых логистов</h3>
+            <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;" class="event-desc">Образовательная программа для студентов и начинающих специалистов: карьера в логистике, стажировки и обмен опытом с экспертами CALTA.</p>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> Бишкек, Кыргызстан</div>
+          </div>
+
+          <div class="carousel-item" style="position:absolute;left:50%;top:50%;width:min(85vw,900px);aspect-ratio:16/9;border:1px solid var(--line-dark);background:linear-gradient(150deg, var(--gold-card) 0%, var(--gold-card-2) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 40px;transition:transform .55s cubic-bezier(.22,.7,.3,1),opacity .55s ease;will-change:transform,opacity;border-radius:8px;">
+            <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;" class="event-date">8 июня 2027</div>
+            <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">Международный день торговли</h3>
+            <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;" class="event-desc">Круглый стол с участием международных партнёров, посвящённый итогам года и планам по расширению сотрудничества.</p>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> Астана, Казахстан</div>
+          </div>
+
         </div>
-      </div>
-      <div class="events-info" id="eventsInfo">
-        <svg class="ei-border" aria-hidden="true"><rect id="eiBorderRect" x="0" y="0" width="100%" height="100%" rx="3"/></svg>
-        <div class="ei-date" id="eiDate">15 сентября 2026</div>
-        <h3 class="ei-title" id="eiTitle">Astana Logistics Forum</h3>
-        <p class="ei-desc" id="eiDesc">Ежегодный форум, объединяющий логистические компании, госорганы и международных партнёров для обсуждения развития транспортных коридоров Центральной Азии.</p>
-        <div class="ei-location" id="eiLocation"><span class="dot"></span> Астана, Казахстан</div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section id="directions" class="sand">
-  <div class="rail"></div>
-  <div class="wrap">
-    <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot"></span> Манифест деятельности</div>
-      <h2>Направления деятельности Ассоциации</h2>
-      <p>Сотрудничество с ключевыми игроками рынка для развития логистического сектора Центральной Азии.</p>
-    </div>
-    <div class="directions-grid reveal">
-      <div class="dir-card">
-        <div class="dir-code">RT-01 <span>ORG</span></div>
-        <h3>Организация и координация</h3>
-        <ul>
-          <li>Объединение логистических компаний, НИИ, вузов и экспертов</li>
-          <li>Формирование профессиональных сетей и кластеров</li>
-          <li>Координация международных и межотраслевых проектов</li>
-        </ul>
-      </div>
-      <div class="dir-card">
-        <div class="dir-code">RT-02 <span>RSD</span></div>
-        <h3>Аналитика и исследования</h3>
-        <ul>
-          <li>Проведение исследований в сфере логистики и торговли</li>
-          <li>Разработка стратегий и рекомендаций</li>
-          <li>Организация конференций, форумов и круглых столов</li>
-        </ul>
-      </div>
-      <div class="dir-card">
-        <div class="dir-code">RT-03 <span>EDU</span></div>
-        <h3>Образование и повышение квалификации</h3>
-        <ul>
-          <li>Программы обучения для логистов, экспедиторов, транспортных компаний</li>
-          <li>Онлайн-вебинары, семинары и тренинги</li>
-          <li>Методические и образовательные материалы</li>
-        </ul>
-      </div>
-      <div class="dir-card">
-        <div class="dir-code">RT-04 <span>DGT</span></div>
-        <h3>Цифровая трансформация и ИТ-решения</h3>
-        <ul>
-          <li>Внедрение цифровых платформ для мониторинга перевозок</li>
-          <li>Консультации по цифровизации логистики и нормативной базе</li>
-          <li>Разработка и поддержка цифровых стратегий</li>
-        </ul>
-      </div>
-      <div class="dir-card">
-        <div class="dir-code">RT-05 <span>INT</span></div>
-        <h3>Международное сотрудничество</h3>
-        <ul>
-          <li>Развитие партнёрств с международными логистическими организациями</li>
-          <li>Участие в трансграничных транспортных и торговых проектах</li>
-          <li>Поддержка международной интеграции бизнеса региона</li>
-        </ul>
-      </div>
-      <div class="dir-card">
-        <div class="dir-code">RT-06 <span>LAW</span></div>
-        <h3>Законодательные инициативы</h3>
-        <ul>
-          <li>Участие в формировании отраслевой политики</li>
-          <li>Подготовка предложений по совершенствованию законодательства</li>
-          <li>Представление интересов отрасли на экспертных советах</li>
-        </ul>
+        <!-- СТРЕЛКИ ПРИДВИНУТЫ БЛИЖЕ К КАРТОЧКАМ -->
+        <button type="button" id="eventsPrev" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;border-radius:50%;border:2px solid rgba(243,239,226,0.4);background:rgba(243,239,226,0.15);color:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s ease;backdrop-filter:blur(4px);" aria-label="Предыдущее мероприятие">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" id="eventsNext" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);z-index:20;width:48px;height:48px;border-radius:50%;border:2px solid rgba(243,239,226,0.4);background:rgba(243,239,226,0.15);color:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s ease;backdrop-filter:blur(4px);" aria-label="Следующее мероприятие">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- ИНДИКАТОРЫ -->
+        <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:15;display:flex;gap:10px;" id="eventsDots">
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--cream);opacity:.3;transition:all .3s;cursor:pointer;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--cream);opacity:.3;transition:all .3s;cursor:pointer;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--cream);opacity:.3;transition:all .3s;cursor:pointer;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--cream);opacity:.3;transition:all .3s;cursor:pointer;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:var(--cream);opacity:.3;transition:all .3s;cursor:pointer;"></span>
+        </div>
       </div>
     </div>
   </div>

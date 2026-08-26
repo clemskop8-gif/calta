@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-08-26T06:21:19.299332+00:00",
+  "updatedAt": "2026-08-26T06:56:59.074650+00:00",
   "featured": {
     "crop": "Пшеница",
-    "cropEn": "Wheat · Alpha Vantage",
+    "cropEn": "Wheat · CBOT",
     "price": 228.74,
     "currency": "USD",
     "unit": "т",
@@ -31,7 +31,7 @@
       "currency": "USD",
       "unit": "т",
       "crop": "Кукуруза",
-      "cropEn": "Corn · Alpha Vantage",
+      "cropEn": "Corn",
       "price": 213.19,
       "changePercent": 8.89,
       "direction": "up"

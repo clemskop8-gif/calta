@@ -102,7 +102,7 @@ def main():
         print(f"   ✅ Пшеница: {wheat['price']} USD/т (Alpha Vantage)")
         featured_data = {
             "crop": "Пшеница",
-            "cropEn": "Wheat · Alpha Vantage",
+            "cropEn": "Wheat · CBOT",
             "price": wheat["price"],
             "currency": "USD",
             "unit": "т",

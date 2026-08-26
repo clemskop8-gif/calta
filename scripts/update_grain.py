@@ -127,7 +127,7 @@ def main():
             "currency": "USD",
             "unit": "т",
             "crop": "Кукуруза",
-            "cropEn": "Corn · Alpha Vantage",
+            "cropEn": "Corn",
             "price": corn["price"],
             "changePercent": corn["changePercent"],
             "direction": corn["direction"],

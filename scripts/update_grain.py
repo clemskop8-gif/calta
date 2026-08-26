@@ -14,6 +14,7 @@
 """
 import json
 import os
+import time
 from datetime import datetime, timezone
 import requests
 
@@ -45,17 +46,28 @@ FALLBACK_SECONDARY = [
 
 
 def fetch_alpha_vantage(function_name):
-    """Получает данные через Alpha Vantage (WHEAT, CORN)"""
+    """
+    Получает данные через Alpha Vantage (WHEAT, CORN).
+    Важно: у товарных функций Alpha Vantage нет дневного интервала —
+    только monthly/quarterly/annual, поэтому запрашиваем monthly
+    (это реальная последняя доступная точка, просто она обновляется
+    не каждый день, а раз в месяц — это ограничение самого API).
+    """
     if not ALPHA_KEY:
+        print(f"      (нет ALPHAVANTAGE_KEY)")
         return None
     try:
         url = "https://www.alphavantage.co/query"
-        params = {"function": function_name, "interval": "daily", "apikey": ALPHA_KEY}
+        params = {"function": function_name, "interval": "monthly", "apikey": ALPHA_KEY}
         r = requests.get(url, params=params, timeout=20)
         r.raise_for_status()
         data = r.json()
         series = data.get("data")
         if not series or len(series) < 2:
+            # Alpha Vantage вместо данных часто присылает служебное сообщение —
+            # выводим его в лог, чтобы сразу видеть причину (лимит, неверный ключ и т.д.)
+            reason = data.get("Note") or data.get("Information") or data.get("Error Message") or data
+            print(f"      (нет данных от Alpha Vantage: {reason})")
             return None
         latest = float(series[0]["value"])
         prev = float(series[1]["value"])
@@ -67,7 +79,8 @@ def fetch_alpha_vantage(function_name):
             "changePercent": abs(round(((latest - prev) / prev) * 100, 2)) if prev else 0,
             "direction": "up" if latest >= prev else "down",
         }
-    except Exception:
+    except Exception as e:
+        print(f"      (ошибка запроса к Alpha Vantage: {e})")
         return None
 
 
@@ -103,6 +116,10 @@ def main():
         featured_data = FALLBACK_FEATURED.copy()
 
     # ===== 2. КУКУРУЗА (Alpha Vantage) =====
+    # Пауза перед вторым запросом — бесплатный тариф Alpha Vantage
+    # ограничивает не только число запросов в день, но и частоту.
+    print("   ⏳ Пауза 15 секунд перед следующим запросом (лимит Alpha Vantage)...")
+    time.sleep(15)
     corn = fetch_alpha_vantage("CORN")
     if corn:
         print(f"   ✅ Кукуруза: {corn['price']} USD/т (Alpha Vantage)")

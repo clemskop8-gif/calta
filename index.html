@@ -1279,11 +1279,23 @@ html {
 
     items.forEach((el, i) => {
       const data = eventsData[i] || eventsData[0];
+      const filesHtml = data.files ? `
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px;">
+          ${data.files.map(f => `
+            <a href="${f.url}" target="_blank" rel="noopener"
+               style="font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--cream);background:rgba(243,239,226,0.15);border:1px solid rgba(243,239,226,0.4);padding:8px 14px;border-radius:20px;transition:background .2s,border-color .2s;"
+               onmouseover="this.style.background='var(--turquoise)';this.style.borderColor='var(--turquoise)'"
+               onmouseout="this.style.background='rgba(243,239,226,0.15)';this.style.borderColor='rgba(243,239,226,0.4)'">
+              ${f.label}
+            </a>`).join('')}
+        </div>` : '';
+
       el.innerHTML = `
         <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;">${data.date}</div>
         <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">${data.title}</h3>
         <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;">${data.desc}</p>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> ${data.location}</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;justify-content:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> ${data.location}</div>
+        ${filesHtml}
       `;
     });
 

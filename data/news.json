@@ -1,25 +1,15 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-26T07:34:54.267388+00:00",
+  "updatedAt": "2026-08-27T07:00:56.975056+00:00",
   "items": [
     {
       "source": "logistan.info",
       "topic": "Транспорт",
       "title": "Узбекистан привязал выдачу китайских E-Permit к конкретным грузовым рейсам",
-      "summary": "Систему электронных разрешений E-Permit для автомобильных грузоперевозок между Узбекистаном и Китаем перевели на принцип «выдача по запросу». Перевозчикам следует оформлять разрешение только при наличии конкретной запланированной транспортировка. В заявке необходимо точно указывать пункты въезда в Китай и выезда из страны.",
+      "summary": "Систему электронных разрешений E-Permit для автомобильных грузоперевозок между Узбекистаном и Китаем перевели на принцип «выдача по запросу». Перевозчикам следует оформлять разрешение только при наличии конкретной запланированной доставка. В заявке необходимо точно указывать пункты въезда в Китай и выезда из страны.",
       "publishedAt": "Wed, 26 Aug 2026 06:34:09 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1678562086957-9bd714d428f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4NzYzNDYzMHww&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
-      "source": "logistan.info",
-      "topic": "Порты",
-      "title": "Открытие склада вакцин в Бишкеке отложили на осень 2026 года",
-      "summary": "Минздрав Кыргызстана летом 2026 года начал строить в Бишкеке специализированный терминал для вакцин. Стоимость проекта — около $107 тыс. Финансирование выделил Глобальный альянс по вакцинам и иммунизации при технической поддержке ЮНИСЕФ в Кыргызстане.",
-      "publishedAt": "Wed, 26 Aug 2026 04:30:00 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1644079446600-219068676743?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OHx8d2FyZWhvdXNlfGVufDF8MHx8fDE3ODc3Mjk2ODF8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc4MTQwNDR8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
@@ -29,7 +19,7 @@
       "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. Работа по модернизации продолжается, .",
       "publishedAt": "2026-07-28T21:40:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1785042379212-af7cb35739d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8dHJhaW4lMjBjYXJyaWFnZSUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODc2MzQ2NDV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1678984239375-53a221f58ad8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8dHJhaW4lMjBjYXJyaWFnZXxlbnwxfDB8fHwxNzg3ODE0MDUzfDA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

@@ -1,7 +1,27 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-27T11:57:42.397628+00:00",
+  "updatedAt": "2026-08-28T06:03:53.870503+00:00",
   "items": [
+    {
+      "source": "logistan.info",
+      "topic": "Транспорт",
+      "title": "В Узбекистане ввели в эксплуатацию новые электростанции и накопители энергии на 2,4 ГВт",
+      "summary": "Энергетические объекты заработали в четырёх регионах республики. Кроме того, их суммарная мощность составляет до 2423 МВт. При этом стоимость — около 20 трлн сумов .",
+      "publishedAt": "Thu, 27 Aug 2026 12:51:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1695222833131-54ee679ae8e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc4OTcwMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "source": "logistan.info",
+      "topic": "Транспорт",
+      "title": "В ЕАЭС ввели годовые квоты на беспошлинный импорт мяса КРС",
+      "summary": "Евразийская экономическая комиссия установила лимиты на ввоз в страны-члены ЕАЭС мяса крупного рогатого скота без уплаты импортной таможенной пошлины. Помимо этого, квоты на беспошлинный ввоз будут действовать в течение 2027 года.",
+      "publishedAt": "Thu, 27 Aug 2026 07:30:00 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1494412519320-aa613dfb7738?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc4OTcwMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
     {
       "source": "inform.kz",
       "topic": "Порты",
@@ -9,17 +29,17 @@
       "summary": "Состоялся рабочий визит заместителя министра иностранных дел Республики Казахстан Армана Исагалиева в Султанат Оман, МИД РК.",
       "publishedAt": "2026-08-27T16:35:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1596422572215-801e9c6beeaf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MTB8fHBvcnR8ZW58MXwwfHx8MTc4NzgzMTg1OHww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1760441471231-79f080ccca49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8cG9ydCUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODc4OTcwMzN8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Транспорт",
       "title": "КТЖ закупит 131 пассажирский вагон до конца 2027 года",
-      "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. При этом работа по модернизации продолжается.",
+      "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. Также отмечается, что работа по модернизации продолжается.",
       "publishedAt": "2026-07-28T21:40:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1621426634287-ffbb8b51cadb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8dHJhaW4lMjBjYXJyaWFnZSUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODc3MjUyOTR8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1678984239565-078e4c996756?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8dHJhaW4lMjBjYXJyaWFnZXxlbnwxfDB8fHwxNzg3ODk3MDMwfDA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

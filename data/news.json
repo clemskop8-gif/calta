@@ -1,45 +1,45 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-08-28T06:03:53.870503+00:00",
+  "updatedAt": "2026-08-28T11:55:51.693910+00:00",
   "items": [
     {
       "source": "logistan.info",
       "topic": "Транспорт",
       "title": "В Узбекистане ввели в эксплуатацию новые электростанции и накопители энергии на 2,4 ГВт",
-      "summary": "Энергетические объекты заработали в четырёх регионах республики. Кроме того, их суммарная мощность составляет до 2423 МВт. При этом стоимость — около 20 трлн сумов .",
+      "summary": "По сути, энергетические объекты заработали в четырёх регионах республики. Вместе с тем, как следует из доступных сведений, речь идёт о 2423. Помимо этого, согласно приведённым цифрам, показатель достигает 20.",
       "publishedAt": "Thu, 27 Aug 2026 12:51:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1695222833131-54ee679ae8e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc4OTcwMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1695222833131-54ee679ae8e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc5MTgxMzh8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "logistan.info",
-      "topic": "Транспорт",
-      "title": "В ЕАЭС ввели годовые квоты на беспошлинный импорт мяса КРС",
-      "summary": "Евразийская экономическая комиссия установила лимиты на ввоз в страны-члены ЕАЭС мяса крупного рогатого скота без уплаты импортной таможенной пошлины. Помимо этого, квоты на беспошлинный ввоз будут действовать в течение 2027 года.",
-      "publishedAt": "Thu, 27 Aug 2026 07:30:00 +0000",
+      "topic": "Грузы",
+      "title": "АБР включил страны Центральной Азии в проект модернизации погранпунктов",
+      "summary": "Как следует из доступных сведений, речь идёт о 400 млн. При этом как отмечается, средства направят на модернизацию авто- и ж/д пунктов пропуска, внедрение цифровых решений, установку современного оборудования для контроля и досмотра, а кроме того совершенствование процедур пограничного управления.",
+      "publishedAt": "Fri, 28 Aug 2026 09:21:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1494412519320-aa613dfb7738?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODc4OTcwMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1710865660313-52dab2ce6841?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NXx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4NzkxODEzOHww&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Порты",
       "title": "Казахстан рассматривает порты Омана как путь на рынки Персидского залива и Индийского океана",
-      "summary": "Состоялся рабочий визит заместителя министра иностранных дел Республики Казахстан Армана Исагалиева в Султанат Оман, МИД РК.",
+      "summary": "Как отмечается, состоялся рабочий визит заместителя министра иностранных дел Республики Казахстан Армана Исагалиева в Султанат Оман, МИД РК.",
       "publishedAt": "2026-08-27T16:35:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1760441471231-79f080ccca49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8cG9ydCUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODc4OTcwMzN8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1762088530544-f17a5a5f1c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8cG9ydCUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODc5MTgxNDV8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Транспорт",
       "title": "КТЖ закупит 131 пассажирский вагон до конца 2027 года",
-      "summary": "За последние четыре года в Казахстане обновили парк пассажирских поездов — приобретено 418 новых вагонов. Также отмечается, что работа по модернизации продолжается.",
+      "summary": "Получено 418 новейших вагонов подвижного состава — за минувшие четыре года подряд в Казахстане заменили часть подвижной состав пассажирских подвижного состава. При этом процесс по модернизации идёт и в настоящее время.",
       "publishedAt": "2026-07-28T21:40:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1678984239565-078e4c996756?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8dHJhaW4lMjBjYXJyaWFnZXxlbnwxfDB8fHwxNzg3ODk3MDMwfDA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1678984239565-078e4c996756?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8dHJhaW4lMjBjYXJyaWFnZXxlbnwxfDB8fHwxNzg3OTE4MTUxfDA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

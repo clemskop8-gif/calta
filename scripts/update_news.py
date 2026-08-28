@@ -7,6 +7,18 @@
 - ровно 6 новостей (по 2 с каждого сайта)
 - ТОЛЬКО логистика Центральной Азии
 - Уникальные картинки (без повторов)
+
+ИСПРАВЛЕНИЕ (см. is_relevant): golos.tj и logistan.info — профильные
+сайты по логистике/новостям Центральной Азии, и их собственные новости
+часто НЕ называют страну явно (это их локальный контекст, "Таджикистан"
+внутри таджикского сайта никто не пишет). Из-за этого старая версия
+фильтра отсеивала почти всё, что приходило с этих двух сайтов, и в
+ленте оставались только новости с inform.kz. Теперь для этих двух
+источников требование явного упоминания страны снято (используется
+implicit_region=True) — достаточно логистического ключевого слова.
+Для inform.kz (общее казахстанское агентство, пишет и про мировую
+логистику) требование явного упоминания страны ЦА сохранено, чтобы не
+тащить нерелевantные новости.
 """
 import html
 import json
@@ -97,8 +109,17 @@ REQUIRED_LOGISTICS_KEYWORDS = [
 # "хаб" внутри "Ашхабад" или "порт" внутри "паспорт"/"экспорт"/"импорт".
 _REQUIRED_PATTERNS = [re.compile(r'\b' + re.escape(kw)) for kw in REQUIRED_LOGISTICS_KEYWORDS]
 
-def is_relevant(title, summary):
-    """Проверяет, относится ли новость к логистике в Центральной Азии."""
+def is_relevant(title, summary, implicit_region=False):
+    """
+    Проверяет, относится ли новость к логистике в Центральной Азии.
+
+    implicit_region=True — используется для источников, которые сами по
+    себе на 100% посвящены логистике/новостям Центральной Азии
+    (golos.tj, logistan.info). Их собственные новости почти никогда не
+    называют страну явно (это их локальный контекст), поэтому для них
+    требование явного упоминания страны снимается — достаточно
+    логистического ключевого слова + отсутствия стоп-слов.
+    """
     if not title:
         return False
 
@@ -113,6 +134,11 @@ def is_relevant(title, summary):
     # с границей слова слева — без ложных срабатываний внутри других слов)
     if not any(p.search(full_text) for p in _REQUIRED_PATTERNS):
         return False
+
+    # Для источников, целиком посвящённых логистике ЦА, явного упоминания
+    # страны не требуем — иначе почти все их новости отсеиваются.
+    if implicit_region:
+        return True
 
     # Проверяем страны ЦА
     return any(country in full_text for country in COUNTRIES)
@@ -659,7 +685,9 @@ def collect_golos():
         if not title:
             continue
         summary = strip_html(entry.get("description") or entry.get("summary") or "")[:800]
-        if not is_relevant(title, summary):
+        # golos.tj — таджикский сайт; его новости о логистике почти
+        # никогда не называют "Таджикистан" явно, поэтому страну не требуем.
+        if not is_relevant(title, summary, implicit_region=True):
             continue
         unique_summary = generate_unique_summary(title, summary)
         photo = pick_photo_from_unsplash(title)
@@ -689,7 +717,9 @@ def collect_logistan():
         if not title:
             continue
         summary = strip_html(entry.get("description") or entry.get("summary") or "")[:800]
-        if not is_relevant(title, summary):
+        # logistan.info целиком посвящён логистике Центральной Азии —
+        # явного упоминания страны в конкретной новости не требуем.
+        if not is_relevant(title, summary, implicit_region=True):
             continue
         unique_summary = generate_unique_summary(title, summary)
         photo = pick_photo_from_unsplash(title)
@@ -747,6 +777,9 @@ def collect_inform():
             continue
         summary = meta("og:description")[:800]
         published = meta("article:published_time") or meta("pubdate")
+        # inform.kz — общее казахстанское агентство, освещает и мировую
+        # логистику, поэтому здесь по-прежнему требуем явное упоминание
+        # страны ЦА, чтобы не тащить нерелевантные новости.
         if not is_relevant(title, summary):
             continue
         unique_summary = generate_unique_summary(title, summary)

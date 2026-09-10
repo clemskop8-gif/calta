@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Заявка участника — Шуский транспортно-логистический форум · CALTA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#101B33;
+    --navy-2:#17223F;
+    --navy-3:#1F2C4D;
+    --sand:#E7E0CC;
+    --sand-2:#F4F0E4;
+    --turquoise:#14958C;
+    --turquoise-light:#4FB8AF;
+    --ochre:#C6862E;
+    --ink:#171712;
+    --cream:#F3EFE2;
+    --line:rgba(23,23,18,0.14);
+    --line-dark:rgba(243,239,226,0.16);
+    --display:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--display);
+    background:var(--sand-2);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+    opacity:.75;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--turquoise);flex:0 0 auto;}
+
+  header{
+    position:relative;
+    background:
+      repeating-linear-gradient(90deg, rgba(243,239,226,0.05) 0px, rgba(243,239,226,0.05) 2px, transparent 2px, transparent 34px),
+      linear-gradient(160deg, #0D1220 0%, #141C30 55%, #0D1220 100%);
+    color:var(--cream);
+    padding:38px 0 50px;
+    overflow:hidden;
+  }
+  header::after{
+    content:'';position:absolute;left:0;right:0;top:100px;height:1px;
+    background:linear-gradient(90deg, transparent, rgba(243,239,226,0.22) 15%, rgba(243,239,226,0.22) 85%, transparent);
+  }
+  .corridor{
+    display:flex;align-items:center;gap:0;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    margin-bottom:40px;
+    color:rgba(243,239,226,0.55);
+  }
+  .corridor .node{display:flex;align-items:center;gap:8px;white-space:nowrap;}
+  .corridor .node .pt{width:6px;height:6px;border-radius:50%;background:rgba(243,239,226,0.4);flex:0 0 auto;}
+  .corridor .node.here .pt{width:9px;height:9px;background:var(--ochre);box-shadow:0 0 0 3px rgba(198,134,46,0.25);}
+  .corridor .node.here{color:var(--cream);font-weight:500;}
+  .corridor .link{flex:1;min-width:20px;height:1px;background:repeating-linear-gradient(90deg, rgba(243,239,226,0.35) 0 4px, transparent 4px 8px);margin:0 10px;}
+  header .wordmark{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.6;margin-bottom:6px;}
+
+  h1{
+    font-family:var(--display);font-weight:600;letter-spacing:-.01em;
+    font-size:clamp(28px,4vw,42px);
+    line-height:1.15;
+    margin-bottom:18px;
+  }
+  .subtitle{
+    font-size:16px;
+    font-style:italic;
+    opacity:.82;
+    max-width:640px;
+    line-height:1.6;
+    margin-bottom:24px;
+  }
+  .tag-row{
+    display:flex;flex-wrap:wrap;gap:8px 18px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+    opacity:.6;
+  }
+  .tag-row span:not(:last-child)::after{content:'·';margin-left:18px;opacity:.5;}
+
+  main{padding:44px 0 80px;}
+
+  .info-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:2px;
+    margin-bottom:36px;
+    overflow:hidden;
+  }
+  .info-row{
+    display:grid;
+    grid-template-columns:190px 1fr;
+    column-gap:24px;
+    padding:18px 30px;
+    border-bottom:1px solid var(--line);
+    align-items:baseline;
+  }
+  .info-row:last-child{border-bottom:none;}
+  .info-row .k{
+    font-family:var(--mono);font-size:13.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;
+    color:#0C7B73;
+  }
+  .info-row .v{font-size:15px;line-height:1.55;}
+  @media(max-width:600px){
+    .info-row{grid-template-columns:1fr;row-gap:6px;padding:16px 22px;}
+  }
+
+  .steps{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:36px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .step{display:flex;align-items:center;gap:9px;}
+  .step .bullet{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--ink);flex:0 0 auto;}
+  .step.active .bullet{background:var(--turquoise);border-color:var(--turquoise);}
+  .step.active{opacity:1;}
+  .step:not(.active){opacity:.4;}
+  .steps .rule{flex:1;height:1px;background:var(--line);min-width:24px;}
+
+  form{background:#fff;border:1px solid var(--line);border-radius:2px;padding:36px 34px 40px;}
+  .section-title{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    padding-bottom:14px;margin-bottom:26px;border-bottom:1px solid var(--line);
+  }
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;margin-bottom:8px;}
+  @media(max-width:600px){.field-grid{grid-template-columns:1fr;}}
+  .field label{
+    display:block;font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+    opacity:.6;margin-bottom:8px;
+  }
+  .field label .req{color:var(--turquoise);opacity:1;}
+  .field input{
+    width:100%;padding:11px 13px;
+    border:1px solid var(--line);border-radius:2px;
+    background:var(--sand-2);
+    font-family:var(--display);font-size:14.5px;color:var(--ink);
+    transition:border-color .2s, background .2s;
+  }
+  .field input::placeholder{color:rgba(23,23,18,0.35);}
+  .field input:focus{outline:none;border-color:var(--turquoise);background:#fff;}
+
+  .format-section{margin-top:36px;}
+  .option{
+    display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer;
+  }
+  .option:last-of-type{border-bottom:none;}
+  .option input[type="checkbox"]{
+    margin-top:3px;width:17px;height:17px;accent-color:var(--turquoise);flex:0 0 auto;cursor:pointer;
+  }
+  .option .opt-title{font-weight:600;font-size:15px;margin-bottom:3px;}
+  .option .opt-desc{font-size:13.5px;opacity:.65;line-height:1.5;}
+
+  .submit-row{
+    margin-top:32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  }
+  button.submit-btn{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--navy);color:var(--cream);
+    border:none;padding:15px 30px;border-radius:2px;cursor:pointer;
+    transition:background .2s;
+  }
+  button.submit-btn:hover{background:var(--navy-2);}
+  .submit-note{font-size:12.5px;opacity:.55;}
+
+  .success-panel{
+    display:none;background:#fff;border:1px solid var(--line);border-radius:2px;
+    padding:56px 34px;text-align:center;
+  }
+  .success-panel.show{display:block;}
+  form.hidden{display:none;}
+  .success-panel .check{
+    width:52px;height:52px;border-radius:50%;background:var(--turquoise);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+  }
+  .success-panel h2{font-size:22px;margin-bottom:12px;}
+  .success-panel p{opacity:.65;font-size:14.5px;max-width:400px;margin:0 auto;}
+
+  .footer-contacts{
+    margin-top:44px;padding-top:28px;border-top:1px solid var(--line);
+    font-size:13.5px;line-height:1.9;opacity:.75;
+  }
+  .footer-contacts .k{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;display:block;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="wordmark">CALTA — Форум Шу · 2026</div>
+    <div class="corridor">
+      <span class="node"><span class="pt"></span>Китай</span>
+      <span class="link"></span>
+      <span class="node here"><span class="pt"></span>Шу</span>
+      <span class="link"></span>
+      <span class="node"><span class="pt"></span>Кавказ</span>
+      <span class="link"></span>
+      <span class="node"><span class="pt"></span>Европа</span>
+    </div>
+    <div class="eyebrow"><span class="dot"></span>Заявка участника · CALTA</div>
+    <h1>Шуский транспортно-логистический форум</h1>
+    <p class="subtitle">Круглый стол «Инновации и новые технологии в перевозках, эффективная логистика. Современные системы учёта перевозок грузов»</p>
+    <div class="tag-row">
+      <span>Железнодорожный узел Шу</span>
+      <span>Запад–Восток / Центр–Юг</span>
+      <span>Китай–Европа–Кавказ</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="info-card">
+      <div class="info-row"><div class="k">Дата и время</div><div class="v">5 ноября 2026 г. · регистрация 9:00–10:00</div></div>
+      <div class="info-row"><div class="k">Место</div><div class="v">Жамбылская область, г. Шу, с. Толе би, ул. Толе би, 173 — районный Дворец Культуры</div></div>
+      <div class="info-row"><div class="k">Организаторы</div><div class="v">CALTA, Акимат Шуского района и города Шу</div></div>
+      <div class="info-row"><div class="k">При поддержке</div><div class="v">АО НК «КТЖ», ОЮЛ «Казлогистик», НИИ ТК, GIZ, ТОО «Сауда Сервис», СЭЗ «Jibek Joly», ТОО «Транс система»</div></div>
+    </div>
+
+    <div class="steps">
+      <div class="step active"><span class="bullet"></span>Данные участника</div>
+      <div class="rule"></div>
+      <div class="step" id="step2"><span class="bullet"></span>Заявка сформирована</div>
+    </div>
+
+    <form id="registrationForm">
+      <div class="section-title">Данные участника</div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label>ФИО <span class="req">*</span></label>
+          <input type="text" name="fio" required>
+        </div>
+        <div class="field">
+          <label>Организация <span class="req">*</span></label>
+          <input type="text" name="org" required>
+        </div>
+        <div class="field">
+          <label>Должность</label>
+          <input type="text" name="position">
+        </div>
+        <div class="field">
+          <label>Телефон <span class="req">*</span></label>
+          <input type="tel" name="phone" placeholder="+7 __ ___ __ __" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email">
+        </div>
+        <div class="field">
+          <label>Страна, город</label>
+          <input type="text" name="city" placeholder="напр. Бишкек, Кыргызстан">
+        </div>
+      </div>
+
+      <div class="format-section">
+        <div class="section-title">Формат участия</div>
+
+        <label class="option">
+          <input type="checkbox" name="format_main" checked>
+          <div>
+            <div class="opt-title">Очное участие в форуме и круглом столе</div>
+            <div class="opt-desc">10:00 — приветственные слова, доклады и презентации, подписание меморандумов</div>
+          </div>
+        </label>
+
+        <label class="option">
+          <input type="checkbox" name="format_talk">
+          <div>
+            <div class="opt-title">Планирую выступить с докладом</div>
+            <div class="opt-desc">укажите тему — оргкомитет включит выступление в программу</div>
+          </div>
+        </label>
+
+        <label class="option">
+          <input type="checkbox" name="format_visit">
+          <div>
+            <div class="opt-title">Выездная сессия</div>
+            <div class="opt-desc">14:15–16:30 — ТЛЦ «Сауда Сервис», депо «Alstom», вокзал Шу</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="submit-btn">Сформировать заявку</button>
+        <span class="submit-note">Поля со звёздочкой обязательны для заполнения</span>
+      </div>
+    </form>
+
+    <div class="success-panel" id="successPanel">
+      <div class="check">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>Заявка отправлена</h2>
+      <p>Спасибо! Оргкомитет свяжется с вами для подтверждения участия и уточнения деталей программы.</p>
+    </div>
+
+    <div class="footer-contacts">
+      <span class="k">По вопросам организации, регистрации и подачи докладов</span>
+      Аскар Комаев +7 747 869 20 90 &nbsp;·&nbsp; Дастан (CALTA) +7 707 777 05 18 &nbsp;·&nbsp; В.Д. Лыткин +7 747 777 07 91
+    </div>
+
+  </div>
+</main>
+
+<script>
+  document.getElementById('registrationForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    this.classList.add('hidden');
+    document.getElementById('successPanel').classList.add('show');
+    document.getElementById('step2').classList.add('active');
+  });
+</script>
+
+</body>
+</html>

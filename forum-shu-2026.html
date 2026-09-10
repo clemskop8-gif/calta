@@ -70,6 +70,29 @@
   .corridor .node.here .pt{width:9px;height:9px;background:var(--ochre);box-shadow:0 0 0 3px rgba(198,134,46,0.25);}
   .corridor .node.here{color:var(--cream);font-weight:500;}
   .corridor .link{flex:1;min-width:20px;height:1px;background:repeating-linear-gradient(90deg, rgba(243,239,226,0.35) 0 4px, transparent 4px 8px);margin:0 10px;}
+  .header-top{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:26px;
+  }
+  .header-logo{
+    display:flex;align-items:center;gap:10px;
+  }
+  .header-logo-mark{
+    width:36px;height:36px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .header-logo-mark img{width:100%;height:100%;object-fit:contain;display:block;}
+  .header-logo-text{
+    font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.02em;color:var(--cream);
+  }
+  .back-link{
+    display:inline-flex;align-items:center;gap:7px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(243,239,226,0.75);
+    padding:8px 14px;border:1px solid rgba(243,239,226,0.25);border-radius:2px;
+    transition:background .2s,border-color .2s,color .2s;
+  }
+  .back-link:hover{background:rgba(243,239,226,0.1);border-color:rgba(243,239,226,0.5);color:var(--cream);}
   header .wordmark{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;opacity:.6;margin-bottom:6px;}
 
   h1{
@@ -201,6 +224,16 @@
 
 <header>
   <div class="wrap">
+    <div class="header-top">
+      <a href="index.html" class="header-logo">
+        <span class="header-logo-mark"><img src="CALTA logo.png" alt="CALTA"></span>
+        <span class="header-logo-text">CALTA</span>
+      </a>
+      <a href="index.html" class="back-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Назад на сайт
+      </a>
+    </div>
     <div class="wordmark">CALTA — Форум Шу · 2026</div>
     <div class="corridor">
       <span class="node"><span class="pt"></span>Китай</span>
@@ -319,11 +352,49 @@
 </main>
 
 <script>
-  document.getElementById('registrationForm').addEventListener('submit', function(e){
+  // ==== НАСТРОЙКА: вставьте сюда URL вашего Google Apps Script Web App ====
+  const GOOGLE_SCRIPT_URL = 'ВСТАВЬТЕ_СЮДА_URL_ВАШЕГО_APPS_SCRIPT';
+  // ==========================================================================
+
+  const form = document.getElementById('registrationForm');
+  const submitBtn = form.querySelector('.submit-btn');
+
+  form.addEventListener('submit', function(e){
     e.preventDefault();
-    this.classList.add('hidden');
-    document.getElementById('successPanel').classList.add('show');
-    document.getElementById('step2').classList.add('active');
+
+    const data = {
+      fio: form.fio.value.trim(),
+      org: form.org.value.trim(),
+      position: form.position.value.trim(),
+      phone: form.phone.value.trim(),
+      email: form.email.value.trim(),
+      city: form.city.value.trim(),
+      format_main: form.format_main.checked ? 'Очное участие' : '',
+      format_talk: form.format_talk.checked ? 'Доклад' : '',
+      format_visit: form.format_visit.checked ? 'Выездная сессия' : '',
+      timestamp: new Date().toLocaleString('ru-RU')
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка...';
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      form.classList.add('hidden');
+      document.getElementById('successPanel').classList.add('show');
+      document.getElementById('step2').classList.add('active');
+    })
+    .catch((err) => {
+      console.error(err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Сформировать заявку';
+      alert('Не удалось отправить заявку. Попробуйте ещё раз или свяжитесь с оргкомитетом по телефону.');
+    });
   });
 </script>
 

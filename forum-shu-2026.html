@@ -326,15 +326,8 @@
             <div class="opt-desc">ТЛЦ «Сауда Сервис», депо «Alstom», вокзал Шу</div>
           </div>
         </label>
-      </div>
 
-      <div class="submit-row">
-        <button type="submit" class="submit-btn">Сформировать заявку</button>
-        <span class="submit-note">Поля со звёздочкой обязательны для заполнения</span>
-      </div>
-    </form>
-
-    <label class="option">
+        <label class="option">
           <input type="checkbox" name="format_sponsor">
           <div>
             <div class="opt-title">Спонсор</div>
@@ -342,6 +335,12 @@
           </div>
         </label>
       </div>
+
+      <div class="submit-row">
+        <button type="submit" class="submit-btn">Сформировать заявку</button>
+        <span class="submit-note">Поля со звёздочкой обязательны для заполнения</span>
+      </div>
+    </form>
 
     <div class="success-panel" id="successPanel">
       <div class="check">
@@ -380,6 +379,7 @@
       format_main: form.format_main.checked ? 'Очное участие' : '',
       format_talk: form.format_talk.checked ? 'Доклад' : '',
       format_visit: form.format_visit.checked ? 'Выездная сессия' : '',
+      format_sponsor: form.format_sponsor.checked ? 'Спонсор' : '',
       timestamp: new Date().toLocaleString('ru-RU')
     };
 

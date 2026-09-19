@@ -1,45 +1,35 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-09-18T09:34:46.862090+00:00",
+  "updatedAt": "2026-09-19T09:21:34.298927+00:00",
   "items": [
-    {
-      "source": "logistan.info",
-      "topic": "Транспорт",
-      "title": "На западе Казахстана строят сервисный центр KAMAZ",
-      "summary": "Фактически, объект расположится вдоль Южной объездной дороги города Актобе. Также отмечается, что фактически, он будет обслуживать грузовую и спецтехнику, Актюбинской области. Помимо этого, по сути, ожидается, что объект станет первым в республике сервисным центром подобного гибридного формата.",
-      "publishedAt": "Wed, 16 Sep 2026 15:10:56 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODk3MjQwNzV8MA&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
     {
       "source": "logistan.info",
       "topic": "Порты",
       "title": "Конкуренция портов на Каспии: почему современный Туркменбаши проигрывает Актау?",
-      "summary": "Судя по всему, пока терминал Туркменбаши проигрывает казахстанскому Актау. Помимо этого, фактически, и дело вовсе не в инфраструктуре. Также отмечается, что фактически, грузоотправители не готовы менять понятную, выстроенную систему на более технологичную, но непрозрачную альтернативу.",
+      "summary": "Фактически, пока гавань Туркменбаши проигрывает казахстанскому Актау. Кроме того, судя по всему, и дело вовсе не в инфраструктуре. Также отмечается, что как отмечается, грузоотправители не готовы менять понятную, выстроенную систему на более технологичную, но непрозрачную альтернативу.",
       "publishedAt": "Thu, 17 Sep 2026 04:20:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1678182451047-196f22a4143e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OXx8cG9ydHxlbnwxfDB8fHwxNzg5NTUyMTQzfDA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1562892302-97faedd66f1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8M3x8cG9ydHxlbnwxfDB8fHwxNzg5ODA5NjgxfDA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
-      "source": "golos.tj",
-      "topic": "Терминалы",
-      "title": "Apple показала первый в истории iPhone-«раскладушку»🎦",
-      "summary": "По имеющимся данным, ключевой показатель составляет 9. Кроме того, по сути, это первый смартфон компании с гибким экраном. По имеющимся данным, по сути, еще одной особенностью стала фронтальная камера, размещенная под дисплеем.",
-      "publishedAt": "Thu, 10 Sep 2026 03:37:41 +0000",
+      "source": "logistan.info",
+      "topic": "Транспорт",
+      "title": "Более 18% поставок по нефтепроводу БТД приходится на нефть из Казахстана и Туркменистана",
+      "summary": "Как следует из доступных сведений, речь идёт о 2026. При этом как следует из доступных сведений, речь идёт о 18,1%. Помимо этого, по сути, в целом по трубопроводу БТД в январе – августе.",
+      "publishedAt": "Fri, 18 Sep 2026 13:09:14 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1710865660313-52dab2ce6841?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Nnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4OTU1MjE0MXww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODk4MDk2ODF8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Порты",
       "title": "Казахстан рассматривает порты Омана как путь на рынки Персидского залива и Индийского океана",
-      "summary": "Фактически, состоялся рабочий визит заместителя министра иностранных дел Республики Казахстан Армана Исагалиева в Султанат Оман, МИД РК.",
+      "summary": "По сути, состоялся рабочий визит заместителя министра иностранных дел Республики Казахстан Армана Исагалиева в Султанат Оман, МИД РК.",
       "publishedAt": "2026-08-27T16:35:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1678182451047-196f22a4143e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OXx8cG9ydHxlbnwxfDB8fHwxNzg5NzI0MDc1fDA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1760441471231-79f080ccca49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8cG9ydCUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODk4MDk2OTB8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

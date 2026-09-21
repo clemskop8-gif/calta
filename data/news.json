@@ -1,35 +1,35 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-09-20T09:43:01.083964+00:00",
+  "updatedAt": "2026-09-21T10:36:22.555074+00:00",
   "items": [
-    {
-      "source": "logistan.info",
-      "topic": "Порты",
-      "title": "Конкуренция портов на Каспии: почему современный Туркменбаши проигрывает Актау?",
-      "summary": "Судя по всему, пока гавань Туркменбаши проигрывает казахстанскому Актау. Кроме того, как отмечается, и дело вовсе не в инфраструктуре. Вместе с тем, судя по всему, грузоотправители не готовы менять понятную, выстроенную систему на более технологичную, но непрозрачную альтернативу.",
-      "publishedAt": "Thu, 17 Sep 2026 04:20:00 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1595587637401-83ff822bd63e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Nnx8cG9ydHxlbnwxfDB8fHwxNzg5ODk3MzcwfDA&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
     {
       "source": "golos.tj",
       "topic": "Терминалы",
       "title": "Apple показала первый в истории iPhone-«раскладушку»🎦",
-      "summary": "Соответствующий показатель, по последним данным, находится на уровне 9. Вместе с тем, фактически, это первый смартфон компании с гибким экраном. При этом судя по всему, еще одной особенностью стала фронтальная камера, размещенная под дисплеем.",
+      "summary": "Как следует из доступных сведений, речь идёт о 9. Кроме того, как отмечается, это первый смартфон компании с гибким экраном. Вместе с тем, как отмечается, еще одной особенностью стала фронтальная камера, размещенная под дисплеем.",
       "publishedAt": "Thu, 10 Sep 2026 03:37:41 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODk4OTczNjh8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1592838064575-70ed626d3a0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODk5ODY5NjV8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "logistan.info",
       "topic": "Транспорт",
-      "title": "Более 18% поставок по нефтепроводу БТД приходится на нефть из Казахстана и Туркменистана",
-      "summary": "По имеющимся данным, ключевой показатель составляет 2026. Помимо этого, соответствующий показатель, по последним данным, находится на уровне 18,1%. При этом фактически, в целом по трубопроводу БТД в январе – августе.",
-      "publishedAt": "Fri, 18 Sep 2026 13:09:14 +0000",
+      "title": "На северо-западе Узбекистана запустили СЭС мощность 126 МВт",
+      "summary": "Как отмечается, солнечная электростанция «Саримай» расположена в Хорезмской области Узбекистана. По имеющимся данным, по имеющимся данным, ключевой показатель составляет 180. При этом как следует из доступных сведений, речь идёт о 126.",
+      "publishedAt": "Mon, 21 Sep 2026 10:31:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1774850714304-7b9438c97ec1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4OTg5NzM3MHww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1494412519320-aa613dfb7738?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3ODk5ODY5NjV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "source": "logistan.info",
+      "topic": "Транспорт",
+      "title": "На севере Кыргызстана заработал стекольный завод за $5,5 млн",
+      "summary": "Как отмечается, предприятие «Гласс Центр» расположено в Ысык-Атинском районе Чуйской области Кыргызстана. Также отмечается, что судя по всему, оно специализируется на производстве стеклопакетов и светоотражающих стекол. Вместе с тем, соответствующий показатель, по последним данным, находится на уровне 144 тыс. По имеющимся данным, по данным Мощность завод, ключевые параметры составляют 482 млн.",
+      "publishedAt": "Mon, 21 Sep 2026 08:29:25 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1765436271393-16377d973d0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8N3x8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc4OTk4Njk2OHww&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
@@ -39,7 +39,7 @@
       "summary": "Фактически, состоялся рабочий визит заместителя министра иностранных дел Республики Казахстан Армана Исагалиева в Султанат Оман, МИД РК.",
       "publishedAt": "2026-08-27T16:35:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1760441471231-79f080ccca49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8cG9ydCUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODk4OTczNzV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1762088530544-f17a5a5f1c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8cG9ydCUyMGNlbnRyYWwlMjBhc2lhfGVufDF8MHx8fDE3ODk5ODY5NzZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

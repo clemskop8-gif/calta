@@ -1,35 +1,45 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-09-28T11:37:03.708723+00:00",
+  "updatedAt": "2026-09-29T11:15:30.831368+00:00",
   "items": [
     {
       "source": "logistan.info",
       "topic": "Порты",
       "title": "KTZ Express организовал контейнерные ж/д перевозки в Индию",
-      "summary": "Как отмечается, логистический оператор KTZ Express организовал мультимодальную перевозку чечевицы в Индию. Помимо этого, фактически, с ж/д станции Акколь продукция отправили до порта Актау. Вместе с тем, судя по всему, далее его перенаправили по Каспийскому морю до порта Алят .",
+      "summary": "Судя по всему, логистический оператор KTZ Express организовал мультимодальную перевозку чечевицы в Индию. Вместе с тем, фактически, с ж/д станции Акколь продукция отправили до порта Актау. Также отмечается, что как отмечается, далее его перенаправили по Каспийскому морю до порта Алят .",
       "publishedAt": "Thu, 24 Sep 2026 05:20:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1605745341112-85968b19335b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8Y29udGFpbmVyfGVufDF8MHx8fDE3OTA1OTU0MTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1493946740644-2d8a1f1a6aff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NXx8Y29udGFpbmVyfGVufDF8MHx8fDE3OTA2ODA1Mjd8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "golos.tj",
-      "topic": "Терминалы",
-      "title": "Apple показала первый в истории iPhone-«раскладушку»🎦",
-      "summary": "Согласно приведённым цифрам, показатель достигает 9. Также отмечается, что фактически, это первый смартфон компании с гибким экраном. По имеющимся данным, фактически, еще одной особенностью стала фронтальная камера, размещенная под дисплеем.",
-      "publishedAt": "Thu, 10 Sep 2026 03:37:41 +0000",
+      "topic": "Логистика",
+      "title": "От бумаги к цифре: Москва и Душанбе упрощают таможенные процедуры",
+      "summary": "Как следует из доступных сведений, речь идёт о 83.",
+      "publishedAt": "Mon, 28 Sep 2026 21:12:51 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1709885536197-9f12cd1f480c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc5MDU5NTQxM3ww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1578575437130-527eed3abbec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Nnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3OTA2ODA1MjR8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "logistan.info",
       "topic": "Транспорт",
       "title": "Таджикистан хочет привлечь инвесторов для строительства логцентров",
-      "summary": "Соответствующий показатель, по последним данным, находится на уровне 10. Также отмечается, что судя по всему, в настоящее время власти ведут поиски международных партнеров, . По имеющимся данным, судя по всему, при этом параметры и места расположения объектов, приблизительные сроки строительства, объём необходимых инвестиций пока не определены.",
+      "summary": "По имеющимся данным, ключевой показатель составляет 10. Кроме того, по сути, в настоящее время власти ведут поиски международных партнеров, . Также отмечается, что как отмечается, при этом параметры и места расположения объектов, приблизительные сроки строительства, объём необходимых инвестиций пока не определены.",
       "publishedAt": "Fri, 25 Sep 2026 13:56:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1559297434-fae8a1916a79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3OTA1OTU0MTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1759322546857-748a67fc04b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8OXx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc5MDY4MDUyN3ww&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "source": "inform.kz",
+      "topic": "Порты",
+      "title": "Средний коридор, порты и технологии: Казахстан расширяет сотрудничество с Бельгией",
+      "summary": "По сути, посол Казахстана в Бельгии Роман Василенко провел встречи с руководством Торгово-промышленной палаты Антверпен-Ваасланд , мэрии Антверпена, инновационно-технологического хаба The Beacon и Порта Антверпен-Брюгге, иностранных дел РК.",
+      "publishedAt": "2026-09-28T17:35:00Z",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MXx8Y29ycmlkb3J8ZW58MXwwfHx8MTc5MDY4MDUyOXww&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

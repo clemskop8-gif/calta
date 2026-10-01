@@ -1,15 +1,25 @@
 {
   "isDemo": false,
-  "updatedAt": "2026-09-30T11:03:42.892318+00:00",
+  "updatedAt": "2026-10-01T11:30:12.268099+00:00",
   "items": [
     {
       "source": "logistan.info",
-      "topic": "Порты",
-      "title": "KTZ Express организовал контейнерные ж/д перевозки в Индию",
-      "summary": "Как отмечается, логистический оператор KTZ Express организовал мультимодальную перевозку чечевицы в Индию. По имеющимся данным, как отмечается, с ж/д станции Акколь продукция отправили до порта Актау. Также отмечается, что как отмечается, далее его перенаправили по Каспийскому морю до порта Алят .",
-      "publishedAt": "Thu, 24 Sep 2026 05:20:00 +0000",
+      "topic": "Транспорт",
+      "title": "IBC Global представит рейтинг крупнейших владельцев складов класса А на CAWS 2026",
+      "summary": "Судя по всему, компания IBC Global представит обновленный рейтинг крупнейших владельцев складской недвижимости класса А в Казахстане в рамках международного Central Asia Warehouse Summit .",
+      "publishedAt": "Thu, 01 Oct 2026 07:40:00 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1601897690942-bcacbad33e55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Nnx8Y29udGFpbmVyfGVufDF8MHx8fDE3OTA1OTU0MTV8MA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1709885536197-9f12cd1f480c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc5MDg1NDIwOXww&ixlib=rb-4.1.0&q=80&w=1080"
+      }
+    },
+    {
+      "source": "logistan.info",
+      "topic": "Транспорт",
+      "title": "Новый терминал в аэропорту Оша планируют сдать в начале 2027 года",
+      "summary": "По сути, в «южной» столице Кыргызстана идёт и в настоящее время сооружение нового терминала «Международного аэропорта Ош». Помимо этого, как отмечается, он будет включать в себя шесть корпусов, два наземных и подземный этажи. Вместе с тем, согласно приведённым цифрам, показатель достигает 25,4 тыс.",
+      "publishedAt": "Thu, 01 Oct 2026 07:03:53 +0000",
+      "photo": {
+        "url": "https://images.unsplash.com/photo-1789540671757-1b2f77976a1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8MTB8fHRlcm1pbmFsJTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc5MDg1NDIwOXww&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
@@ -19,27 +29,17 @@
       "summary": "Соответствующий показатель, по последним данным, находится на уровне 83.",
       "publishedAt": "Mon, 28 Sep 2026 21:12:51 +0000",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1709885536197-9f12cd1f480c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc5MDc2NjIxNXww&ixlib=rb-4.1.0&q=80&w=1080"
-      }
-    },
-    {
-      "source": "logistan.info",
-      "topic": "Транспорт",
-      "title": "Таджикистан хочет привлечь инвесторов для строительства логцентров",
-      "summary": "Согласно приведённым цифрам, показатель достигает 10. При этом как отмечается, в настоящее время власти ведут поиски международных партнеров, . Также отмечается, что судя по всему, при этом параметры и места расположения объектов, приблизительные сроки строительства, объём необходимых инвестиций пока не определены.",
-      "publishedAt": "Fri, 25 Sep 2026 13:56:00 +0000",
-      "photo": {
-        "url": "https://images.unsplash.com/photo-1788770691954-53ef8f9d8cac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0JTIwY2VudHJhbCUyMGFzaWF8ZW58MXwwfHx8MTc5MDc2NjIxNXww&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1559297434-fae8a1916a79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NHx8bG9naXN0aWNzJTIwdHJhbnNwb3J0fGVufDF8MHx8fDE3OTA4NTQyMDd8MA&ixlib=rb-4.1.0&q=80&w=1080"
       }
     },
     {
       "source": "inform.kz",
       "topic": "Порты",
       "title": "Средний коридор, порты и технологии: Казахстан расширяет сотрудничество с Бельгией",
-      "summary": "Судя по всему, ваасланд , мэрии Антверпена, инновационно-технологического хаба The Beacon и Порта Антверпен-Брюгге, иностранных дел РК — посол Казахстана в Бельгии Роман Василенко провел встречи с руководством Торгово-промышленной палаты Антверпен.",
+      "summary": "Как отмечается, ваасланд , мэрии Антверпена, инновационно-технологического хаба The Beacon и Порта Антверпен-Брюгге, иностранных дел РК — посол Казахстана в Бельгии Роман Василенко провел встречи с руководством Торгово-промышленной палаты Антверпен.",
       "publishedAt": "2026-09-28T17:35:00Z",
       "photo": {
-        "url": "https://images.unsplash.com/photo-1774850767328-a805e3d72054?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8Mnx8Y29ycmlkb3IlMjBjZW50cmFsJTIwYXNpYXxlbnwxfDB8fHwxNzkwNzY2MjIyfDA&ixlib=rb-4.1.0&q=80&w=1080"
+        "url": "https://images.unsplash.com/photo-1573247257746-e445228fe991?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMDM1MTM3fDB8MXxzZWFyY2h8NXx8Y29ycmlkb3J8ZW58MXwwfHx8MTc5MDg1NDIxMXww&ixlib=rb-4.1.0&q=80&w=1080"
       }
     }
   ]

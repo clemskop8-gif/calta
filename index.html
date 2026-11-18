@@ -833,20 +833,32 @@ html {
   /* Фото в карточках «Преимущества международного сотрудничества» */
   .adv-art.adv-photo{height:auto;aspect-ratio:16/9;object-fit:cover;}
 
-  /* Узор из квадратов с «хвоста» логотипа CALTA на светлых секциях */
+
+  /* Узор из квадратов с «хвоста» логотипа CALTA на светлых секциях.
+     Цвет узора = цвет цветной секции, которая идёт выше. */
   section.sand::before,
-  section.sand::after{
+  section.sand#why::after{
     content:'';position:absolute;z-index:-1;pointer-events:none;
-    width:clamp(120px,15vw,250px);aspect-ratio:330/710;
-    background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%232F9B58%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%232F9B58%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%232F9B58%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%232F9B58%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%232F9B58%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%232F9B58%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%2314427A%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%2314427A%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%2314427A%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%2314427A%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%2314427A%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230A4A63%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230A4A63%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%230A4A63%22/%3E%3C/svg%3E") center/contain no-repeat;
-    opacity:.42;
+    /* ширина = свободное поле сбоку от контента (контент 1230px по центру) */
+    width:clamp(56px,calc((100vw - 1230px) / 2 - 4px),250px);aspect-ratio:330/710;
+    background-position:center;background-size:contain;background-repeat:no-repeat;
+    opacity:.5;
   }
   section.sand::before{left:0;top:60px;}
-  section.sand::after{right:0;bottom:60px;transform:scaleX(-1);}
+  section.sand#why::after{right:0;bottom:60px;transform:scaleX(-1);}
+  #about::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%236F95D1%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%236F95D1%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%236F95D1%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%236F95D1%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%236F95D1%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%236F95D1%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3C/svg%3E");}
+  #directions::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%234FB0DD%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%234FB0DD%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%234FB0DD%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%230F87BD%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3C/svg%3E");}
+  #why::before,
+  #why::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%23E0707F%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%23E0707F%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%23E0707F%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%23E0707F%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%23E0707F%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%23E0707F%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3C/svg%3E");}
+  #insights::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%234FCB68%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%234FCB68%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%234FCB68%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%234FCB68%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%234FCB68%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%234FCB68%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23137A29%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3C/svg%3E");}
+  #contact::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%23EBBE72%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%23EBBE72%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%23EBBE72%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3C/svg%3E");}
+  @media(max-width:1230px){
+    section.sand::before,section.sand#why::after{opacity:.38;}
+  }
   @media(max-width:760px){
-    section.sand::before,section.sand::after{width:58px;opacity:.16;}
-    section.sand::before{top:0;}
-    section.sand::after{bottom:0;}
+    section.sand::before,section.sand#why::after{width:58px;opacity:.28;}
+    section.sand::before{top:auto;bottom:0;}
+    section.sand#why::after{bottom:auto;top:0;}
   }
 </style>
 </head>
@@ -1145,7 +1157,7 @@ html {
   </div>
 </section>
 
-<section class="sand">
+<section class="sand" id="why">
   <div class="rail"></div>
   <div class="wrap">
     <div class="section-head reveal">

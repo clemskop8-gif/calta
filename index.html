@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="images/hero-2-sm.webp" media="(max-width:760px)">
+<link rel="preload" as="image" href="images/hero-2-lg.webp" media="(min-width:761px)">
 <style>
   :root {
   --navy:#101B33;
@@ -595,9 +597,228 @@ html {
     .nav-right{display:none;}
     .burger{display:block;position:relative;z-index:5;}
   }
-  @media(max-width:760px){
+    @media(max-width:760px){
     section{padding:70px 0;}
     .contact-grid{grid-template-columns:1fr;gap:20px;}
+  }
+
+  @media(max-width:760px){
+    #eventsCarousel{height:auto !important;max-height:none !important;}
+    #carouselTrack{height:auto !important;}
+    .carousel-item{
+      position:relative !important;left:auto !important;top:auto !important;
+      transform:none !important;aspect-ratio:auto !important;
+      width:calc(100% - 32px) !important;margin:0 auto;
+      padding:24px 18px !important;
+    }
+    .carousel-item p{max-width:100% !important;}
+    .carousel-item a{display:block;width:100%;text-align:center;}
+    #eventsPrev,#eventsNext,#eventsDots{display:none !important;}
+  }
+
+  /* ============================================================
+     MOBILE & TABLET OPTIMIZATION
+     ============================================================ */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+
+  /* Убираем глобальное увеличение 110% на всех экранах, где работает бургер-меню */
+  @media(max-width:1239px){
+    html{zoom:1;-moz-transform:none;}
+    .nav .links{max-height:calc(100vh - 84px);max-height:calc(100dvh - 84px);}
+  }
+
+  /* ---------- Планшет и телефон ---------- */
+  @media(max-width:900px){
+    html{scroll-padding-top:70px;}
+    .hero-inner.wrap{padding-left:32px;}
+  }
+
+  /* ---------- Телефон ---------- */
+  @media(max-width:760px){
+    .wrap{padding:0 20px;}
+
+    /* Шапка: компактный логотип и тикер */
+    .rate-ticker-inner{gap:16px;padding:6px 16px;}
+    .rate-item{font-size:10.5px;}
+    .nav{padding:0 8px 0 12px;}
+    .logo-badge,.logo-badge-inner{width:56px;height:56px;}
+    .burger{
+      font-size:24px;line-height:1;
+      min-width:48px;min-height:48px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .nav .links{max-height:calc(100vh - 92px);max-height:calc(100dvh - 92px);}
+    .nav .links a,
+    .nav-dropdown-trigger{padding:15px 20px;font-size:13px;}
+    .nav-dropdown-menu a{padding:14px 20px 14px 36px;}
+    .nav-cta-mobile{margin:16px 20px 20px;padding:14px 16px;}
+
+    /* Главный экран */
+    .hero{min-height:0;padding-top:104px;}
+    .hero-map{opacity:.45;transform:none;}
+    .hero-inner.wrap{padding-left:20px;padding-right:20px;}
+    .hero-content{padding:28px 0 56px;}
+    .hero h1{font-size:clamp(34px,10.5vw,44px);line-height:1.08;margin-bottom:18px;}
+    .hero p.lead{font-size:15.5px;line-height:1.6;margin-bottom:28px;}
+    .hero-actions{flex-direction:column;gap:10px;}
+    .hero-actions .btn{width:100%;justify-content:center;padding:15px 20px;}
+    .eyebrow{font-size:11px;letter-spacing:.1em;margin-bottom:14px;}
+
+    /* Секции и заголовки */
+    section{padding:52px 0;}
+    .section-head{margin-bottom:28px;}
+    .section-head h2{font-size:clamp(24px,7vw,30px);margin-bottom:12px;}
+    .section-head p{font-size:15.5px;line-height:1.6;}
+
+    /* Мероприятия */
+    #events{padding:44px 0 !important;}
+    #events .section-head{padding:0 20px !important;}
+    #events .section-head h2{font-size:clamp(24px,7vw,30px) !important;}
+    #events .carousel-item{padding:22px 16px !important;width:calc(100% - 40px) !important;}
+    #events .carousel-item h3{font-size:19px !important;}
+    #events .carousel-item p{font-size:14.5px !important;line-height:1.6 !important;}
+
+    /* Направления */
+    .dir-card{padding:22px 20px;min-height:0;}
+    .dir-code{margin-bottom:14px;padding-bottom:10px;}
+    .dir-card h3{font-size:18px;margin-bottom:10px;}
+    .dir-card ul{font-size:14.5px;}
+
+    /* Цели */
+    .goals-wrap{gap:28px;}
+    .goals-list li{padding:16px 0;gap:14px;font-size:15px;}
+    .goals-visual{padding:22px 20px;}
+    .goals-visual .gv-figure{font-size:40px;}
+
+    /* Преимущества */
+    .adv-grid{gap:12px;}
+    .adv-card{padding:22px 20px;}
+    .adv-icon{width:32px;height:32px;margin-bottom:14px;}
+    .adv-card h3{font-size:17px;}
+
+    /* Новости */
+    .news-layout{gap:14px;}
+    .nf-body{padding:20px 18px 14px;}
+    .nf-body h3{font-size:19px;}
+    .nf-body p{font-size:14.5px;}
+    .news-mini{padding:14px 16px;}
+    .news-mini h4{font-size:14px;}
+    .news-arrow{width:40px;height:40px;}
+
+    /* Котировки зерна */
+    .grain-wrap{gap:14px;}
+    .grain-hero{padding:22px 18px;}
+    .grain-hero-top{margin-bottom:16px;}
+    .grain-crop-name{font-size:18px;}
+    .grain-price{font-size:clamp(38px,12vw,48px);}
+    .grain-mini{padding:14px 16px;}
+
+    /* Контакты */
+    .contact-grid{gap:28px;}
+    .contact-item{padding:16px 0;}
+    .contact-item .ci-value{font-size:16px;word-break:break-word;}
+    .social-row{margin-top:22px;}
+    .social-row a{width:46px;height:46px;}
+    .map-frame{aspect-ratio:1/1;}
+    .map-link{padding:6px 0;}
+
+    /* Подвал и «наверх» */
+    .back-to-top-row{padding:12px 0;}
+    footer{padding:22px 0;font-size:11px;}
+    footer .wrap{flex-direction:column;gap:6px;}
+  }
+
+  /* ---------- Очень узкие экраны ---------- */
+  @media(max-width:380px){
+    .wrap{padding:0 16px;}
+    .hero-inner.wrap{padding-left:16px;padding-right:16px;}
+    .hero h1{font-size:32px;}
+    .btn{font-size:12px;}
+  }
+
+  /* ============================================================
+     ФОТОГРАФИИ
+     ============================================================ */
+  /* Главный экран: слайд-шоу из трёх фото под тёмной вуалью */
+  .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;}
+  .hero-slide{
+    position:absolute;inset:0;background-size:cover;background-position:center;
+    opacity:0;animation:heroFade 27s infinite;will-change:opacity;
+  }
+  .hero-slide.s1{background-image:url(images/hero-2-lg.webp);}
+  .hero-slide.s2{background-image:url(images/hero-3-lg.webp);animation-delay:9s;}
+  .hero-slide.s3{background-image:url(images/hero-1-lg.webp);animation-delay:18s;}
+  @keyframes heroFade{
+    0%{opacity:0;} 5%{opacity:1;} 33%{opacity:1;} 38%{opacity:0;} 100%{opacity:0;}
+  }
+  .hero-bg::after{
+    content:'';position:absolute;inset:0;
+    background:
+      linear-gradient(90deg, rgba(16,27,51,.94) 0%, rgba(16,27,51,.78) 50%, rgba(16,27,51,.52) 100%),
+      linear-gradient(180deg, rgba(16,27,51,.55) 0%, rgba(16,27,51,0) 30%, rgba(16,27,51,.65) 100%);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-slide{animation:none;}
+    .hero-slide.s1{opacity:1;}
+  }
+
+  /* О нас: текст + два фото */
+  .about-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;}
+  .about-grid .section-head{margin-bottom:0;max-width:none;}
+  .about-photos{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .about-photos figure{
+    aspect-ratio:3/4;overflow:hidden;border-radius:3px;background:var(--navy);
+    box-shadow:0 14px 34px rgba(16,27,51,.18);
+  }
+  .about-photos figure:nth-child(2){margin-top:44px;}
+  .about-photos img{width:100%;height:100%;object-fit:cover;display:block;}
+  .about-photos figure:nth-child(1) img{object-position:35% center;}
+
+  /* Мероприятия: фото на карточке под затемнением */
+  #events .carousel-item{
+    background:
+      linear-gradient(150deg, rgba(2,35,49,.84) 0%, rgba(5,104,148,.58) 100%),
+      url(images/event-1-lg.webp) center/cover no-repeat !important;
+  }
+  #events .carousel-item:nth-child(even){
+    background:
+      linear-gradient(150deg, rgba(2,35,49,.84) 0%, rgba(5,104,148,.58) 100%),
+      url(images/event-2-lg.webp) center/cover no-repeat !important;
+  }
+
+  /* Разделители между секциями */
+  .photo-divider{
+    position:relative;height:clamp(160px,26vw,320px);overflow:hidden;background:var(--navy);
+  }
+  .photo-divider img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-divider::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(16,27,51,.28) 0%, rgba(16,27,51,.08) 50%, rgba(16,27,51,.28) 100%);
+    pointer-events:none;
+  }
+
+  @media(max-width:900px){
+    .about-grid{grid-template-columns:1fr;gap:28px;}
+    .about-photos figure:nth-child(2){margin-top:24px;}
+  }
+  @media(max-width:760px){
+    .hero-slide.s1{background-image:url(images/hero-2-sm.webp);}
+    .hero-slide.s2{background-image:url(images/hero-3-sm.webp);}
+    .hero-slide.s3{background-image:url(images/hero-1-sm.webp);}
+    .hero-bg::after{
+      background:linear-gradient(180deg, rgba(16,27,51,.82) 0%, rgba(16,27,51,.74) 55%, rgba(16,27,51,.88) 100%);
+    }
+    #events .carousel-item{
+      background:
+        linear-gradient(150deg, rgba(2,35,49,.86) 0%, rgba(5,104,148,.6) 100%),
+        url(images/event-1-sm.webp) center/cover no-repeat !important;
+    }
+    #events .carousel-item:nth-child(even){
+      background:
+        linear-gradient(150deg, rgba(2,35,49,.86) 0%, rgba(5,104,148,.6) 100%),
+        url(images/event-2-sm.webp) center/cover no-repeat !important;
+    }
+    .about-photos{gap:10px;}
   }
 </style>
 </head>
@@ -651,6 +872,7 @@ html {
 </header>
 
 <div id="top" class="hero">
+  <div class="hero-bg" aria-hidden="true"><div class="hero-slide s1"></div><div class="hero-slide s2"></div><div class="hero-slide s3"></div></div>
   <svg class="hero-map" viewBox="0 0 1180 760" preserveAspectRatio="xMidYMid slice">
     <path class="route" d="M40 520 C 220 470, 300 610, 460 540 S 700 380, 860 430 S 1080 300, 1150 260" />
     <path class="route tq" d="M120 220 C 260 300, 380 260, 480 360 S 640 470, 780 420 S 980 520, 1120 560" style="animation-delay:.3s" />
@@ -681,10 +903,16 @@ html {
 <section id="about" class="sand">
   <div class="rail"></div>
   <div class="wrap">
-    <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot tq"></span> О нас</div>
-      <h2>Платформа для тех, кто строит логистику региона</h2>
-      <p>CALTA формирует профессиональное пространство, где бизнес, наука, государство и международные партнёры вырабатывают общие решения для логистики и торговли Центральной Азии — от координации отраслевых проектов до цифровизации перевозок.</p>
+    <div class="about-grid">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span class="dot tq"></span> О нас</div>
+        <h2>Платформа для тех, кто строит логистику региона</h2>
+        <p>CALTA формирует профессиональное пространство, где бизнес, наука, государство и международные партнёры вырабатывают общие решения для логистики и торговли Центральной Азии — от координации отраслевых проектов до цифровизации перевозок.</p>
+      </div>
+      <div class="about-photos reveal">
+        <figure><img src="images/about-1-lg.webp" srcset="images/about-1-sm.webp 900w, images/about-1-lg.webp 1920w" sizes="(max-width:900px) 45vw, 28vw" alt="Железнодорожный путь, уходящий к горизонту" width="1920" height="1280" loading="lazy" decoding="async"></figure>
+        <figure><img src="images/about-2-lg.webp" srcset="images/about-2-sm.webp 600w, images/about-2-lg.webp 1280w" sizes="(max-width:900px) 45vw, 28vw" alt="Электрифицированная железная дорога в казахстанской степи" width="1280" height="1920" loading="lazy" decoding="async"></figure>
+      </div>
     </div>
   </div>
 </section>
@@ -917,6 +1145,8 @@ html {
   </div>
 </section>
 
+<figure class="photo-divider"><img src="images/divider-1-lg.webp" srcset="images/divider-1-sm.webp 900w, images/divider-1-lg.webp 1920w" sizes="100vw" alt="Контейнерный терминал морского порта с портальными кранами" width="1920" height="1080" loading="lazy" decoding="async" style="object-position:center 45%;"></figure>
+
 <section class="dark section-green">
   <div class="wrap">
     <div class="section-head reveal">
@@ -1010,6 +1240,8 @@ html {
     </div>
   </div>
 </section>
+
+<figure class="photo-divider"><img src="images/divider-2-lg.webp" srcset="images/divider-2-sm.webp 900w, images/divider-2-lg.webp 1920w" sizes="100vw" alt="Силуэты портовых кранов на закате" width="1920" height="1260" loading="lazy" decoding="async" style="object-position:center 40%;"></figure>
 
 <section class="dark section-amber" id="grain">
   <div class="wrap">
@@ -1215,18 +1447,14 @@ html {
   (function(){
     const eventsData = [
   {
-    date:'5 ноября 2026 года',
-    title:'Транспортно-логистический форум в г. Шу',
-    desc:'Международный транспортно-логистический форум о развитии промышленного потенциала Шуйского региона — стратегического узла Северной ветки Шёлкового пути между Китаем, Центральной Азией и Европой.',
-    location:'Дворец культуры города Шу, ул. Аркалык, 7',
+    title:'Анализ транспортно-логистических центров Казахстана',
+    desc:'Цифровая зрелость, эффективность, инфраструктура и направления развития терминальной сети.Совместно с «KAZLOGISTICS» Центрально-Азиатская ассоциация логистики и транспорта (CALTA) проводит комплексное исследование терминальной сети страны. Мы хотим получить объективную картину текущего состояния ТЛЦ и на её основе сформировать практические рекомендации для операторов, отраслевых объединений и государственных органов.',
     files:[
-      {label:'Приглашение', url:'https://drive.google.com/file/d/19wUNLJ6p5xXZPKyoxJFFiKa5VGikfXJK/view'},
-      {label:'Концепция Шу', url:'https://drive.google.com/file/d/1whjIy8DvzmixDCoOaSzLUXpqhzwMXOfh/view'},
-      {label:'Дорожная карта Шу', url:'https://drive.google.com/file/d/1nSzLRVb6uRywu9yuRjltlSosdif58-Ve/view'}
+      {label:'Анкета оператора транспортно-логистического центра (ТЛЦ) Республики Казахстан', url:'https://docs.google.com/forms/d/e/1FAIpQLSeFeqsC2mFgJfpVUs4eBjFzUpGNDEa2KFpUStYVlmlkPop6Wg/viewform'},
+      {label:'Анкета оператора морского портового терминала Республики Казахстан (Каспийское море)', url:'https://docs.google.com/forms/d/e/1FAIpQLSdx0SiMC7RoIRFmztMoxd8FiPrkZRXpDtKBub-Sl5OivEO6hQ/viewform'},
     ],
-    registerUrl:'forum-shu-2026.html'
   },
-  ];
+];
 
     const track = document.getElementById('carouselTrack');
     const items = track ? Array.from(track.children) : [];
@@ -1253,22 +1481,10 @@ html {
             </a>`).join('')}
         </div>` : '';
 
-      el.innerHTML = `
-        <div style="font-family:var(--mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--cream);opacity:.6;margin-bottom:12px;">${data.date}</div>
+                  el.innerHTML = `
         <h3 style="font-family:var(--display);font-size:clamp(18px,2.2vw,28px);color:var(--cream);margin-bottom:12px;font-weight:600;">${data.title}</h3>
         <p style="font-family:var(--body);font-size:clamp(14px,1.1vw,17px);line-height:1.7;color:var(--cream);opacity:.85;max-width:80%;margin:0 auto 16px;">${data.desc}</p>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--cream);opacity:.6;display:flex;align-items:center;justify-content:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--turquoise-light);display:inline-block;"></span> ${data.location}</div>
         ${filesHtml}
-        ${data.registerUrl ? `
-        <div style="margin-top:20px;">
-          <a href="${data.registerUrl}"
-             style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-bright);background:var(--cream);padding:12px 26px;border-radius:2px;font-weight:500;transition:background .2s, transform .2s;"
-             onmouseover="this.style.transform='translateY(-1px)'"
-             onmouseout="this.style.transform='translateY(0)'">
-            Подать заявку на участие
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
-        </div>` : ''}
       `;
     });
 

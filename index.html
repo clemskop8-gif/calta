@@ -820,6 +820,18 @@ html {
     }
     .about-photos{gap:10px;}
   }
+
+  /* Иллюстрации в карточках «Преимущества международного сотрудничества» */
+  .adv-art{
+    display:block;max-width:none;width:calc(100% + 52px);height:150px;
+    margin:-32px -26px 22px;border-bottom:1px solid rgba(243,239,226,0.12);
+  }
+  @media(max-width:760px){
+    .adv-art{width:calc(100% + 40px);height:auto;aspect-ratio:32/15;margin:-22px -20px 16px;}
+  }
+
+  /* Фото в карточках «Преимущества международного сотрудничества» */
+  .adv-art.adv-photo{height:auto;aspect-ratio:16/9;object-fit:cover;}
 </style>
 </head>
 <body>
@@ -1156,17 +1168,17 @@ html {
     </div>
     <div class="adv-grid reveal">
       <div class="adv-card">
-        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><path d="M6 20H34M20 6C24 12 24 28 20 34C16 28 16 12 20 6Z" stroke="#4FB8AF" stroke-width="1.3"/><circle cx="20" cy="20" r="14" stroke="#4FB8AF" stroke-width="1.3"/></svg>
+        <img class="adv-art adv-photo" src="images/adv-1-lg.webp" srcset="images/adv-1-sm.webp 640w, images/adv-1-lg.webp 1200w" sizes="(max-width:860px) 100vw, 33vw" alt="Участники международной конференции в зале" width="1200" height="655" loading="lazy" decoding="async" style="object-position:center 55%;">
         <h3>Обмен опытом</h3>
         <p>Сотрудничество позволяет обмениваться лучшими практиками и инновационными решениями.</p>
       </div>
       <div class="adv-card">
-        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><path d="M5 30L16 14L24 22L35 8" stroke="#C6862E" stroke-width="1.3"/><path d="M27 8H35V16" stroke="#C6862E" stroke-width="1.3"/></svg>
+        <img class="adv-art adv-photo" src="images/adv-2-lg.webp" srcset="images/adv-2-sm.webp 640w, images/adv-2-lg.webp 1200w" sizes="(max-width:860px) 100vw, 33vw" alt="Контейнерный терминал на закате" width="1200" height="800" loading="lazy" decoding="async" style="object-position:center 12%;">
         <h3>Расширение горизонтов</h3>
         <p>Взаимодействие с международными партнёрами открывает новые возможности для профессионального роста.</p>
       </div>
       <div class="adv-card">
-        <svg class="adv-icon" viewBox="0 0 40 40" fill="none"><rect x="8" y="8" width="24" height="24" stroke="#4FB8AF" stroke-width="1.3"/><path d="M8 16H32M16 8V32" stroke="#4FB8AF" stroke-width="1"/></svg>
+        <img class="adv-art adv-photo" src="images/adv-3-lg.webp" srcset="images/adv-3-sm.webp 640w, images/adv-3-lg.webp 1200w" sizes="(max-width:860px) 100vw, 33vw" alt="Сотрудница склада со сканером и планшетом" width="640" height="360" loading="lazy" decoding="async" style="object-position:center 30%;">
         <h3>Доступ к международным стандартам</h3>
         <p>Сотрудничество помогает внедрять международные стандарты и практики в работу.</p>
       </div>

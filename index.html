@@ -878,6 +878,46 @@ section.sand::after{right:0;transform:scaleX(-1);-webkit-mask-position:right top
   section.sand .wrap{padding-left:24px;padding-right:24px;}
 }
 
+
+  /* Регион охвата: пять флагов слева от «5 стран», плавно появляются по очереди */
+  .goals-visual .gv-row{display:flex;align-items:center;gap:16px;flex-wrap:nowrap;margin-bottom:12px;}
+  .goals-visual .gv-row .gv-figure{margin-bottom:0;white-space:nowrap;flex:0 0 auto;}
+  .gv-flags{display:flex;gap:6px;flex:1 1 auto;min-width:0;max-width:200px;}
+  .gv-flag{
+    position:relative;display:block;flex:1 1 0;min-width:14px;max-width:36px;aspect-ratio:4/3;
+    border-radius:3px;overflow:hidden;
+    box-shadow:0 0 0 1px rgba(243,239,226,.28),0 6px 14px rgba(0,0,0,.28);
+    opacity:0;transform:translateY(16px) scale(.65) rotate(-8deg);
+  }
+  .gv-flag img{display:block;width:100%;height:100%;object-fit:cover;}
+  /* блик, пробегающий по флагу после появления */
+  .gv-flag::after{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);
+    transform:translateX(-130%);
+  }
+  .gv-flags.in .gv-flag{
+    animation:gvFlagIn 1.5s cubic-bezier(.22,.8,.24,1) forwards;
+    animation-delay:calc(.35s + var(--i) * .34s);
+  }
+  .gv-flags.in .gv-flag::after{
+    animation:gvFlagSheen 1.2s ease-in-out forwards;
+    animation-delay:calc(1.3s + var(--i) * .34s);
+  }
+  @keyframes gvFlagIn{
+    0%  {opacity:0;transform:translateY(16px) scale(.65) rotate(-8deg);filter:blur(5px);}
+    55% {opacity:1;transform:translateY(-3px) scale(1.07) rotate(1.5deg);filter:blur(0);}
+    100%{opacity:1;transform:none;filter:none;}
+  }
+  @keyframes gvFlagSheen{to{transform:translateX(130%);}}
+  @media(max-width:520px){
+    .goals-visual .gv-row{gap:12px;}
+    .gv-flags{gap:5px;max-width:150px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .gv-flag{opacity:1 !important;transform:none !important;animation:none !important;}
+    .gv-flag::after{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -1165,7 +1205,10 @@ section.sand::after{right:0;transform:scaleX(-1);-webkit-mask-position:right top
       </ul>
       <div class="goals-visual">
         <div class="gv-label">Регион охвата</div>
-        <div class="gv-figure">5 стран</div>
+        <div class="gv-row">
+          <div class="gv-flags" role="group" aria-label="Флаги стран региона"><span class="gv-flag" style="--i:0"><img src="images/flags/kz.svg" alt="Флаг: Казахстан" title="Казахстан" width="40" height="30" loading="lazy" decoding="async"></span><span class="gv-flag" style="--i:1"><img src="images/flags/uz.svg" alt="Флаг: Узбекистан" title="Узбекистан" width="40" height="30" loading="lazy" decoding="async"></span><span class="gv-flag" style="--i:2"><img src="images/flags/kg.svg" alt="Флаг: Кыргызстан" title="Кыргызстан" width="40" height="30" loading="lazy" decoding="async"></span><span class="gv-flag" style="--i:3"><img src="images/flags/tj.svg" alt="Флаг: Таджикистан" title="Таджикистан" width="40" height="30" loading="lazy" decoding="async"></span><span class="gv-flag" style="--i:4"><img src="images/flags/tm.svg" alt="Флаг: Туркменистан" title="Туркменистан" width="40" height="30" loading="lazy" decoding="async"></span></div>
+          <div class="gv-figure">5 стран</div>
+        </div>
         <div class="gv-desc">Казахстан, Узбекистан, Кыргызстан, Таджикистан, Туркменистан — единый логистический коридор между Китаем, Каспием и Европой.</div>
         <hr>
         <div class="gv-label">Статус</div>
@@ -2208,5 +2251,19 @@ section.sand::after{right:0;transform:scaleX(-1);-webkit-mask-position:right top
     .catch(function(){ /* нет файла/сети — тихо оставляем образцы */ });
 </script>
 
+
+<script>
+  /* Флаги в «Регионе охвата» появляются, когда плашка попадает в экран */
+  (function(){
+    const box = document.querySelector('.gv-flags');
+    if(!box) return;
+    if('IntersectionObserver' in window){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ box.classList.add('in'); io.disconnect(); } });
+      },{threshold:.5});
+      io.observe(box);
+    } else { box.classList.add('in'); }
+  })();
+</script>
 </body>
 </html>

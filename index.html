@@ -834,33 +834,65 @@ html {
   .adv-art.adv-photo{height:auto;aspect-ratio:16/9;object-fit:cover;}
 
 
-  /* Узор из квадратов с «хвоста» логотипа CALTA на светлых секциях.
-     Цвет узора = цвет цветной секции, которая идёт выше. */
-  section.sand::after,
-  section.sand#why::before{
-    content:'';position:absolute;z-index:-1;pointer-events:none;
-    /* ширина = свободное поле сбоку от контента (контент 1230px по центру) */
-    width:clamp(56px,calc((100vw - 1230px) / 2 - 4px),250px);aspect-ratio:330/710;
-    background-position:center;background-size:contain;background-repeat:no-repeat;
-    opacity:.5;
-  }
-  section.sand#why::before{left:0;top:60px;}
-  section.sand::after{right:0;bottom:60px;transform:scaleX(-1);}
-  #about::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%236F95D1%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%236F95D1%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%236F95D1%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%236F95D1%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%236F95D1%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%236F95D1%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3C/svg%3E");}
-  #directions::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%234FB0DD%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%234FB0DD%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%234FB0DD%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%230F87BD%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3C/svg%3E");}
-  #why::before,
-  #why::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%23E0707F%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%23E0707F%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%23E0707F%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%23E0707F%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%23E0707F%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%23E0707F%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3C/svg%3E");}
-  #insights::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%234FCB68%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%234FCB68%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%234FCB68%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%234FCB68%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%234FCB68%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%234FCB68%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23137A29%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3C/svg%3E");}
-  #contact::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%23EBBE72%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%23EBBE72%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%23EBBE72%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3C/svg%3E");}
-  @media(max-width:1230px){
-    section.sand::after,section.sand#why::before{opacity:.38;}
-  }
-  @media(max-width:760px){
-    section.sand::after,section.sand#why::before{width:58px;opacity:.28;}
-    section.sand#why::before{top:auto;bottom:0;}
-    section.sand::after{bottom:0;}
-    section.sand#why::after{bottom:auto;top:0;}
-  }
+
+/* ==========================================================================
+   CALTA: узор из квадратов с «хвоста» логотипа на светлых секциях
+   --------------------------------------------------------------------------
+   * Узор стоит с двух сторон: слева сверху и справа снизу (зеркально).
+   * Цвет = цвет цветной секции, которая идёт выше:
+       О нас (после тёмно-синего первого экрана) — синий
+       Направления (после «Мероприятий») — голубой
+       Почему CALTA (после красных «Целей») — красный
+       Новости (после зелёного блока) — зелёный
+       Контакты (после янтарных «Котировок») — янтарный
+   * Узор лежит ПОД контентом и не ловит клики. Текст он не перекрывает:
+       - на широком экране узор помещается в свободные поля по бокам;
+       - на узком экране он живёт в пустой полосе отступа секции
+         (сверху и снизу), где текста нет, а под карточками и иконками
+         он может заходить без вреда.
+   Чтобы сделать узор ярче или бледнее — меняйте opacity ниже.
+   ========================================================================== */
+
+section.sand::before,
+section.sand::after{
+  content:'';position:absolute;z-index:-1;pointer-events:none;
+  aspect-ratio:330/710;
+  background-position:center;background-size:contain;background-repeat:no-repeat;
+  opacity:.5;
+  /* ширина = свободное поле сбоку от контента (контент 1230px по центру) */
+  width:clamp(46px,calc((100vw - 1230px) / 2 - 4px),250px);
+}
+section.sand::before{left:0;top:60px;}
+section.sand::after{right:0;bottom:60px;transform:scaleX(-1);}
+
+/* Цвета по секциям */
+#about::before,
+#about::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%236F95D1%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%236F95D1%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%236F95D1%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%236F95D1%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%236F95D1%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%236F95D1%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%232F5BA8%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%2317325F%22/%3E%3C/svg%3E");}
+#directions::before,
+#directions::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%234FB0DD%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%234FB0DD%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%234FB0DD%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%234FB0DD%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%230F87BD%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230F87BD%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%23056894%22/%3E%3C/svg%3E");}
+#why::before,
+#why::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%23E0707F%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%23E0707F%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%23E0707F%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%23E0707F%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%23E0707F%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%23E0707F%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23BD0F26%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%238F0A1C%22/%3E%3C/svg%3E");}
+#insights::before,
+#insights::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%234FCB68%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%234FCB68%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%234FCB68%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%234FCB68%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%234FCB68%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%234FCB68%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23137A29%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23137A29%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%230A521B%22/%3E%3C/svg%3E");}
+#contact::before,
+#contact::after{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 330 710%22%3E%3Crect x=%2240%22 y=%220%22 width=%2244%22 height=%2244%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22114%22 y=%220%22 width=%2242%22 height=%2242%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22114%22 y=%2286%22 width=%2244%22 height=%2244%22 fill=%22%23EBBE72%22/%3E%3Crect x=%2214%22 y=%22154%22 width=%2266%22 height=%2266%22 fill=%22%23EBBE72%22/%3E%3Crect x=%220%22 y=%22293%22 width=%2242%22 height=%2242%22 fill=%22%23EBBE72%22/%3E%3Crect x=%2294%22 y=%22265%22 width=%2254%22 height=%2254%22 fill=%22%23EBBE72%22/%3E%3Crect x=%22158%22 y=%22176%22 width=%2262%22 height=%2262%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22166%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%2274%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22166%22 y=%22450%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%22258%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%23D99A3D%22/%3E%3Crect x=%2274%22 y=%22355%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3Crect x=%22166%22 y=%22543%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3Crect x=%22258%22 y=%22638%22 width=%2264%22 height=%2264%22 fill=%22%238A5E17%22/%3E%3C/svg%3E");}
+
+/* Узкие экраны: узор не выше пустой полосы отступа секции (110px),
+   поэтому текста он не касается */
+@media(max-width:1341px){
+  section.sand::before,
+  section.sand::after{width:46px;opacity:.4;}
+  section.sand::before{top:0;}
+  section.sand::after{bottom:0;}
+}
+
+/* Телефон: отступ снизу увеличен, оба узора сидят в нижней полосе */
+@media(max-width:760px){
+  section.sand{padding-bottom:104px;}
+  section.sand::before,
+  section.sand::after{width:44px;opacity:.3;bottom:0;top:auto;}
+}
+
 </style>
 </head>
 <body>

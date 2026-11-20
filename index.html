@@ -919,18 +919,6 @@ section.sand::after{right:0;transform:scaleX(-1);-webkit-mask-position:right top
     .gv-flag::after{display:none;}
   }
 
-  /* Преимущества международного сотрудничества: заголовок + картинка про логистику в зелёной гамме */
-  .intl-top{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;margin-bottom:64px;}
-  .intl-top .section-head{margin-bottom:0;max-width:none;}
-  .intl-photo{
-    aspect-ratio:16/10;overflow:hidden;border-radius:3px;background:var(--green-card);
-    border:1px solid rgba(243,239,226,0.16);box-shadow:0 18px 40px rgba(0,0,0,.28);
-  }
-  .intl-photo img{display:block;width:100%;height:100%;object-fit:cover;}
-  @media(max-width:900px){
-    .intl-top{grid-template-columns:1fr;gap:24px;margin-bottom:32px;}
-    .intl-photo{aspect-ratio:16/9;}
-  }
 
   /* ===== Первый экран: текст по центру, большая кнопка со скачиванием, под ней две малые ===== */
   .hero-inner.wrap{padding-left:32px;padding-right:32px;}
@@ -1316,15 +1304,10 @@ section.sand::after{right:0;transform:scaleX(-1);-webkit-mask-position:right top
 
 <section class="dark section-green">
   <div class="wrap">
-    <div class="intl-top">
-      <div class="section-head reveal">
-        <div class="eyebrow"><span class="dot tq"></span> Глобальный контур</div>
-        <h2>Преимущества международного сотрудничества</h2>
-        <p>Обмен опытом и знаниями с международными партнёрами и сотрудничество с ними — важный шаг для развития профессионального сообщества.</p>
-      </div>
-      <figure class="intl-photo reveal">
-        <img src="images/intl-green-lg.webp" srcset="images/intl-green-sm.webp 640w, images/intl-green-lg.webp 1200w" sizes="(max-width:900px) 100vw, 45vw" alt="Контейнерный терминал с портальными кранами" width="1200" height="803" loading="lazy" decoding="async">
-      </figure>
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot tq"></span> Глобальный контур</div>
+      <h2>Преимущества международного сотрудничества</h2>
+      <p>Обмен опытом и знаниями с международными партнёрами и сотрудничество с ними — важный шаг для развития профессионального сообщества.</p>
     </div>
     <div class="adv-grid reveal">
       <div class="adv-card">
